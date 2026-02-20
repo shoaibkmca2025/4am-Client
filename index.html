@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4AM | The Growth Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Premium Font Loading -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,600,700&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Satoshi', 'system-ui', 'sans-serif'],
+              display: ['Clash Display', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              brand: {
+                obsidian: '#0B1120', // Lighter dark (Slate 950/Navy)
+                dark: '#0B1120',
+                primary: '#2563EB',
+                accent: '#7C3AED',
+                signal: '#00D1FF'
+              }
+            },
+            boxShadow: {
+              'premium': '0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.05), 0 12px 24px rgba(0,0,0,0.05)',
+              'premium-dark': '0 0 0 1px rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.4), 0 24px 48px rgba(0,0,0,0.4)',
+              'glow': '0 0 20px rgba(37, 99, 235, 0.15)',
+            },
+            animation: {
+              'mesh': 'mesh 20s ease infinite',
+              'scanline': 'scanline 10s linear infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'grain': 'grain 8s steps(10) infinite',
+            },
+            keyframes: {
+              mesh: {
+                '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                '33%': { transform: 'translate(5%, -5%) scale(1.05)' },
+                '66%': { transform: 'translate(-5%, 5%) scale(0.95)' },
+              },
+              grain: {
+                '0%, 100%': { transform: 'translate(0, 0)' },
+                '10%': { transform: 'translate(-5%, -10%)' },
+                '20%': { transform: 'translate(-15%, 5%)' },
+              },
+              scanline: {
+                '0%': { transform: 'translateY(-100%)' },
+                '100%': { transform: 'translateY(100%)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-15px)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      :root {
+        --brand-blue: #2563EB;
+        --brand-purple: #7C3AED;
+      }
+
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+      }
+      
+      .noise-overlay {
+        position: fixed;
+        inset: -200%;
+        z-index: 100;
+        background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+        opacity: 0.02;
+        pointer-events: none;
+      }
+
+      .mesh-bg {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background: 
+          radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.03) 0%, transparent 40%),
+          radial-gradient(circle at 20% 80%, rgba(124, 58, 237, 0.02) 0%, transparent 40%);
+        filter: blur(120px);
+      }
+
+      .dark .mesh-bg {
+        background: 
+          radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+          radial-gradient(circle at 20% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 40%);
+      }
+
+      .grid-bg {
+        position: fixed;
+        inset: 0;
+        background-image: 
+          linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: -1;
+        mask-image: radial-gradient(circle at 50% 50%, black, transparent);
+      }
+
+      .dark .grid-bg {
+        background-image: 
+          linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .dark .glass {
+        background: rgba(17, 24, 39, 0.75); /* Gray 900 @ 75% */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .premium-card {
+        border-radius: 24px;
+        padding: 28px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+      .glow-text {
+        text-shadow: 0 0 40px rgba(37, 99, 235, 0.25);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "framer-motion": "https://esm.sh/framer-motion@10.16.16?external=react,react-dom",
+    "lucide-react": "https://esm.sh/lucide-react@0.330.0?external=react,react-dom",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.22.0?external=react,react-dom",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-[#fafafa] dark:bg-brand-dark text-zinc-900 dark:text-zinc-100 selection:bg-brand-primary/20 transition-colors duration-500 font-sans leading-relaxed">
+    <div class="noise-overlay"></div>
+    <div class="mesh-bg"></div>
+    <div class="grid-bg"></div>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
