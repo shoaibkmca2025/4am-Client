@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Rocket, Zap, Loader2, CheckCircle2, ChevronDown } from 'lucide-react';
+import { Menu, X, Zap, Loader2, CheckCircle2, ChevronDown } from 'lucide-react';
 import { NAV_ITEMS } from '../constants';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import MonkeyThemeToggle from './MonkeyThemeToggle';
+import LogoImage from '../4am logo.jpeg';
 
 const ConnectButton: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -69,6 +70,15 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const handleLogoClick = () => {
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -81,9 +91,17 @@ const Navbar: React.FC = () => {
 
         {/* 1. Left Section: Logo */}
         <div className="flex items-center">
-          <Link to="/" className="flex items-center gap-3 group shrink-0">
-            <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:rotate-12">
-              <Rocket className="w-5 h-5 text-white" />
+          <Link
+            to="/"
+            onClick={handleLogoClick}
+            className="flex items-center gap-3 group shrink-0"
+          >
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-zinc-900/90 dark:bg-black flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-105">
+              <img
+                src={LogoImage}
+                alt="4AM Global Media logo"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="hidden lg:block">
               <span className="text-lg font-display font-bold text-zinc-900 dark:text-white uppercase tracking-tight block">4AM Global</span>

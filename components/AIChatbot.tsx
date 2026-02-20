@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, Loader2, Rocket, Bot, Sparkles, User, Terminal } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { useAuth } from './AuthContext';
+import { useLocation } from 'react-router-dom';
 
 interface Message {
   role: 'user' | 'model';
@@ -12,6 +13,7 @@ interface Message {
 }
 
 const AIChatbot: React.FC = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -91,8 +93,12 @@ const AIChatbot: React.FC = () => {
     }
   };
 
+  if (location.pathname === '/contact') {
+    return null;
+  }
+
   return (
-    <div className="fixed bottom-8 right-8 z-[200]">
+    <div className="fixed bottom-5 right-5 z-[200] md:bottom-8 md:right-8">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -193,11 +199,11 @@ const AIChatbot: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className={`w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all relative ${isOpen ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' : 'bg-brand-primary text-white'
+        className={`w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center transition-all relative ${isOpen ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' : 'bg-brand-primary text-white'
           }`}
       >
         <div className="absolute inset-0 bg-brand-primary rounded-full animate-ping opacity-20 pointer-events-none" />
-        {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
+        {isOpen ? <X className="w-5 h-5 md:w-6 md:h-6" /> : <MessageSquare className="w-5 h-5 md:w-6 md:h-6" />}
 
         {!isOpen && (
           <div className="absolute -top-1 -right-1 w-5 h-5 bg-brand-accent rounded-full border-2 border-white dark:border-brand-dark flex items-center justify-center">

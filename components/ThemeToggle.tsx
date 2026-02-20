@@ -50,9 +50,7 @@ const ThemeToggle: React.FC<{ compact?: boolean }> = ({ compact = false }) => {
       />
       
       {/* Subtle border glow for current active state */}
-      <div className={`absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100 bg-gradient-to-r ${
-        theme === 'light' ? 'from-amber-500/5 to-transparent' : 'from-brand-signal/5 to-transparent'
-      }`} />
+      <div className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-brand-primary/5 to-transparent" />
     </button>
   );
 };

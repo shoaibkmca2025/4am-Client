@@ -82,12 +82,12 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#020202] text-slate-900 dark:text-white relative font-sans selection:bg-brand-primary/30 overflow-x-hidden transition-colors duration-500">
+    <div className="min-h-screen bg-zinc-50 dark:bg-brand-dark text-slate-900 dark:text-white relative font-sans selection:bg-brand-primary/30 overflow-x-hidden transition-colors duration-500">
       {/* 1. Holographic HUD Background */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-accent/5 blur-[120px] rounded-full" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(124,58,237,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(124,58,237,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)]" />
       </div>
 
       {/* 2. Tactical Command Sidebar */}
@@ -192,7 +192,7 @@ const Dashboard: React.FC = () => {
                 <p className="text-[7px] font-mono text-slate-500 uppercase tracking-widest">Clearance_Lvl_4</p>
               </div>
               <div className="relative">
-                <div className="absolute inset-0 bg-brand-primary blur-sm opacity-20 rounded-xl" />
+                <div className="absolute inset-0 bg-brand-primary/15 opacity-100 rounded-xl" />
                 <img 
                   src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=user`} 
                   alt="" 

@@ -59,13 +59,13 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, isOpen, onClose, onLogout }) 
               <div className="relative z-10 flex flex-col items-center">
                 <div className="relative group mb-4">
                    <div className="absolute -inset-2 bg-brand-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                   <div className="w-24 h-24 rounded-3xl border-2 border-brand-primary p-1 bg-brand-obsidian overflow-hidden shadow-2xl relative">
+                   <div className="w-24 h-24 rounded-3xl border-2 border-brand-primary p-1 bg-black overflow-hidden shadow-2xl relative">
                      <img 
                        src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} 
                        alt="" 
                        className="w-full h-full object-cover rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-500"
                      />
-                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_50%,rgba(59,130,246,0.3))] pointer-events-none" />
+                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_50%,rgba(124,58,237,0.3))] pointer-events-none" />
                    </div>
                    <div className="absolute -bottom-2 -right-2 bg-brand-primary text-white p-2 rounded-xl shadow-lg border border-white/20">
                      <Fingerprint className="w-4 h-4" />

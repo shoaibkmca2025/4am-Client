@@ -29,7 +29,9 @@ const Contact: React.FC = () => {
                 to plan ambitious software.
               </h2>
               <p className="text-zinc-500 dark:text-zinc-400 text-lg md:text-xl font-light leading-relaxed max-w-lg mt-8 border-l-2 border-zinc-200 dark:border-white/10 pl-8">
-                Tell us where your product is today, where it needs to go, and we’ll share a practical roadmap – no hard sell, just honest thinking.
+                Tell us where your product is today
+                <br />
+                and we’ll map the next steps.
               </p>
             </div>
 

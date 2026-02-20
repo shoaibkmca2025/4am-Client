@@ -61,7 +61,7 @@ const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, i
 
         <div className="mt-auto flex items-center justify-between pt-8 border-t border-zinc-100 dark:border-white/5">
           <div className="flex items-center gap-3">
-            <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${isHovered ? 'bg-brand-primary shadow-[0_0_8px_#2563EB]' : 'bg-zinc-300 dark:bg-white/10'}`} />
+            <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${isHovered ? 'bg-brand-primary shadow-[0_0_8px_#7C3AED]' : 'bg-zinc-300 dark:bg-white/10'}`} />
             <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.16em]">Made for real teams</span>
           </div>
           <div className="flex items-center gap-3 text-brand-primary opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500">

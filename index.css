@@ -67,10 +67,13 @@ p {
   }
 }
 .heading-gradient {
-  background-image: linear-gradient(110deg, #e5e7eb, #ffffff, #93c5fd, #a855f7);
+  background-image: linear-gradient(110deg, #111827, #1f2933, #7c3aed, #4c1d95);
   background-size: 200% auto;
   color: transparent;
   background-clip: text;
+}
+.dark .heading-gradient {
+  background-image: linear-gradient(110deg, #e5e7eb, #f9fafb, #a855f7, #7c3aed);
 }
 .heading-gradient-animated {
   animation: gradient-text 12s ease-in-out infinite;
@@ -123,8 +126,8 @@ p {
 .hero-orb {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(60px);
-  opacity: 0.7;
+  filter: blur(40px);
+  opacity: 0.45;
   mix-blend-mode: screen;
 }
 .hero-orb-1 {
@@ -132,7 +135,7 @@ p {
   height: 26rem;
   top: -8rem;
   left: -6rem;
-  background: radial-gradient(circle at 30% 30%, rgba(37, 99, 235, 0.9), transparent 60%);
+  background: radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.85), transparent 60%);
   animation: hero-orbit-1 28s ease-in-out infinite;
 }
 .hero-orb-2 {
@@ -140,7 +143,7 @@ p {
   height: 22rem;
   bottom: -6rem;
   right: -4rem;
-  background: radial-gradient(circle at 40% 40%, rgba(56, 189, 248, 0.85), transparent 65%);
+  background: radial-gradient(circle at 40% 40%, rgba(124, 58, 237, 0.7), transparent 65%);
   animation: hero-orbit-2 32s ease-in-out infinite;
 }
 .hero-orb-3 {
@@ -149,7 +152,7 @@ p {
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.65), transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.6), transparent 70%);
   animation: hero-orbit-3 36s ease-in-out infinite;
 }
 @keyframes hero-orbit-1 {

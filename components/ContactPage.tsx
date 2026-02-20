@@ -2,7 +2,10 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Contact from './Contact';
-import { Shield, Globe, Cpu } from 'lucide-react';
+import Services from './Services';
+import Projects from './Projects';
+import Testimonials from './Testimonials';
+import { Shield, Globe, Cpu, ArrowRight } from 'lucide-react';
 
 const ContactPage: React.FC = () => {
   useEffect(() => {
@@ -30,17 +33,27 @@ const ContactPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-5xl sm:text-6xl md:text-7xl font-display font-bold text-slate-900 dark:text-white tracking-tighter uppercase leading-[0.9] heading-interactive"
             >
-              START THE <br/>
+              We help ambitious teams <br/>
               <span className="heading-gradient heading-gradient-animated text-brand-primary">
-                ENGINE.
+                design, build, and scale digital products.
               </span>
             </motion.h1>
 
+            <div>
+              <button
+                onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
+                className="mt-4 inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-brand-primary via-brand-accent to-brand-signal text-white font-bold rounded-2xl shadow-xl hover:shadow-brand-primary/40 hover:-translate-y-1 transition-all text-xs uppercase tracking-[0.2em]"
+              >
+                Start a Project
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
             <div className="space-y-7">
                {[
-                 { icon: Globe, label: 'Global Availability', text: 'Active nodes in 12+ regions worldwide.' },
-                 { icon: Shield, label: 'Secure Transmission', text: 'All initial inquiries are end-to-end encrypted.' },
-                 { icon: Cpu, label: 'Expert Evaluation', text: 'Direct mission briefing with senior architects.' },
+                 { icon: Globe, label: 'Clients worldwide', text: 'We work with teams in 12+ regions.' },
+                 { icon: Shield, label: 'Secure by default', text: 'Your first message is encrypted end-to-end.' },
+                 { icon: Cpu, label: 'Senior review', text: 'Senior engineers review your project and map next steps.' },
                ].map((item, i) => (
                  <motion.div 
                    key={i}
@@ -74,9 +87,12 @@ const ContactPage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        <Contact />
       </div>
+
+      <Services />
+      <Projects />
+      <Testimonials />
+      <Contact />
     </div>
   );
 };
