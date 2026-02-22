@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
             <p className="text-sm md:text-base text-zinc-400 max-w-sm leading-relaxed">
               The growth engine that never sleeps. Powering founders, operators, and teams across the globe.
             </p>
-            <div className="inline-flex items-center gap-3 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+              <div className="inline-flex items-center gap-3 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
               <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
               <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-emerald-200">
                 Systems online
@@ -109,13 +109,15 @@ const Footer: React.FC = () => {
                   Email
                 </p>
                 <p className="text-sm font-medium text-zinc-100">
-                  hello@4amglobal.media
+                  4amhustles@gmail.com
                 </p>
               </a>
 
               <div className="flex gap-3">
                 <a
-                  href="#"
+                  href="https://www.instagram.com/reel/DUBIUl5DfBU/?utm_source=ig_web_copy_link"
+                  target="_blank"
+                  rel="noreferrer"
                   className="flex-1 rounded-2xl border border-zinc-700/80 bg-zinc-900/40 px-4 py-3 hover:border-brand-primary hover:bg-brand-primary/10 transition-colors flex items-center justify-between"
                 >
                   <div>

@@ -9,7 +9,6 @@ const testimonials = [
         author: "Sarah J.",
         role: "CTO, FinTech Scaleup",
         icon: Code,
-        colSpan: "col-span-1 md:col-span-2",
     },
     {
         id: 2,
@@ -17,7 +16,6 @@ const testimonials = [
         author: "Michael R.",
         role: "Founder, SaaS Platform",
         icon: Terminal,
-        colSpan: "col-span-1",
     },
     {
         id: 3,
@@ -25,7 +23,6 @@ const testimonials = [
         author: "Elena V.",
         role: "VP Marketing, E-com Giant",
         icon: Zap,
-        colSpan: "col-span-1",
     },
     {
         id: 4,
@@ -33,7 +30,6 @@ const testimonials = [
         author: "David K.",
         role: "Director, Global Logistics",
         icon: Star,
-        colSpan: "col-span-1 md:col-span-2",
     }
 ];
 
@@ -61,7 +57,7 @@ const Testimonials: React.FC = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1 }}
-                            className={`${t.colSpan} p-8 glass rounded-[2rem] border border-zinc-200 dark:border-white/5 flex flex-col justify-between group hover:border-brand-primary/30 transition-all duration-500`}
+                            className="p-8 glass rounded-[2rem] border border-zinc-200 dark:border-white/5 flex flex-col justify-between h-full group hover:border-brand-primary/30 transition-all duration-500"
                         >
                             <div className="mb-8 relative">
                                 <div className="absolute -left-2 -top-2 text-brand-primary/10 text-6xl font-serif font-black">"</div>

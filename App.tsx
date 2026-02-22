@@ -1,13 +1,7 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import LandingPage from './components/LandingPage';
-import ServicesPage from './components/ServicesPage';
-import ServiceDetail from './components/ServiceDetail';
-import WorkPage from './components/WorkPage';
-import InsightsPage from './components/InsightsPage';
-import ContactPage from './components/ContactPage';
 import Footer from './components/Footer';
 import BackgroundParticles from './components/BackgroundParticles';
 import ScrollToTop from './components/ScrollToTop';
@@ -17,6 +11,13 @@ import { ThemeProvider } from './components/ThemeContext';
 import { AuthProvider } from './components/AuthContext';
 import { ArticleProvider } from './components/ArticleContext';
 import { motion, useScroll, useSpring } from 'framer-motion';
+
+const LandingPage = lazy(() => import('./components/LandingPage'));
+const ServicesPage = lazy(() => import('./components/ServicesPage'));
+const ServiceDetail = lazy(() => import('./components/ServiceDetail'));
+const WorkPage = lazy(() => import('./components/WorkPage'));
+const InsightsPage = lazy(() => import('./components/InsightsPage'));
+const ContactPage = lazy(() => import('./components/ContactPage'));
 
 const ScrollIndicator: React.FC = () => {
   const { scrollYProgress } = useScroll();
@@ -64,15 +65,17 @@ function App() {
           <ThemeProvider>
             <SmoothScroll>
               <LayoutWrapper>
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/services" element={<ServicesPage />} />
-                  <Route path="/services/:id" element={<ServiceDetail />} />
-                  <Route path="/work" element={<WorkPage />} />
-                  <Route path="/insights" element={<InsightsPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-sm text-zinc-500">Loading 4AM experience…</div>}>
+                  <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/services" element={<ServicesPage />} />
+                    <Route path="/services/:id" element={<ServiceDetail />} />
+                    <Route path="/work" element={<WorkPage />} />
+                    <Route path="/insights" element={<InsightsPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </Suspense>
               </LayoutWrapper>
             </SmoothScroll>
           </ThemeProvider>

@@ -26,9 +26,6 @@ const ProjectCard: React.FC<{ project: Project; index: number; onClick: () => vo
     mouseY.set(0);
   };
 
-  // Minimal staggered offset
-  const staggerClass = index % 2 === 0 ? 'lg:mt-0' : 'lg:mt-4';
-
   return (
     <motion.div
       ref={cardRef}
@@ -41,7 +38,7 @@ const ProjectCard: React.FC<{ project: Project; index: number; onClick: () => vo
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
       style={{ rotateX, rotateY, perspective: 1000 }}
-      className={`relative group cursor-pointer w-full ${staggerClass}`}
+      className="relative group cursor-pointer w-full h-full"
     >
       <div className="absolute -inset-1 bg-brand-primary/5 rounded-[1rem] opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300 pointer-events-none" />
 

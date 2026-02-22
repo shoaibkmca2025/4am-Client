@@ -38,16 +38,29 @@ const Contact: React.FC = () => {
             <div className="space-y-6">
               {[
                 { label: 'Email', value: 'contact@4amglobal.media', icon: Mail },
-                { label: 'Phone', value: '+1 (555) 426-9000', icon: Phone },
+                { label: 'Phone', value: '+91 90005 98600', icon: Phone },
                 { label: 'Location', value: 'Global / Remote team', icon: MapPin },
               ].map((item) => (
-                <div key={item.label} className="group flex items-center gap-6 p-8 glass rounded-[2.5rem] border border-zinc-200 dark:border-white/5 hover:border-brand-primary/20 transition-all shadow-premium">
+                <div
+                  key={item.label}
+                  className="group flex items-center gap-6 p-8 glass rounded-[2.5rem] border border-zinc-200 dark:border-white/5 hover:border-brand-primary/20 transition-all shadow-premium"
+                >
                   <div className="w-14 h-14 rounded-2xl bg-brand-primary/5 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-500">
                     <item.icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.2em] mb-1">{item.label}</h4>
-                    <p className="text-lg font-bold text-zinc-900 dark:text-white font-display">{item.value}</p>
+                    <h4 className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.2em] mb-1">
+                      {item.label}
+                    </h4>
+                    <p className="text-lg font-bold text-zinc-900 dark:text-white font-display">
+                      {item.label === 'Phone' ? (
+                        <a href="tel:+919000598600" className="hover:text-brand-primary transition-colors">
+                          {item.value}
+                        </a>
+                      ) : (
+                        item.value
+                      )}
+                    </p>
                   </div>
                 </div>
               ))}

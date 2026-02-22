@@ -17,34 +17,17 @@ const LandingPage: React.FC = () => {
     <main>
       <Hero />
 
-      {/* Quick Audit sits safely below Hero */}
-      <div className="container mx-auto px-6 py-12">
-        <QuickAudit />
-      </div>
-
-      <div id="services">
-        <Services />
-      </div>
-
+      <QuickAudit />
+      <Services />
       <Process />
-
       <TargetAudience />
 
-      <div id="projects">
-        <Projects />
-      </div>
-
+      <Projects />
       <ROICalculator />
-
       <Testimonials />
-
       <Articles />
-
       <NetworkMarquee />
-
-      <div id="contact">
-        <Contact />
-      </div>
+      <Contact />
     </main>
   );
 };
