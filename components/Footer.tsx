@@ -102,7 +102,7 @@ const Footer: React.FC = () => {
 
             <div className="space-y-4">
               <a
-                href="mailto:hello@4amglobal.media"
+                href="mailto:4amhustles@gmail.com"
                 className="block rounded-2xl border border-zinc-700/80 bg-zinc-900/40 px-4 py-3 hover:border-brand-primary hover:bg-brand-primary/10 transition-colors"
               >
                 <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500 mb-1">

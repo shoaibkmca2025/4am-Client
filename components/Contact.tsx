@@ -37,7 +37,7 @@ const Contact: React.FC = () => {
 
             <div className="space-y-6">
               {[
-                { label: 'Email', value: 'contact@4amglobal.media', icon: Mail },
+                { label: 'Email', value: '4amhustles@gmail.com', icon: Mail },
                 { label: 'Phone', value: '+91 90005 98600', icon: Phone },
                 { label: 'Location', value: 'Global / Remote team', icon: MapPin },
               ].map((item) => (
