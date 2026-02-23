@@ -4,6 +4,10 @@ import { ArrowRight, Shield, Zap, Signal } from 'lucide-react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Magnetic from './Magnetic';
+import ScrollReveal from './ScrollReveal';
+import SpotlightSection from './SpotlightSection';
+import ParallaxLayer from './ParallaxLayer';
+import ParticleBackground from './ParticleBackground';
 
 const Hero: React.FC = () => {
   const { scrollY } = useScroll();
@@ -17,9 +21,9 @@ const Hero: React.FC = () => {
   const smoothMouseY = useSpring(mouseY, { stiffness: 40, damping: 25 });
 
   const phrases = [
-    'We build scalable software for modern teams.',
-    'We design interfaces that stay calm under pressure.',
-    'We ship reliable systems that feel effortless to use.'
+    'We turn attention into predictable revenue.',
+    'We build visibility that compounds over time.',
+    'We help brands ship campaigns that actually convert.'
   ];
 
   const [phraseIndex, setPhraseIndex] = useState(0);
@@ -59,69 +63,75 @@ const Hero: React.FC = () => {
   }, [phrases, phraseIndex, visibleText, isDeleting]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-32 pb-24 overflow-hidden">
+    <SpotlightSection className="min-h-screen flex items-center justify-center pt-32 pb-24 overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-brand-dark dark:via-[#050816] dark:to-[#020617]">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-orb hero-orb-2" />
-        <div className="hero-orb hero-orb-3" />
+        <ParticleBackground className="absolute inset-0" maxParticles={90} parallaxStrength={0.02} />
+        <ParallaxLayer strength={0.18} className="w-full h-full">
+          <div className="hero-orb hero-orb-1" />
+        </ParallaxLayer>
+        <ParallaxLayer strength={0.24} className="w-full h-full">
+          <div className="hero-orb hero-orb-2" />
+        </ParallaxLayer>
+        <ParallaxLayer strength={0.32} className="w-full h-full">
+          <div className="hero-orb hero-orb-3" />
+        </ParallaxLayer>
       </div>
-      <div className="container mx-auto px-6 max-w-7xl relative z-10">
+      <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          <motion.div
-            style={{ opacity: heroOpacity }}
-            className="lg:col-span-8 space-y-10"
-          >
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full glass border border-zinc-200 dark:border-white/5 shadow-premium backdrop-blur-md">
-              <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse shadow-[0_0_10px_#7C3AED]" />
-              <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
-                Software studio for teams that care about craft
-              </span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl md:text-7xl xl:text-8xl font-display font-bold leading-[0.95] tracking-tighter text-zinc-900 dark:text-white heading-interactive">
-              Software that feels
-              <br />
-              <Magnetic strength={10}>
-                <span className="heading-gradient heading-gradient-animated">
-                  crafted, not generated.
+          <ScrollReveal className="lg:col-span-8">
+            <motion.div style={{ opacity: heroOpacity }} className="space-y-10">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full glass border border-zinc-200/80 dark:border-white/10 shadow-premium backdrop-blur-md bg-white/5">
+                <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse shadow-[0_0_10px_#7C3AED]" />
+                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+                  Digital marketing studio for brands that care about growth
                 </span>
-              </Magnetic>
-            </h1>
+              </div>
 
-            <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-light max-w-2xl leading-relaxed">
-              We design, build, and ship modern web products for software companies that want a calm, considered experience from first pixel to final deploy.
-            </p>
-            <div className="space-y-2">
-              <p className="hidden sm:block text-sm md:text-base font-mono text-zinc-400">
-                <span className="typing-inline">{visibleText}</span>
-                <span className="typing-cursor" />
-              </p>
-              <p className="sm:hidden text-sm font-mono text-zinc-400">
-                We build scalable software for modern teams.
-              </p>
-            </div>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-display font-bold leading-[1.02] tracking-tight text-slate-900 dark:text-white heading-interactive">
+                We Turn Digital Presence
+                <br />
+                <Magnetic strength={10}>
+                  <span className="heading-gradient heading-gradient-animated">
+                    Into Real Growth
+                  </span>
+                </Magnetic>
+              </h1>
 
-            <div className="flex flex-col sm:flex-row gap-5 pt-6">
-              <Magnetic strength={20}>
+              <p className="text-lg md:text-xl text-zinc-700 dark:text-zinc-300 font-light max-w-2xl leading-relaxed">
+                Data-driven marketing for real results.
+              </p>
+              <div className="space-y-2">
+                <p className="hidden sm:block text-sm md:text-base font-mono text-zinc-400">
+                  <span className="typing-inline">{visibleText}</span>
+                  <span className="typing-cursor" />
+                </p>
+                <p className="sm:hidden text-sm font-mono text-zinc-400">
+                  Data-driven marketing for real results.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-5 pt-6">
+                <Magnetic strength={20}>
+                  <button
+                    onClick={() => navigate('/contact')}
+                    className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#22D3EE] text-white font-bold rounded-2xl shadow-xl hover:shadow-brand-primary/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-4 group"
+                  >
+                    <span className="text-xs uppercase tracking-[0.2em]">Get Started</span>
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </Magnetic>
+
                 <button
-                  onClick={() => navigate('/contact')}
-                  className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-brand-primary via-brand-accent to-brand-signal text-white font-bold rounded-2xl shadow-xl hover:shadow-brand-primary/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-4 group"
+                  onClick={() => navigate('/work')}
+                  className="w-full sm:w-auto px-10 py-5 glass text-white font-bold rounded-2xl hover:bg-white/5 border border-white/10 transition-all flex items-center justify-center"
                 >
-                  <span className="text-xs uppercase tracking-[0.2em]">Book a call</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <span className="text-xs uppercase tracking-[0.2em]">View Our Work</span>
                 </button>
-              </Magnetic>
+              </div>
+            </motion.div>
+          </ScrollReveal>
 
-              <button
-                onClick={() => navigate('/services')}
-                className="w-full sm:w-auto px-10 py-5 glass text-zinc-900 dark:text-white font-bold rounded-2xl hover:bg-zinc-100 dark:hover:bg-white/5 border border-zinc-200 dark:border-white/10 transition-all flex items-center justify-center"
-              >
-                <span className="text-xs uppercase tracking-[0.2em]">View services</span>
-              </button>
-            </div>
-          </motion.div>
-
-          <div className="hidden lg:block lg:col-span-4 pl-8">
+          <ScrollReveal className="hidden lg:block lg:col-span-4 pl-8">
             <motion.div
               style={{
                 x: useTransform(smoothMouseX, (v) => v * 0.015),
@@ -130,9 +140,9 @@ const Hero: React.FC = () => {
               className="space-y-4"
             >
               {[
-                { icon: Shield, label: 'Security', value: 'ECC_Encrypted', color: 'text-brand-primary' },
-                { icon: Signal, label: 'Throughput', value: '1.2ms_Latency', color: 'text-brand-primary' },
-                { icon: Zap, label: 'Optimization', value: 'Tier_1_ROI', color: 'text-brand-primary' }
+                { icon: Signal, label: 'Monthly Reach', value: '18.4M impressions', color: 'text-brand-primary' },
+                { icon: Zap, label: 'Ad Efficiency', value: '4.6x ROAS', color: 'text-brand-primary' },
+                { icon: Shield, label: 'Lead Quality', value: '+62% MQLs', color: 'text-brand-primary' }
               ].map((item, i) => (
                 <div key={i} className="glass px-5 py-4 rounded-[1.25rem] border border-zinc-200 dark:border-white/5 flex items-center gap-4 group hover:border-brand-primary/20 transition-all shadow-premium dark:shadow-premium-dark hover:-translate-x-2">
                   <div className={`w-10 h-10 rounded-xl bg-zinc-50 dark:bg-white/5 flex items-center justify-center ${item.color} shadow-inner`}>
@@ -145,7 +155,7 @@ const Hero: React.FC = () => {
                 </div>
               ))}
             </motion.div>
-          </div>
+          </ScrollReveal>
         </div>
 
         <div className="mt-10 space-y-4">
@@ -194,8 +204,7 @@ const Hero: React.FC = () => {
           </div>
         </div>
       </div>
-
-    </section>
+    </SpotlightSection>
   );
 };
 

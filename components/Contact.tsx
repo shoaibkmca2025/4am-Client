@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Loader2, Zap, DollarSign, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TiltCard from './TiltCard';
 
 const Contact: React.FC = () => {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
@@ -13,64 +14,67 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-24 md:py-48 relative bg-white dark:bg-brand-dark overflow-hidden">
-      <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 xl:gap-32 items-start">
-          
-          <div className="space-y-16">
-            <div>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-[1px] bg-brand-primary" />
-                <span className="text-brand-primary font-mono font-bold tracking-[0.5em] uppercase text-xs">Let’s talk</span>
-              </div>
-              <h2 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold text-zinc-900 dark:text-white tracking-tighter leading-[1.05]">
-                A calm space
-                <br />
-                to plan ambitious software.
-              </h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-lg md:text-xl font-light leading-relaxed max-w-lg mt-8 border-l-2 border-zinc-200 dark:border-white/10 pl-8">
-                Tell us where your product is today
-                <br />
-                and we’ll map the next steps.
-              </p>
-            </div>
+    <section id="contact" className="py-14 md:py-18 relative bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-brand-dark dark:via-brand-obsidian dark:to-brand-dark overflow-hidden">
+      <div className="pointer-events-none absolute -top-32 right-[-10%] w-[420px] h-[420px] bg-gradient-to-br from-brand-primary/20 via-brand-accent/15 to-brand-signal/20 rounded-full blur-3xl opacity-70" />
+      <div className="pointer-events-none absolute -bottom-40 left-[-20%] w-[520px] h-[520px] bg-gradient-to-tr from-brand-primary/15 via-transparent to-brand-accent/25 rounded-full blur-3xl opacity-70" />
 
-            <div className="space-y-6">
-              {[
-                { label: 'Email', value: '4amhustles@gmail.com', icon: Mail },
-                { label: 'Phone', value: '+91 90005 98600', icon: Phone },
-                { label: 'Location', value: 'Global / Remote team', icon: MapPin },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="group flex items-center gap-6 p-8 glass rounded-[2.5rem] border border-zinc-200 dark:border-white/5 hover:border-brand-primary/20 transition-all shadow-premium"
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-brand-primary/5 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-500">
-                    <item.icon className="w-6 h-6" />
+      <div className="container mx-auto px-6 md:px-8 max-w-[1100px] relative z-10">
+        <div className="max-w-2xl mx-auto text-center mb-8 md:mb-10">
+          <p className="text-[11px] font-mono font-bold tracking-[0.3em] text-brand-primary uppercase mb-3">
+            Let’s talk
+          </p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-semibold tracking-tight text-zinc-900 dark:text-white mb-4">
+            Let’s build something ambitious.
+          </h1>
+          <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto">
+            Share a bit about your team, your timelines, and what a great outcome looks like. We’ll reply with a clear next step.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-10 items-start">
+          <div className="space-y-5">
+            <div className="glass rounded-[1.75rem] p-5 md:p-6 border border-zinc-200/70 dark:border-white/10 shadow-premium dark:shadow-premium-dark bg-white/80 dark:bg-brand-obsidian/80 backdrop-blur-xl">
+              <p className="text-[11px] font-mono font-bold tracking-[0.25em] text-zinc-500 dark:text-zinc-400 uppercase mb-4">
+                Contact details
+              </p>
+              <div className="flex flex-col divide-y divide-zinc-100/80 dark:divide-white/10">
+                {[
+                  { label: 'Email', value: '4amhustles@gmail.com', icon: Mail },
+                  { label: 'Phone', value: '+91 90005 98600', icon: Phone },
+                  { label: 'Location', value: 'Global / Remote team', icon: MapPin },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-center gap-4 py-4 first:pt-1 last:pb-1"
+                  >
+                    <div className="w-11 h-11 rounded-2xl bg-brand-primary/10 flex items-center justify-center text-brand-primary">
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.18em] mb-1">
+                        {item.label}
+                      </p>
+                      <p className="text-sm md:text-base font-semibold text-zinc-900 dark:text-white">
+                        {item.label === 'Phone' ? (
+                          <a href="tel:+919000598600" className="hover:text-brand-primary transition-colors">
+                            {item.value}
+                          </a>
+                        ) : (
+                          item.value
+                        )}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.2em] mb-1">
-                      {item.label}
-                    </h4>
-                    <p className="text-lg font-bold text-zinc-900 dark:text-white font-display">
-                      {item.label === 'Phone' ? (
-                        <a href="tel:+919000598600" className="hover:text-brand-primary transition-colors">
-                          {item.value}
-                        </a>
-                      ) : (
-                        item.value
-                      )}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="glass rounded-[3.5rem] p-10 md:p-14 border border-zinc-200 dark:border-white/10 shadow-premium dark:shadow-premium-dark h-full">
+          <TiltCard className="relative" maxTilt={8} scale={1.02} glow={false}>
+            <div className="pointer-events-none absolute -inset-2 bg-gradient-to-br from-brand-primary/30 via-brand-accent/25 to-brand-signal/30 opacity-70 blur-2xl" />
+            <div className="relative glass rounded-[2.25rem] p-7 md:p-8 border border-zinc-200 dark:border-white/10 shadow-premium dark:shadow-premium-dark bg-white/90 dark:bg-brand-obsidian/95 backdrop-blur-xl">
               {status === 'success' ? (
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center h-full py-24 text-center">
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center h-full py-16 text-center">
                   <div className="w-24 h-24 bg-emerald-500/10 rounded-3xl flex items-center justify-center mb-10 border border-emerald-500/20">
                     <Zap className="w-12 h-12 text-emerald-500" />
                   </div>
@@ -79,8 +83,8 @@ const Contact: React.FC = () => {
                   <button onClick={() => setStatus('idle')} className="text-brand-primary font-bold uppercase tracking-[0.3em] text-[10px] hover:underline">Transmit New Data</button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-10">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <label className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest ml-1">Full name</label>
                       <input required type="text" className="w-full bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/10 rounded-2xl px-8 py-5 text-sm focus:outline-none focus:border-brand-primary transition-all text-zinc-900 dark:text-white" placeholder="How should we address you?" />
@@ -91,7 +95,7 @@ const Contact: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <label className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-widest ml-1">What do you need help with?</label>
                       <div className="relative">
@@ -138,7 +142,7 @@ const Contact: React.FC = () => {
                 </form>
               )}
             </div>
-          </div>
+          </TiltCard>
         </div>
       </div>
     </section>

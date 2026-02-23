@@ -40,7 +40,7 @@ const Process: React.FC = () => {
 
   return (
     <section className="py-32 bg-zinc-50 dark:bg-black relative overflow-hidden">
-      <div className="container mx-auto px-6 max-w-7xl relative z-10">
+      <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
         <div className="flex flex-col md:flex-row gap-16 lg:gap-24">
 
           {/* Left: Sticky Header */}

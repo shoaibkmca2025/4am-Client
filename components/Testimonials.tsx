@@ -1,86 +1,131 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Star, Code, Terminal, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, Code, Terminal, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import ScrollReveal from './ScrollReveal';
 
 const testimonials = [
-    {
-        id: 1,
-        quote: "The velocity at which 4AM deployed our infrastructure was unprecedented. They don't just build; they architect growth.",
-        author: "Sarah J.",
-        role: "CTO, FinTech Scaleup",
-        icon: Code,
-    },
-    {
-        id: 2,
-        quote: "Precision engineering meets creative brilliance. A rare combination.",
-        author: "Michael R.",
-        role: "Founder, SaaS Platform",
-        icon: Terminal,
-    },
-    {
-        id: 3,
-        quote: "Our conversion rates doubled within 30 days of the deployment.",
-        author: "Elena V.",
-        role: "VP Marketing, E-com Giant",
-        icon: Zap,
-    },
-    {
-        id: 4,
-        quote: "They speak the language of ROI. No fluff, just hard data and results.",
-        author: "David K.",
-        role: "Director, Global Logistics",
-        icon: Star,
-    }
+  {
+    id: 1,
+    quote: 'Client testimonial goes here',
+    author: 'Client Name',
+    role: 'Company Name',
+    icon: Code,
+  },
+  {
+    id: 2,
+    quote: 'The 4AM team brought clarity to our growth strategy and execution.',
+    author: 'Sarah J.',
+    role: 'Head of Marketing, SaaS Brand',
+    icon: Terminal,
+  },
+  {
+    id: 3,
+    quote: 'We saw a meaningful lift in qualified pipeline within the first quarter.',
+    author: 'Michael R.',
+    role: 'Founder, DTC Brand',
+    icon: Zap,
+  },
+  {
+    id: 4,
+    quote: 'Data, creative, and execution all feel aligned in a way they never did before.',
+    author: 'David K.',
+    role: 'Director, B2B Services',
+    icon: Star,
+  },
 ];
 
 const Testimonials: React.FC = () => {
-    return (
-        <section className="py-32 bg-gradient-to-b from-white via-slate-50 to-white dark:from-brand-dark dark:via-black dark:to-brand-obsidian overflow-hidden">
-            <div className="container mx-auto px-6 max-w-7xl">
-                <div className="max-w-3xl mb-24">
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="w-12 h-[2px] bg-brand-primary" />
-                        <span className="text-brand-primary font-mono font-bold tracking-[0.3em] uppercase text-xs">What our clients say</span>
-                    </div>
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-zinc-900 dark:text-white leading-[1.1]">
-                        Teams stay with us
-                        <br />
-                        because the work keeps paying off.
-                    </h3>
-                </div>
+  const [index, setIndex] = React.useState(0);
+  const active = testimonials[index];
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  const handlePrev = () => {
+    setIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+  };
+
+  return (
+    <section className="py-32 bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-brand-obsidian dark:via-[#050816] dark:to-brand-dark overflow-hidden transition-colors duration-500">
+      <div className="container mx-auto px-6 max-w-[1200px]">
+        <ScrollReveal className="max-w-3xl mx-auto mb-16 text-center">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="w-12 h-[2px] bg-brand-primary" />
+            <span className="text-brand-primary font-mono font-bold tracking-[0.3em] uppercase text-xs">
+              Testimonials
+            </span>
+            <div className="w-12 h-[2px] bg-brand-primary" />
+          </div>
+          <h3 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-slate-900 dark:text-zinc-50 leading-[1.1]">
+            Teams trust 4AM
+            <br />
+            to handle the signal, not the noise.
+          </h3>
+        </ScrollReveal>
+
+        <ScrollReveal className="max-w-3xl mx-auto">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <button
+              aria-label="Previous testimonial"
+              onClick={handlePrev}
+              className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-zinc-200 hover:bg-white/10 hover:border-white/30 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <div className="flex-1" />
+            <button
+              aria-label="Next testimonial"
+              onClick={handleNext}
+              className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-zinc-200 hover:bg-white/10 hover:border-white/30 transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.3 }}
+                className="p-10 glass rounded-[2.5rem] border border-zinc-200/60 dark:border-zinc-700/60 bg-white/80 dark:bg-white/5 backdrop-blur-md text-center transition-colors duration-500"
+              >
+                <div className="flex flex-col items-center gap-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-brand-primary/30 via-brand-accent/30 to-brand-signal/30 flex items-center justify-center text-white">
+                    <active.icon size={22} />
+                  </div>
+                  <p className="text-xl md:text-2xl font-medium text-slate-900 dark:text-zinc-50 leading-relaxed max-w-2xl">
+                    “{active.quote}”
+                  </p>
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-slate-900 dark:text-zinc-100 text-sm uppercase tracking-wide">
+                      {active.author}
+                    </h4>
+                    <p className="text-xs text-zinc-400 font-mono uppercase tracking-widest">
+                      {active.role}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-center gap-1 mt-2">
                     {testimonials.map((t, i) => (
-                        <motion.div
-                            key={t.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="p-8 glass rounded-[2rem] border border-zinc-200 dark:border-white/5 flex flex-col justify-between h-full group hover:border-brand-primary/30 transition-all duration-500"
-                        >
-                            <div className="mb-8 relative">
-                                <div className="absolute -left-2 -top-2 text-brand-primary/10 text-6xl font-serif font-black">"</div>
-                                <p className="text-lg md:text-xl font-medium text-zinc-700 dark:text-zinc-200 leading-relaxed relative z-10">
-                                    {t.quote}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-4 pt-6 border-t border-zinc-100 dark:border-white/5">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-primary/10 via-brand-accent/10 to-brand-signal/10 dark:from-brand-primary/20 dark:via-brand-accent/20 dark:to-brand-signal/20 flex items-center justify-center text-brand-primary dark:text-brand-signal">
-                                    <t.icon size={18} />
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-zinc-900 dark:text-white text-sm uppercase tracking-wide">{t.author}</h4>
-                                    <p className="text-xs text-zinc-400 font-mono uppercase tracking-widest">{t.role}</p>
-                                </div>
-                            </div>
-                        </motion.div>
+                      <span
+                        key={t.id}
+                        className={`h-1.5 rounded-full transition-all ${
+                          i === index ? 'w-4 bg-brand-primary' : 'w-2 bg-zinc-700'
+                        }`}
+                      />
                     ))}
+                  </div>
                 </div>
-            </div>
-        </section>
-    );
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
 };
 
 export default Testimonials;

@@ -20,6 +20,7 @@ export interface NavItem {
   label: string;
   href: string;
   icon?: string;
+  sectionId?: string;
 }
 
 export interface Article {
@@ -38,10 +39,9 @@ export interface Project {
   id: number;
   title: string;
   category: string;
-  image: string;
+  image?: string;
+  url: string;
   description: string;
-  challenge: string;
-  solution: string;
   technologies: string[];
 }
 

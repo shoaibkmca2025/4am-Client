@@ -51,7 +51,7 @@ const Articles: React.FC = () => {
   return (
     <section id="insights" className="py-48 relative bg-slate-50 dark:bg-brand-obsidian transition-colors">
       <div className="container mx-auto px-6">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-32">
             <div className="max-w-2xl">
               <div className="flex items-center gap-4 mb-6">

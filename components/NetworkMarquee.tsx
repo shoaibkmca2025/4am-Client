@@ -1,44 +1,46 @@
 import React from 'react';
-import { CLIENTS } from '../constants';
+import { PROJECTS } from '../constants';
 
 const NetworkMarquee: React.FC = () => {
   return (
-    <section id="clients" className="py-20 border-y border-gray-200 dark:border-white/5 bg-gradient-to-r from-brand-primary/5 via-gray-100/70 to-brand-accent/5 dark:from-brand-dark dark:via-black/40 dark:to-brand-obsidian overflow-hidden relative transition-colors duration-300">
-      <div className="container mx-auto px-6 mb-10 text-center">
-        <h2 className="text-2xl font-display font-bold text-gray-500 dark:text-gray-400">Trusted by 100+ Global Partners</h2>
-      </div>
-
-      <div className="relative flex overflow-x-hidden group">
-        <div className="animate-marquee whitespace-nowrap flex gap-12 items-center group-hover:[animation-play-state:paused]">
-          {/* First set of clients */}
-          {CLIENTS.map((client) => (
-            <a 
-              key={client.id} 
-              href={client.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl font-display font-bold text-gray-400 hover:text-brand-primary dark:text-gray-700 dark:hover:text-white transition-colors duration-300 uppercase tracking-tight flex-shrink-0"
-            >
-              {client.name}
-            </a>
-          ))}
-          {/* Duplicate set for seamless loop */}
-          {CLIENTS.map((client) => (
-            <a 
-              key={`dup-${client.id}`} 
-              href={client.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl font-display font-bold text-gray-400 hover:text-brand-primary dark:text-gray-700 dark:hover:text-white transition-colors duration-300 uppercase tracking-tight flex-shrink-0"
-            >
-              {client.name}
-            </a>
-          ))}
+    <section
+      id="clients"
+      className="py-16 border-y border-zinc-100 dark:border-white/10 bg-gradient-to-r from-slate-50 via-white to-slate-100 dark:from-brand-dark dark:via-[#050816] dark:to-brand-obsidian transition-colors duration-500"
+    >
+      <div className="container mx-auto px-6 max-w-[1200px]">
+        <div className="text-center mb-8">
+          <p className="text-xs font-mono font-bold uppercase tracking-[0.3em] text-zinc-500">
+            Trusted by growing brands
+          </p>
         </div>
-
-        {/* Gradient fade on edges - Theme Aware */}
-        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-gray-100 dark:from-brand-dark to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
-        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-gray-100 dark:from-brand-dark to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
+        <div className="relative overflow-hidden">
+          <div className="animate-marquee whitespace-nowrap flex items-center gap-10 py-2">
+            {PROJECTS.map((project) => (
+              <a
+                key={project.id}
+                href={project.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-[10px] md:text-xs font-mono font-bold uppercase tracking-[0.25em] text-zinc-700 dark:text-zinc-300 hover:border-brand-primary hover:text-brand-primary dark:hover:text-brand-primary transition-colors"
+              >
+                <span className="w-1 h-1 rounded-full bg-brand-primary shadow-[0_0_8px_rgba(129,140,248,0.9)]" />
+                <span>{project.title}</span>
+              </a>
+            ))}
+            {PROJECTS.map((project) => (
+              <a
+                key={`dup-${project.id}`}
+                href={project.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-[10px] md:text-xs font-mono font-bold uppercase tracking-[0.25em] text-zinc-700 dark:text-zinc-300 hover:border-brand-primary hover:text-brand-primary dark:hover:text-brand-primary transition-colors"
+              >
+                <span className="w-1 h-1 rounded-full bg-brand-primary shadow-[0_0_8px_rgba(129,140,248,0.9)]" />
+                <span>{project.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

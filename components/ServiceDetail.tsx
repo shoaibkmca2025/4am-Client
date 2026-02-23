@@ -46,7 +46,7 @@ const ServiceDetail: React.FC = () => {
       <div className="absolute bottom-1/4 -left-24 w-96 h-96 bg-brand-accent/10 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           {/* Breadcrumbs & Back Navigation */}
           <div className="mb-16 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <nav className="flex items-center gap-4">
@@ -75,14 +75,14 @@ const ServiceDetail: React.FC = () => {
                 <div className="w-20 h-20 glass rounded-3xl flex items-center justify-center text-brand-primary border border-white/50 shadow-xl mb-12">
                   {iconMap[service.icon]}
                 </div>
-                <h1 className="text-6xl md:text-8xl font-display font-bold text-slate-900 dark:text-white tracking-tighter uppercase leading-[0.85]">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-900 dark:text-white tracking-tight uppercase leading-[1.05]">
                   {service.title.split(' ').map((word, i) => (
                     <span key={i} className={i === service.title.split(' ').length - 1 ? "text-brand-primary" : "block"}>
                       {word}{' '}
                     </span>
                   ))}
                 </h1>
-                <p className="text-2xl md:text-3xl text-slate-500 dark:text-slate-400 font-light leading-relaxed max-w-2xl italic">
+                <p className="text-xl md:text-2xl text-slate-500 dark:text-slate-400 font-light leading-relaxed max-w-2xl italic">
                   {service.longDescription}
                 </p>
               </motion.div>
@@ -152,7 +152,7 @@ const ServiceDetail: React.FC = () => {
 
             <aside className="lg:col-span-5">
               <div className="sticky top-32 space-y-8">
-                <div className="glass rounded-[2.5rem] p-10 border border-white/50 shadow-2xl space-y-8 relative overflow-hidden">
+                <div className="glass rounded-[2.5rem] p-10 border border-zinc-200 dark:border-white/10 shadow-premium dark:shadow-premium-dark space-y-8 relative overflow-hidden">
                    <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 blur-3xl pointer-events-none" />
                    
                    <div className="flex items-center justify-between">

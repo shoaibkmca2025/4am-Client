@@ -14,7 +14,7 @@ const WorkPage: React.FC = () => {
       <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(circle_at_70%_30%,rgba(37,99,235,0.05),transparent_70%)] pointer-events-none" />
       
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-7xl mx-auto mb-20">
+        <div className="max-w-[1200px] mx-auto mb-20">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -27,7 +27,7 @@ const WorkPage: React.FC = () => {
           <motion.h1 
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl sm:text-6xl md:text-8xl font-display font-bold text-slate-900 dark:text-white tracking-tighter uppercase leading-[0.9] mb-10 heading-interactive"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-slate-900 dark:text-white tracking-tight uppercase leading-[1.02] mb-10 heading-interactive"
           >
             DEPLOYMENT <br/>
             <span className="heading-gradient heading-gradient-animated">

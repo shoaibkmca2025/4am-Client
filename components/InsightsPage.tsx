@@ -14,7 +14,7 @@ const InsightsPage: React.FC = () => {
       <div className="absolute top-1/4 -left-24 w-96 h-96 bg-brand-primary/10 blur-[120px] rounded-full pointer-events-none" />
       
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-7xl mx-auto mb-20 text-center">
+        <div className="max-w-[1200px] mx-auto mb-20 text-center">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -27,7 +27,7 @@ const InsightsPage: React.FC = () => {
           <motion.h1 
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl sm:text-6xl md:text-7xl font-display font-bold text-slate-900 dark:text-white tracking-tighter uppercase leading-[0.85] mb-10 heading-interactive"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-slate-900 dark:text-white tracking-tight uppercase leading-[1.02] mb-10 heading-interactive"
           >
             TECHNICAL <br/>
             <span className="heading-gradient heading-gradient-animated glow-text">

@@ -5,6 +5,8 @@ type Theme = 'light' | 'dark';
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
+  beginFadeThemeChange: () => void;
+  isFading: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -30,12 +32,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  const [isFading, setIsFading] = useState(false);
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
+  const beginFadeThemeChange = () => {
+    if (isFading) return;
+    setIsFading(true);
+
+    window.setTimeout(() => {
+      toggleTheme();
+    }, 150);
+
+    window.setTimeout(() => {
+      setIsFading(false);
+    }, 300);
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme: beginFadeThemeChange, beginFadeThemeChange, isFading }}>
       {children}
     </ThemeContext.Provider>
   );
