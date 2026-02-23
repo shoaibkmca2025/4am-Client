@@ -44,6 +44,7 @@ const ConnectButton: React.FC = () => {
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>('home');
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -93,10 +94,45 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+      if (location.pathname === '/' && window.scrollY < 120) {
+        setActiveSection('home');
+      }
+    };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setActiveSection(null);
+      return;
+    }
+
+    const sectionIds = ['services', 'projects', 'about', 'contact'];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible[0]) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      { threshold: 0.35 }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        observer.observe(el);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, [location.pathname]);
 
   return (
     <header
@@ -132,9 +168,19 @@ const Navbar: React.FC = () => {
         {/* 2. Center Section: Navigation Links (Desktop) */}
         <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
           {NAV_ITEMS.map((item) => {
-            const active = !item.sectionId
-              ? location.pathname === item.href
-              : location.pathname === '/' && item.href === '/';
+            const isHomeItem = item.label.toLowerCase() === 'home';
+            let active = false;
+
+            if (item.sectionId) {
+              active = location.pathname === '/' && activeSection === item.sectionId;
+            } else if (isHomeItem) {
+              active =
+                location.pathname === '/' &&
+                (!activeSection || activeSection === 'home');
+            } else {
+              active = location.pathname === item.href;
+            }
+
             return (
               <Link
                 key={item.label}

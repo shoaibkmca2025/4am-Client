@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Hero from './Hero';
 import Services from './Services';
 import Projects from './Projects';
-import NetworkMarquee from './NetworkMarquee';
 import Testimonials from './Testimonials';
 import ScrollReveal from './ScrollReveal';
 import ParallaxLayer from './ParallaxLayer';
@@ -168,7 +167,6 @@ const LandingPage: React.FC = () => {
   return (
     <main>
       <Hero />
-      <NetworkMarquee />
       <Services />
       <StatsSection />
       <Projects />
