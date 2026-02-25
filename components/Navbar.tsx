@@ -227,24 +227,24 @@ const Navbar: React.FC = () => {
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            className="absolute top-full left-0 right-0 md:hidden px-4 pb-4"
+            className="absolute top-full left-0 right-0 md:hidden px-4 pb-4 max-h-[calc(100vh-80px)] overflow-y-auto"
           >
-            <div className="glass bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl border border-zinc-200/80 dark:border-white/5 rounded-3xl shadow-[0_18px_45px_rgba(15,23,42,0.3)] p-5 flex flex-col gap-4">
+            <div className="glass bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl border border-zinc-200/80 dark:border-white/5 rounded-3xl shadow-[0_18px_45px_rgba(15,23,42,0.3)] p-4 flex flex-col gap-3">
               {NAV_ITEMS.map((item) => (
                 <Link
                   key={item.label}
                   to={item.href}
                   onClick={(event) => handleNavClick(event, item)}
-                  className="text-sm font-semibold uppercase tracking-[0.22em] text-center text-zinc-600 dark:text-zinc-200 py-2 hover:text-brand-primary"
+                  className="text-sm font-semibold uppercase tracking-[0.22em] text-center text-zinc-600 dark:text-zinc-200 py-3 hover:text-brand-primary active:bg-zinc-100 dark:active:bg-white/5 rounded-xl transition-colors"
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="pt-3 border-t border-zinc-100 dark:border-white/10 flex flex-col gap-4">
+              <div className="pt-2 border-t border-zinc-100 dark:border-white/10 flex flex-col gap-3">
                 <div className="w-full">
-                  <ConnectButton className="w-full" />
+                  <ConnectButton className="w-full py-2.5" />
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between px-2">
                   <span className="text-xs uppercase font-bold text-zinc-400">Theme</span>
                   <MonkeyThemeToggle compact={true} />
                 </div>

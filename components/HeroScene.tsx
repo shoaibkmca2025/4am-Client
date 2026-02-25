@@ -76,7 +76,7 @@ const HeroScene: React.FC = () => {
   ];
 
   return (
-    <div ref={containerRef} className="relative w-full h-[600px] flex items-center justify-center perspective-1000 overflow-visible">
+    <div ref={containerRef} className="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center perspective-1000 overflow-visible">
       {/* Cinematic Ambient Glows */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div 
@@ -320,7 +320,10 @@ const HeroScene: React.FC = () => {
       </motion.div>
 
       {/* === FLOATING ICONS LAYER (MOVED OUTSIDE 3D CONTAINER TO FIX CLIPPING) === */}
-      <motion.div animate={{ scale: scale * 0.9 }}>
+      <motion.div 
+        className="absolute inset-0 pointer-events-none"
+        animate={{ scale: scale * 0.9 }}
+      >
         {icons.map((icon, index) => (
           <motion.div
           key={index}
@@ -354,6 +357,7 @@ const HeroScene: React.FC = () => {
               <icon.Icon className={`w-8 h-8 ${icon.color} drop-shadow-[0_4px_8px_rgba(0,0,0,0.1)] dark:drop-shadow-[0_4px_8px_rgba(0,0,0,0.2)]`} strokeWidth={1.5} />
             </div>
           </motion.div>
+        </motion.div>
         ))}
       </motion.div>
     </div>

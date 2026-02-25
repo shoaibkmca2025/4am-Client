@@ -58,7 +58,7 @@ const Hero: React.FC = () => {
   }, [phrases, phraseIndex, visibleText, isDeleting]);
 
   return (
-    <SpotlightSection className="min-h-screen flex items-center justify-center pt-24 pb-12 sm:pt-32 sm:pb-24 overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-brand-dark dark:via-[#050816] dark:to-[#020617]">
+    <SpotlightSection className="min-h-screen flex items-center justify-center pt-20 pb-8 sm:pt-28 sm:pb-20 overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-brand-dark dark:via-[#050816] dark:to-[#020617]">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <ParticleBackground className="absolute inset-0" maxParticles={90} parallaxStrength={0.02} />
         <ParallaxLayer strength={0.18} className="w-full h-full">
