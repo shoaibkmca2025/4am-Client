@@ -12,7 +12,71 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Services', href: '/', sectionId: 'services' },
   { label: 'About', href: '/', sectionId: 'about' },
   { label: 'Work', href: '/', sectionId: 'projects' },
+  { label: 'Insights', href: '/insights' },
   { label: 'Contact', href: '/', sectionId: 'contact' },
+];
+
+export const INITIAL_ARTICLES: Article[] = [
+  {
+    id: '1',
+    title: 'The Death of the Traditional Funnel: Why Mesh Networks are Winning',
+    excerpt: 'Linear funnels are bleeding efficiency. Learn how decentralized touchpoints create higher-velocity conversion loops in 2024.',
+    content: `The traditional marketing funnel is dead. The linear path from awareness to consideration to conversion no longer reflects how modern B2B buyers make decisions. In today's hyper-fragmented digital landscape, buyers are interacting with brands across dozens of touchpoints simultaneously, often in a non-linear fashion.
+
+This shift requires a new mental model: the Mesh Network. Instead of forcing users down a rigid path, successful brands are building ecosystems of content and engagement that allow users to self-educate and convert on their own terms.
+
+Key Components of a Mesh Network Strategy:
+1.  **Decentralized Content Nodes:** Distribute high-value content across multiple platforms (LinkedIn, YouTube, X, Newsletters) rather than gating everything behind a landing page.
+2.  **Signal-Based Retargeting:** Use engagement data from one node to trigger relevant messaging in another, creating a cohesive narrative without forcing a linear journey.
+3.  **Community-Led Growth:** Empower your existing customers to become advocates, creating a self-reinforcing loop of social proof and referral.
+
+By adopting a Mesh Network approach, brands can reduce CAC, increase LTV, and build deeper resilience against algorithm changes on any single platform.`,
+    author: 'Alex V.',
+    date: 'Oct 12, 2024',
+    category: 'Strategy',
+    readTime: '4 min read',
+    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'
+  },
+  {
+    id: '2',
+    title: 'AI-Native SEO: dominating the generative search era',
+    excerpt: 'Google SGE is changing the game. We break down the new ranking factors for AI-driven search results.',
+    content: `Search Engine Optimization (SEO) is undergoing its biggest transformation in two decades. With the rise of Generative AI in search results (like Google's SGE), the goal is no longer just to rank for keywords, but to be cited as a source of truth by the AI models themselves.
+
+This shift demands a fundamental rethink of content strategy. "SEO content" stuffed with keywords is being de-prioritized in favor of deep, authoritative content that demonstrates genuine expertise and unique perspective.
+
+How to Win in the Age of Generative Search:
+1.  **Focus on Information Gain:** Create content that adds new data, original research, or unique viewpoints to the conversation. AI models prioritize sources that provide information not found elsewhere.
+2.  **Optimize for Entities, Not Just Keywords:** Ensure your brand and key concepts are clearly defined and linked within the Knowledge Graph.
+3.  **Prioritize E-E-A-T:** Experience, Expertise, Authoritativeness, and Trustworthiness are more critical than ever. Showcase your authors' credentials and cite primary sources.
+
+The future of search belongs to brands that can effectively communicate their expertise to both humans and machines.`,
+    author: 'Sarah J.',
+    date: 'Oct 08, 2024',
+    category: 'Technical',
+    readTime: '6 min read',
+    imageUrl: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop'
+  },
+  {
+    id: '3',
+    title: 'Visual Capital: Why Design is the Highest-Leverage Asset',
+    excerpt: 'In a noise-saturated market, premium visual identity is the only way to signal competence instantly.',
+    content: `We live in the attention economy, but most brands are bankrupt when it comes to visual capital. In a world where users scroll past thousands of messages a day, design is the primary filter they use to judge credibility.
+
+Visual Capital is the accumulated trust and authority your brand commands through its aesthetic presentation. A high-quality visual identity signals competence, attention to detail, and market leadership before a single word is read.
+
+The ROI of Premium Design:
+1.  **Instant Trust:** Users form an opinion about a website in 50 milliseconds. Premium design buys you the time to deliver your message.
+2.  **Price Elasticity:** Brands that look expensive can charge more. Visuals anchor price expectations.
+3.  **Talent Attraction:** Top talent wants to work for winning companies. Your visual identity tells them if you're a leader or a follower.
+
+Investing in visual capital isn't an expense; it's a leverage multiplier for every other marketing dollar you spend.`,
+    author: 'David K.',
+    date: 'Sep 28, 2024',
+    category: 'Design',
+    readTime: '3 min read',
+    imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop'
+  }
 ];
 
 export const PROJECTS: Project[] = [
@@ -115,38 +179,6 @@ export const PROJECTS: Project[] = [
   { id: 97, title: "Jimmy Ryce Foundation", category: "Client Website", url: "https://jimmyryce.org", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] }
 ];
 
-export const INITIAL_ARTICLES: Article[] = [
-  {
-    id: '1',
-    title: 'The Algorithmic Shift: Marketing in 2025',
-    excerpt: 'How proprietary AI models are replacing traditional SEO strategies in the battle for the top spot.',
-    content: 'The digital landscape is no longer just about keywords; it is about intent and context. At 4AM Global Media, we have seen a 300% increase in efficiency when moving from traditional SEO to LLM-optimized content frameworks...',
-    author: 'Sarah Devlin',
-    date: 'Jan 15, 2024',
-    category: 'Marketing',
-    readTime: '6 min read',
-  },
-  {
-    id: '2',
-    title: 'Scaling from Zero to 1M Users',
-    excerpt: 'A technical blueprint for architects building the next generation of SaaS platforms.',
-    content: 'Scaling isn\'t just about bigger servers; it\'s about smarter code. This article dives into the exact stack we use at our software company to ensure horizontal scalability from day one...',
-    author: 'David Zhang',
-    date: 'Feb 02, 2024',
-    category: 'Technology',
-    readTime: '10 min read',
-  },
-  {
-    id: '3',
-    title: 'Immersion: The Future of Interaction',
-    excerpt: 'Why AR and VR motion graphics are becoming the standard for enterprise storytelling.',
-    content: 'AR and VR motion graphics integrate animation into immersive environments, enhancing user interaction and realism. By combining motion with augmented or virtual spaces, designers can guide attention, tell stories, and create experiences that feel dynamic...',
-    author: 'Leo Sterling',
-    date: 'March 10, 2024',
-    category: 'Immersive',
-    readTime: '8 min read',
-  }
-];
 
 export const SERVICES: Service[] = [
   {

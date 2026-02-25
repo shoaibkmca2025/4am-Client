@@ -67,7 +67,7 @@ const Footer: React.FC = () => {
               </h4>
               <div className="space-y-2 text-sm">
                 <Link to="/insights" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
-                  Insights & articles
+                  Blog
                 </Link>
                 <Link to="/work" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
                   Case studies
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
                   Case studies
                 </Link>
                 <Link to="/insights" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
-                  Insights
+                  Blog
                 </Link>
                 <Link to="/services" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
                   Pricing overview

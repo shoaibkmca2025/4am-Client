@@ -1,24 +1,19 @@
 
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, Shield, Zap, Signal } from 'lucide-react';
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Magnetic from './Magnetic';
 import ScrollReveal from './ScrollReveal';
 import SpotlightSection from './SpotlightSection';
 import ParallaxLayer from './ParallaxLayer';
 import ParticleBackground from './ParticleBackground';
+import HeroScene from './HeroScene';
 
 const Hero: React.FC = () => {
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
   const navigate = useNavigate();
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const smoothMouseX = useSpring(mouseX, { stiffness: 40, damping: 25 });
-  const smoothMouseY = useSpring(mouseY, { stiffness: 40, damping: 25 });
 
   const phrases = [
     'We turn attention into predictable revenue.',
@@ -63,7 +58,7 @@ const Hero: React.FC = () => {
   }, [phrases, phraseIndex, visibleText, isDeleting]);
 
   return (
-    <SpotlightSection className="min-h-screen flex items-center justify-center pt-32 pb-24 overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-brand-dark dark:via-[#050816] dark:to-[#020617]">
+    <SpotlightSection className="min-h-screen flex items-center justify-center pt-24 pb-12 sm:pt-32 sm:pb-24 overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-brand-dark dark:via-[#050816] dark:to-[#020617]">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <ParticleBackground className="absolute inset-0" maxParticles={90} parallaxStrength={0.02} />
         <ParallaxLayer strength={0.18} className="w-full h-full">
@@ -77,8 +72,8 @@ const Hero: React.FC = () => {
         </ParallaxLayer>
       </div>
       <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          <ScrollReveal className="lg:col-span-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          <ScrollReveal className="lg:col-span-7">
             <motion.div style={{ opacity: heroOpacity }} className="space-y-10">
               <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full glass border border-zinc-200/80 dark:border-white/10 shadow-premium backdrop-blur-md bg-white/5">
                 <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse shadow-[0_0_10px_#7C3AED]" />
@@ -123,7 +118,7 @@ const Hero: React.FC = () => {
 
                 <button
                   onClick={() => navigate('/work')}
-                  className="w-full sm:w-auto px-10 py-5 glass text-white font-bold rounded-2xl hover:bg-white/5 border border-white/10 transition-all flex items-center justify-center"
+                  className="w-full sm:w-auto px-10 py-5 glass text-slate-900 dark:text-white font-bold rounded-2xl hover:bg-slate-100 dark:hover:bg-white/5 border border-slate-200 dark:border-white/10 transition-all flex items-center justify-center"
                 >
                   <span className="text-xs uppercase tracking-[0.2em]">View Our Work</span>
                 </button>
@@ -131,30 +126,10 @@ const Hero: React.FC = () => {
             </motion.div>
           </ScrollReveal>
 
-          <ScrollReveal className="hidden lg:block lg:col-span-4 pl-8">
-            <motion.div
-              style={{
-                x: useTransform(smoothMouseX, (v) => v * 0.015),
-                y: useTransform(smoothMouseY, (v) => v * 0.015)
-              }}
-              className="space-y-4"
-            >
-              {[
-                { icon: Signal, label: 'Monthly Reach', value: '18.4M impressions', color: 'text-brand-primary' },
-                { icon: Zap, label: 'Ad Efficiency', value: '4.6x ROAS', color: 'text-brand-primary' },
-                { icon: Shield, label: 'Lead Quality', value: '+62% MQLs', color: 'text-brand-primary' }
-              ].map((item, i) => (
-                <div key={i} className="glass px-5 py-4 rounded-[1.25rem] border border-zinc-200 dark:border-white/5 flex items-center gap-4 group hover:border-brand-primary/20 transition-all shadow-premium dark:shadow-premium-dark hover:-translate-x-2">
-                  <div className={`w-10 h-10 rounded-xl bg-zinc-50 dark:bg-white/5 flex items-center justify-center ${item.color} shadow-inner`}>
-                    <item.icon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-[9px] font-mono text-zinc-400 uppercase tracking-widest mb-1">{item.label}</p>
-                    <p className="text-sm font-bold text-zinc-900 dark:text-white font-mono">{item.value}</p>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
+          <ScrollReveal className="mt-12 lg:mt-0 lg:col-span-5 pl-0 relative z-20 flex justify-center">
+            <div className="scale-[0.6] sm:scale-[0.75] md:scale-[0.85] xl:scale-100 origin-center">
+              <HeroScene />
+            </div>
           </ScrollReveal>
         </div>
 

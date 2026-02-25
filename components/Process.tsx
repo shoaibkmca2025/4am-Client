@@ -60,7 +60,7 @@ const Process: React.FC = () => {
           </div>
 
           {/* Right: Steps */}
-          <div ref={containerRef} className="md:w-2/3 relative pl-8 md:pl-0">
+          <div ref={containerRef} className="md:w-2/3 relative pl-8 md:pl-0" style={{ position: 'relative' }}>
             {/* Connecting Line */}
             <div className="absolute left-0 md:left-8 top-0 bottom-0 w-[1px] bg-zinc-200 dark:bg-zinc-800">
               <motion.div

@@ -9,9 +9,13 @@ import SpotlightSection from './SpotlightSection';
 import ParallaxLayer from './ParallaxLayer';
 
 const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
+  const getFaviconUrl = (url: string, title: string) => {
+    return `https://picsum.photos/seed/${encodeURIComponent(title)}/800/1000`;
+  };
+
   const primaryImage =
     project.image ||
-    `${project.url.replace(/\/$/, '')}/favicon.ico`;
+    getFaviconUrl(project.url, project.title);
 
   const [imageSrc, setImageSrc] = useState(primaryImage);
 
@@ -85,12 +89,12 @@ const Projects: React.FC = () => {
   };
 
   return (
-    <SpotlightSection id="projects" className="relative py-32 bg-slate-50 dark:bg-brand-obsidian overflow-hidden transition-colors duration-500">
+    <SpotlightSection ref={containerRef} id="projects" className="relative py-32 bg-slate-50 dark:bg-brand-obsidian overflow-hidden transition-colors duration-500">
       <ParallaxLayer strength={0.16} className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-40 -left-24 w-[420px] h-[420px] bg-brand-primary/8 rounded-full blur-3xl" />
         <div className="absolute -bottom-32 right-[-10%] w-[520px] h-[520px] bg-brand-accent/8 rounded-full blur-3xl" />
       </ParallaxLayer>
-      <div ref={containerRef} className="container mx-auto px-6 max-w-[1200px] relative z-10">
+      <div ref={containerRef} className="container mx-auto px-6 max-w-[1200px] relative z-10" style={{ position: 'relative' }}>
         <motion.div style={{ y: sectionY }} className="w-full">
           <ScrollReveal className="mb-8 flex flex-col items-start gap-4">
             <div className="flex items-center gap-4">

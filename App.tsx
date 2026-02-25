@@ -65,7 +65,7 @@ const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
 function App() {
   return (
-    <Router>
+      <Router>
       <ScrollToTop />
       <AuthProvider>
         <ArticleProvider>

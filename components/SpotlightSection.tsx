@@ -4,7 +4,7 @@ interface SpotlightSectionProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
 }
 
-const SpotlightSection: React.FC<SpotlightSectionProps> = ({ children, className = '', ...rest }) => {
+const SpotlightSection = React.forwardRef<HTMLElement, SpotlightSectionProps>(({ children, className = '', ...rest }, ref) => {
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
   const [enabled, setEnabled] = useState(true);
@@ -84,7 +84,7 @@ const SpotlightSection: React.FC<SpotlightSectionProps> = ({ children, className
       {children}
     </section>
   );
-};
+});
 
 export default SpotlightSection;
 

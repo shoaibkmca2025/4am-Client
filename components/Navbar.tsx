@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MonkeyThemeToggle from './MonkeyThemeToggle';
 import LogoImage from '../4am logo.jpeg';
 
-const ConnectButton: React.FC = () => {
+const ConnectButton: React.FC<{ className?: string }> = ({ className }) => {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
 
@@ -15,28 +15,22 @@ const ConnectButton: React.FC = () => {
     <motion.button
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       onClick={() => navigate('/contact')}
-      className={`relative group w-full md:w-auto px-6 py-2 rounded-full font-bold text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ease-out flex items-center justify-center gap-3 overflow-hidden cursor-pointer shadow-[0_14px_30px_rgba(15,23,42,0.24)] ${
-        isHovered
-          ? 'bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-500 text-white border border-transparent shadow-[0_0_20px_rgba(108,99,255,0.35)]'
-          : 'bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-500 text-white border border-white/10'
-      }`}
+      className={`relative group px-3 md:px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all duration-300 ease-out flex items-center justify-center gap-2 overflow-hidden cursor-pointer shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-500 text-white border border-white/10 hover:border-white/20 ${className || 'w-auto'}`}
     >
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={isHovered ? 'hover' : 'idle'}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          className="flex items-center gap-2 relative z-20"
-        >
-          <Zap className={`w-3.5 h-3.5 ${isHovered ? 'animate-pulse' : ''}`} />
-          <span className="font-mono">Get Free Consultation</span>
-        </motion.div>
-      </AnimatePresence>
-      <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="flex items-center gap-1.5 relative z-20">
+        <Zap className={`w-3 h-3 transition-transform duration-300 ${isHovered ? 'scale-110 rotate-12' : ''}`} />
+        <span className="font-mono relative top-[1px] whitespace-nowrap">
+          <span className="hidden xl:inline">Get Free </span>
+          <span className="hidden md:inline xl:hidden">Let's Talk</span>
+          <span className="md:hidden">Book</span>
+        </span>
+      </div>
+      
+      {/* Shine effect */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </motion.button>
   );
 };
@@ -141,7 +135,7 @@ const Navbar: React.FC = () => {
       }`}
     >
       <div className="max-w-[1120px] mx-auto px-4">
-        <div className="flex w-full items-center justify-between gap-6 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_18px_45px_rgba(15,23,42,0.30)] px-5 py-1">
+        <div className="flex w-full items-center justify-between gap-2 md:gap-4 lg:gap-6 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_18px_45px_rgba(15,23,42,0.30)] px-3 md:px-6 py-2">
 
         {/* 1. Left Section: Logo */}
         <div className="flex items-center gap-3 shrink-0">
@@ -166,7 +160,7 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* 2. Center Section: Navigation Links (Desktop) */}
-        <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
+        <nav className="hidden md:flex flex-1 items-center justify-center gap-4 lg:gap-8">
           {NAV_ITEMS.map((item) => {
             const isHomeItem = item.label.toLowerCase() === 'home';
             let active = false;
@@ -211,7 +205,9 @@ const Navbar: React.FC = () => {
             <MonkeyThemeToggle compact={true} />
           </div>
 
-          <ConnectButton />
+          <div className="hidden md:block">
+            <ConnectButton />
+          </div>
 
           {/* Mobile Menu Toggle */}
           <button
@@ -246,7 +242,7 @@ const Navbar: React.FC = () => {
               ))}
               <div className="pt-3 border-t border-zinc-100 dark:border-white/10 flex flex-col gap-4">
                 <div className="w-full">
-                  <ConnectButton />
+                  <ConnectButton className="w-full" />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase font-bold text-zinc-400">Theme</span>
