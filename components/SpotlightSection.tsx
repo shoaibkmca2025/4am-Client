@@ -65,6 +65,7 @@ const SpotlightSection = React.forwardRef<HTMLElement, SpotlightSectionProps>(({
 
   return (
     <section
+      ref={ref}
       {...rest}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}

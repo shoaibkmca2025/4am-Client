@@ -6,7 +6,6 @@ import { ArrowUpRight, Code2, ChevronLeft, ChevronRight } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 import TiltCard from './TiltCard';
 import SpotlightSection from './SpotlightSection';
-import ParallaxLayer from './ParallaxLayer';
 
 const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
   const getFaviconUrl = (url: string, title: string) => {
@@ -29,15 +28,15 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
         onClick={handleClick}
         className="group cursor-pointer w-full h-full"
       >
-        <div className="absolute -inset-1 bg-brand-primary/5 rounded-[1rem] opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300 pointer-events-none" />
+        <div className="absolute -inset-1 bg-brand-primary/5 rounded-xl opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300 pointer-events-none" />
 
-        <div className="relative glass rounded-[2rem] overflow-hidden border border-slate-300/70 dark:border-slate-50/20 bg-gradient-to-b from-slate-800 via-slate-950 to-slate-900 transform transition-all duration-300 shadow-xl group-hover:shadow-2xl group-hover:border-brand-primary/60">
+        <div className="relative glass rounded-2xl overflow-hidden border border-slate-300/70 dark:border-slate-50/20 bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-slate-800 dark:via-slate-950 dark:to-slate-900 transform transition-all duration-300 shadow-xl group-hover:shadow-2xl group-hover:border-brand-primary/60">
           <div className="relative aspect-[3/4] w-full flex items-center justify-center px-2 pt-5 pb-6">
             <div className="absolute top-2 inset-x-0 flex justify-center items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-slate-900 border border-slate-500 shadow-sm" />
               <span className="w-10 h-1.5 rounded-full bg-slate-700/80" />
             </div>
-            <div className="relative w-[92%] h-[88%] rounded-[1.4rem] overflow-hidden bg-black shadow-[0_0_0_1px_rgba(148,163,184,0.35)]">
+            <div className="relative w-[92%] h-[88%] rounded-xl overflow-hidden bg-black shadow-[0_0_0_1px_rgba(148,163,184,0.35)]">
               <motion.img
                 src={imageSrc}
                 alt={project.title}
@@ -89,25 +88,25 @@ const Projects: React.FC = () => {
   };
 
   return (
-    <SpotlightSection ref={containerRef} id="projects" className="relative py-32 bg-slate-50 dark:bg-brand-obsidian overflow-hidden transition-colors duration-500">
-      <ParallaxLayer strength={0.16} className="pointer-events-none absolute inset-0 -z-10">
+    <SpotlightSection ref={containerRef} id="work" className="relative py-16 md:py-20 bg-slate-50 dark:bg-brand-obsidian overflow-hidden transition-colors duration-500">
+      <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-40 -left-24 w-[420px] h-[420px] bg-brand-primary/8 rounded-full blur-3xl" />
         <div className="absolute -bottom-32 right-[-10%] w-[520px] h-[520px] bg-brand-accent/8 rounded-full blur-3xl" />
-      </ParallaxLayer>
-      <div ref={containerRef} className="container mx-auto px-6 max-w-[1200px] relative z-10" style={{ position: 'relative' }}>
+      </div>
+      <div className="container mx-auto px-6 max-w-[1200px] relative z-10" style={{ position: 'relative' }}>
         <motion.div style={{ y: sectionY }} className="w-full">
-          <ScrollReveal className="mb-8 flex flex-col items-start gap-4">
+          <ScrollReveal className="mb-6 flex flex-col items-start gap-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-[2px] bg-brand-primary" />
               <span className="text-brand-primary font-mono font-bold tracking-[0.3em] uppercase text-xs">Work Archive</span>
             </div>
 
             <div className="flex flex-col md:flex-row md:items-end justify-between w-full gap-6">
-              <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-900 dark:text-white tracking-tight leading-[1.05]">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-slate-900 dark:text-white tracking-tight leading-[1.1]">
                 Our Work
               </h3>
               <div className="flex items-end justify-between md:justify-end gap-4 w-full md:w-auto">
-                <p className="md:max-w-xs text-sm md:text-base text-slate-500 font-light leading-relaxed md:text-right">
+                <p className="md:max-w-xs text-sm text-slate-500 font-light leading-relaxed md:text-right">
                   A moving snapshot of long-term client partnerships across web, brand, and growth.
                 </p>
                 <div className="flex items-center gap-2">
@@ -133,11 +132,11 @@ const Projects: React.FC = () => {
           <div className="relative">
             <div
               ref={marqueeRef}
-              className="overflow-x-auto scroll-smooth scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent"
+                className="overflow-x-auto scroll-smooth no-scrollbar snap-x snap-mandatory"
             >
               <div className="flex items-stretch gap-6 pr-6">
                 {PROJECTS.map((project, index) => (
-                  <div key={project.id} className="w-[260px] shrink-0">
+                    <div key={project.id} className="w-[240px] sm:w-[260px] shrink-0 snap-start">
                     <ProjectCard project={project} index={index} />
                   </div>
                 ))}

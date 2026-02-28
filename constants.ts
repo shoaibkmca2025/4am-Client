@@ -8,11 +8,11 @@ declare global {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/' },
+  { label: 'Home', href: '/', sectionId: 'home' },
   { label: 'Services', href: '/', sectionId: 'services' },
   { label: 'About', href: '/', sectionId: 'about' },
-  { label: 'Work', href: '/', sectionId: 'projects' },
-  { label: 'Insights', href: '/insights' },
+  { label: 'Work', href: '/', sectionId: 'work' },
+  { label: 'Insights', href: '/', sectionId: 'insights' },
   { label: 'Contact', href: '/', sectionId: 'contact' },
 ];
 

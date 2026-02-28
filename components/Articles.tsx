@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ScrollReveal from './ScrollReveal';
 import { ArrowRight, Clock, User, X, Tag, BookOpen, Calendar, Search, Sparkles, Globe, ExternalLink, Loader2, Bookmark } from 'lucide-react';
 import { Article } from '../types';
 import { useArticles } from './ArticleContext';
@@ -52,12 +53,18 @@ const Articles: React.FC = () => {
   const safeArticles = Array.isArray(articles) ? articles : [];
 
   return (
-    <section id="insights" className="py-12 relative bg-transparent transition-colors">
-      <div className="container mx-auto px-6">
+    <section id="insights" className="py-16 md:py-20 relative bg-slate-50 dark:bg-brand-obsidian transition-colors">
+      <div className="container mx-auto px-6 max-w-[1200px]">
         <div className="max-w-5xl mx-auto">
           
+          <ScrollReveal>
+             <h2 className="text-2xl md:text-3xl font-display font-bold text-slate-900 dark:text-white mb-8 text-center">
+               Insights
+             </h2>
+          </ScrollReveal>
+
           {/* AI Research Portal */}
-          <div className="max-w-xl mx-auto mb-16">
+          <div className="max-w-xl mx-auto mb-10">
             <form onSubmit={handleAiResearch} className="relative group">
               <div className="absolute -inset-1 bg-brand-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative glass rounded-full p-2 flex border border-white/40 dark:border-white/10 shadow-xl items-center">
@@ -66,7 +73,7 @@ const Articles: React.FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Request AI Insight..."
-                  className="flex-1 bg-transparent border-none py-2 px-6 text-slate-900 dark:text-white focus:outline-none placeholder:text-slate-400 font-mono text-[11px] uppercase tracking-wider"
+                  className="flex-1 bg-transparent border-none py-2 px-4 text-slate-900 dark:text-white focus:outline-none placeholder:text-slate-400 font-mono text-base tracking-wide"
                 />
                 <button
                   type="submit"
@@ -85,7 +92,7 @@ const Articles: React.FC = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-16 glass rounded-[2rem] p-8 md:p-10 border border-brand-primary/30 relative overflow-hidden"
+                className="mb-10 glass rounded-2xl p-6 md:p-8 border border-brand-primary/30 relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
                   <Sparkles className="w-48 h-48" />
@@ -107,7 +114,7 @@ const Articles: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <button onClick={() => setAiResult(null)} className="absolute top-6 right-6 p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-all">
+                <button onClick={() => setAiResult(null)} className="absolute top-6 right-6 p-3 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-all">
                   <X className="w-4 h-4" />
                 </button>
               </motion.div>
@@ -123,7 +130,7 @@ const Articles: React.FC = () => {
                 transition={{ delay: index * 0.1 }}
                 viewport={{ once: true }}
                 onClick={() => handleRead(article)}
-                className="group glass rounded-[2rem] p-6 border border-white/40 dark:border-white/5 hover:border-brand-primary/30 transition-all duration-500 cursor-pointer flex flex-col h-full hover:shadow-2xl"
+                className="group glass rounded-2xl p-5 md:p-6 border border-white/40 dark:border-white/5 hover:border-brand-primary/30 transition-all duration-500 cursor-pointer flex flex-col h-full hover:shadow-2xl"
               >
                 <div className="flex justify-between items-start mb-6">
                   <div className="w-10 h-10 bg-slate-100 dark:bg-white/5 rounded-xl flex items-center justify-center text-brand-primary border border-slate-200 dark:border-white/10 group-hover:bg-brand-primary group-hover:text-white transition-all">
@@ -132,7 +139,7 @@ const Articles: React.FC = () => {
                   <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest">{article.readTime}</span>
                 </div>
 
-                <h4 className="text-xl font-display font-bold text-slate-900 dark:text-white uppercase leading-tight tracking-tight mb-4 group-hover:text-brand-primary transition-colors">
+                <h4 className="text-lg font-display font-bold text-slate-900 dark:text-white uppercase leading-tight tracking-tight mb-4 group-hover:text-brand-primary transition-colors">
                   {article.title}
                 </h4>
 
@@ -166,24 +173,24 @@ const Articles: React.FC = () => {
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="w-full max-w-4xl glass rounded-[3rem] overflow-hidden relative z-[160] border border-white/20 shadow-3xl max-h-[90vh] flex flex-col"
+              className="w-full max-w-4xl glass rounded-2xl overflow-hidden relative z-[160] border border-white/20 shadow-3xl max-h-[90vh] flex flex-col"
             >
-              <div className="p-10 md:p-16 overflow-y-auto no-scrollbar">
+              <div className="p-6 md:p-8 overflow-y-auto no-scrollbar">
                 <div className="max-w-2xl mx-auto">
-                  <div className="flex items-center justify-between mb-12">
+                  <div className="flex items-center justify-between mb-8">
                     <span className="text-[10px] font-mono font-bold text-brand-primary uppercase tracking-[0.5em]">{selectedArticle.category}</span>
                     <button onClick={handleClose} className="p-3 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-all">
                       <X className="w-6 h-6" />
                     </button>
                   </div>
-                  <h2 className="text-5xl md:text-7xl font-display font-bold uppercase tracking-tighter mb-12 leading-[0.9]">{selectedArticle.title}</h2>
-                  <div className="flex items-center gap-8 mb-16 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest border-y border-slate-100 dark:border-white/5 py-4">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold uppercase tracking-tight mb-8 leading-[1.05]">{selectedArticle.title}</h2>
+                  <div className="flex flex-wrap items-center gap-6 mb-10 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest border-y border-slate-100 dark:border-white/5 py-3">
                     <span className="flex items-center gap-2"><User className="w-3.5 h-3.5" /> {selectedArticle.author}</span>
                     <span className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> {selectedArticle.date}</span>
                     <span className="flex items-center gap-2"><Clock className="w-3.5 h-3.5" /> {selectedArticle.readTime}</span>
                   </div>
-                  <div className="prose prose-xl dark:prose-invert max-w-none text-slate-600 dark:text-slate-300 leading-relaxed font-light italic">
-                    {selectedArticle.content.split('\n').filter(p => p.trim() !== '').map((p, i) => <p key={i} className="mb-8">{p}</p>)}
+                  <div className="prose prose-base md:prose-lg dark:prose-invert max-w-none text-slate-600 dark:text-slate-300 leading-relaxed font-light italic">
+                    {selectedArticle.content.split('\n').filter(p => p.trim() !== '').map((p, i) => <p key={i} className="mb-6">{p}</p>)}
                   </div>
                 </div>
               </div>

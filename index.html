@@ -14,6 +14,14 @@
         --brand-blue: #2563EB;
         --brand-purple: #7C3AED;
       }
+      
+      html {
+        background-color: #F8FAFC;
+      }
+
+      html.dark {
+        background-color: #0B0F19;
+      }
 
       body {
         -webkit-font-smoothing: antialiased;
@@ -107,8 +115,24 @@
   }
 }
 </script>
-</head>
-  <body class="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 selection:bg-brand-primary/20 transition-colors duration-500 font-sans leading-relaxed">
+<script>
+      // Initialize theme based on user preference or system settings
+      try {
+        const savedTheme = localStorage.getItem('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const theme = savedTheme || systemTheme;
+        
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {
+        console.error('Error initializing theme:', e);
+      }
+    </script>
+  </head>
+  <body class="bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 selection:bg-brand-primary/20 transition-colors duration-500 font-sans leading-relaxed">
     <div class="noise-overlay"></div>
     <div class="mesh-bg"></div>
     <div class="grid-bg"></div>

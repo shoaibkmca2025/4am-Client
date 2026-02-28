@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Share2, Search, Code, Zap, Palette, ArrowRight, Cpu } from 'lucide-react';
@@ -55,7 +54,7 @@ const iconMap: Record<HomepageService['icon'], JSX.Element> = {
 };
 
 const ServiceCard: React.FC<{ service: HomepageService; index: number }> = ({ service, index }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Navigation removed as target page is deleted
   const [isHovered, setIsHovered] = React.useState(false);
 
   return (
@@ -63,23 +62,23 @@ const ServiceCard: React.FC<{ service: HomepageService; index: number }> = ({ se
       <TiltCard
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={() => navigate('/services')}
+        // onClick={() => navigate('/services')} // Removed navigation
         className="group glass premium-card cursor-pointer border border-zinc-200 dark:border-white/5 h-full flex flex-col overflow-hidden shadow-sm hover:shadow-2xl dark:hover:shadow-brand-primary/10 transition-shadow duration-500"
       >
         <div className="relative z-10 flex flex-col h-full">
-        <div className="w-14 h-14 bg-brand-primary/5 dark:bg-white/5 rounded-2xl flex items-center justify-center text-brand-primary mb-8 group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 shadow-inner">
+        <div className="w-12 h-12 bg-brand-primary/5 dark:bg-white/5 rounded-2xl flex items-center justify-center text-brand-primary mb-6 group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 shadow-inner">
           {iconMap[service.icon]}
         </div>
 
-        <h4 className="text-xl md:text-2xl font-display font-bold text-zinc-900 dark:text-white tracking-tight mb-3 leading-snug group-hover:text-brand-primary transition-colors">
+        <h4 className="text-lg md:text-xl font-display font-bold text-zinc-900 dark:text-white tracking-tight mb-3 leading-snug group-hover:text-brand-primary transition-colors">
           {service.title}
         </h4>
 
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-8 flex-grow">
+        <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-6 flex-grow">
           {service.description}
         </p>
 
-        <div className="mt-auto flex items-center justify-between pt-8 border-t border-zinc-100 dark:border-white/5">
+        <div className="mt-auto flex items-center justify-between pt-6 border-t border-zinc-100 dark:border-white/5">
           <div className="flex items-center gap-3">
             <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${isHovered ? 'bg-brand-primary shadow-[0_0_8px_#7C3AED]' : 'bg-zinc-300 dark:bg-white/10'}`} />
             <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-[0.16em]">Made for real teams</span>
@@ -100,32 +99,30 @@ const ServiceCard: React.FC<{ service: HomepageService; index: number }> = ({ se
 
 const Services: React.FC = () => {
   return (
-    <SpotlightSection id="services" className="py-32 bg-white dark:bg-brand-dark transition-colors duration-500 overflow-hidden">
+    <SpotlightSection id="services" className="py-16 md:py-20 relative overflow-hidden bg-slate-50/50 dark:bg-transparent">
       <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
-        <ScrollReveal className="max-w-4xl mb-16">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-[2px] bg-brand-primary" />
-            <span className="text-brand-primary font-mono font-bold tracking-[0.3em] uppercase text-xs">
-              Our Services
-            </span>
-          </div>
-          <h3
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-zinc-900 dark:text-white tracking-tight leading-[1.1]"
-          >
-            <span className="heading-interactive">
-              Full-funnel growth
-            </span>
-            <br />
-            <span className="heading-interactive heading-gradient heading-gradient-animated">
-              for brands that want real results.
-            </span>
-          </h3>
-          <p className="mt-6 text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-2xl">
-            From strategy to execution, 4AM Global Media helps you show up where it matters and turn that attention into measurable growth.
-          </p>
-        </ScrollReveal>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 md:mb-16">
+          <ScrollReveal>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-[1px] bg-brand-primary" />
+              <span className="text-brand-primary font-mono font-bold tracking-[0.5em] uppercase text-xs">Capabilities</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-[32px] lg:text-4xl font-display font-bold text-slate-900 dark:text-white tracking-tight leading-[1.15]">
+              Everything you need to <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-accent">
+                dominate your market.
+              </span>
+            </h2>
+          </ScrollReveal>
+          
+          <ScrollReveal delay={100} className="max-w-md">
+            <p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed">
+              We replace fragmented freelancers with a unified growth infrastructure. Design, code, and distribution—all under one roof.
+            </p>
+          </ScrollReveal>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {homepageServices.map((service, index) => (
             <ServiceCard key={service.title} service={service} index={index} />
           ))}

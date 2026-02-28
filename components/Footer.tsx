@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Twitter, Instagram, Linkedin, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import LogoImage from '../4am logo.jpeg';
+import { Instagram, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
+import LogoImage from '../assets/logo.jpeg';
+import { scrollToSection } from '../utils/scroll';
 
 const Footer: React.FC = () => {
   return (
@@ -10,7 +10,11 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-6 max-w-[1200px] py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 mb-12">
           <div className="md:col-span-4 space-y-6">
-            <Link to="/" className="inline-flex items-center gap-3">
+            <a 
+              href="#home"
+              onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}
+              className="inline-flex items-center gap-3"
+            >
               <div className="w-12 h-12 rounded-2xl overflow-hidden bg-black flex items-center justify-center shadow-lg shadow-brand-primary/40">
                 <img
                   src={LogoImage}
@@ -21,7 +25,7 @@ const Footer: React.FC = () => {
               <span className="text-2xl font-display font-bold uppercase tracking-tight">
                 4AM Global Media
               </span>
-            </Link>
+            </a>
             <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 max-w-sm leading-relaxed">
               The growth engine that never sleeps. Powering founders, operators, and teams across the globe.
             </p>
@@ -39,25 +43,42 @@ const Footer: React.FC = () => {
                 Services
               </h4>
               <div className="space-y-2 text-sm">
-                <Link
-                  to="/services"
+                <a
+                  href="#services"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
                   className="flex items-center gap-1 text-slate-900 dark:text-zinc-100 font-semibold hover:text-brand-primary transition-colors"
                 >
                   Full service menu
                   <ArrowRight className="w-3 h-3" />
-                </Link>
-                <Link to="/services" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#services"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Product & web
-                </Link>
-                <Link to="/services" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#services"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Paid growth
-                </Link>
-                <Link to="/services" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#services"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   SEO & content
-                </Link>
-                <Link to="/services" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#services"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Brand systems
-                </Link>
+                </a>
               </div>
             </div>
 
@@ -66,15 +87,27 @@ const Footer: React.FC = () => {
                 Resources
               </h4>
               <div className="space-y-2 text-sm">
-                <Link to="/insights" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                <a 
+                  href="#insights"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('insights'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Blog
-                </Link>
-                <Link to="/work" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#work"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Case studies
-                </Link>
-                <Link to="/services" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#services"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Service overview
-                </Link>
+                </a>
                 <span className="block text-zinc-600 dark:text-zinc-400">
                   ROI & performance reports
                 </span>
@@ -86,18 +119,34 @@ const Footer: React.FC = () => {
                 Company
               </h4>
               <div className="space-y-2 text-sm">
-                <Link to="/work" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                <a 
+                  href="#work"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Case studies
-                </Link>
-                <Link to="/insights" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#insights"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('insights'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Blog
-                </Link>
-                <Link to="/services" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#services"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Pricing overview
-                </Link>
-                <Link to="/contact" className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors">
+                </a>
+                <a 
+                  href="#contact"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}
+                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                >
                   Partner with us
-                </Link>
+                </a>
               </div>
             </div>
           </div>
@@ -139,20 +188,6 @@ const Footer: React.FC = () => {
                 </a>
               </div>
 
-              <div className="flex gap-3">
-                <a
-                  href="#"
-                  className="w-10 h-10 rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700/80 dark:bg-zinc-900/40 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:border-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 transition-colors"
-                >
-                  <Twitter className="w-4 h-4" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700/80 dark:bg-zinc-900/40 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:border-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 transition-colors"
-                >
-                  <Linkedin className="w-4 h-4" />
-                </a>
-              </div>
             </div>
           </div>
         </div>

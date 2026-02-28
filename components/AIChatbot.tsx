@@ -105,10 +105,10 @@ const AIChatbot: React.FC = () => {
             initial={{ opacity: 0, scale: 0.8, y: 20, transformOrigin: 'bottom right' }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="absolute bottom-20 right-0 w-[380px] md:w-[420px] max-h-[600px] flex flex-col glass rounded-[2.5rem] shadow-3xl border border-white/40 dark:border-white/10 overflow-hidden"
+            className="absolute bottom-20 right-0 w-[calc(100vw-40px)] max-w-[380px] md:w-[420px] md:max-w-[420px] max-h-[600px] flex flex-col glass rounded-2xl shadow-3xl border border-white/40 dark:border-white/10 overflow-hidden"
           >
             {/* Header */}
-            <div className="p-6 bg-brand-primary text-white flex items-center justify-between relative overflow-hidden">
+            <div className="p-4 bg-brand-primary text-white flex items-center justify-between relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-brand-primary via-indigo-600 to-brand-accent opacity-90" />
               <div className="relative z-10 flex items-center gap-4">
                 <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md">
@@ -124,7 +124,7 @@ const AIChatbot: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="relative z-10 p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="relative z-10 p-3 hover:bg-white/10 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -133,7 +133,7 @@ const AIChatbot: React.FC = () => {
             {/* Chat Body */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-y-auto p-6 space-y-6 min-h-[300px] max-h-[400px] bg-slate-50/50 dark:bg-black/40 no-scrollbar"
+              className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[260px] max-h-[380px] bg-slate-50/50 dark:bg-black/40 no-scrollbar"
             >
               {messages.map((msg, idx) => (
                 <motion.div
@@ -179,12 +179,12 @@ const AIChatbot: React.FC = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Transmit your message..."
-                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 pl-6 pr-14 text-sm focus:outline-none focus:border-brand-primary transition-all text-slate-900 dark:text-white"
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-3 pl-4 pr-12 text-base focus:outline-none focus:border-brand-primary transition-all text-slate-900 dark:text-white"
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-brand-primary text-white rounded-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 shadow-lg shadow-brand-primary/20"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-brand-primary text-white rounded-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 shadow-lg shadow-brand-primary/20"
                 >
                   <Send className="w-4 h-4" />
                 </button>
