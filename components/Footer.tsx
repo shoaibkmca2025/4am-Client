@@ -6,7 +6,7 @@ import { scrollToSection } from '../utils/scroll';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-slate-50 text-slate-900 dark:bg-brand-obsidian dark:text-zinc-100 transition-colors duration-500">
+    <footer className="relative z-50 border-t border-zinc-200 dark:border-zinc-800 bg-slate-50 text-slate-900 dark:bg-brand-obsidian dark:text-zinc-100 transition-colors duration-500">
       <div className="container mx-auto px-6 max-w-[1200px] py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 mb-12">
           <div className="md:col-span-4 space-y-6">

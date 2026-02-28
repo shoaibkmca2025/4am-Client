@@ -1,7 +1,7 @@
 import React from 'react';
 import ScrollReveal from './ScrollReveal';
 
-export const StatsSection: React.FC = () => {
+const StatsSection: React.FC = () => {
   const stats = [
     { label: 'Projects launched', value: 120, suffix: '+' },
     { label: 'Average client growth', value: 3.4, suffix: 'x' },

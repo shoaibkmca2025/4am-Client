@@ -23,10 +23,10 @@ const LandingPage: React.FC = () => {
   return (
     <main>
       <Hero />
-      <Services />
       <StatsSection />
+      <Services />
       <Projects />
-      <Articles />
+      {/* <Articles /> Removed for cleaner SaaS layout */}
       <Testimonials />
       <Contact />
     </main>
