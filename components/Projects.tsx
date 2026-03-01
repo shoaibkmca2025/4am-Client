@@ -1,10 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useRef, useState, useEffect } from 'react';
 import { PROJECTS } from '../constants';
 import { Project } from '../types';
-import { ArrowUpRight, Code2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
-import TiltCard from './TiltCard';
 import SpotlightSection from './SpotlightSection';
 
 const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
@@ -23,127 +21,189 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
   };
 
   return (
-    <ScrollReveal delay={index * 80}>
-      <TiltCard
-        onClick={handleClick}
-        className="group cursor-pointer w-full h-full"
-      >
-        <div className="absolute -inset-1 bg-brand-primary/5 rounded-xl opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300 pointer-events-none" />
+    <div 
+      className="snap-center shrink-0 w-[85vw] max-w-[320px] md:w-[340px] lg:w-[380px] h-[480px] relative group cursor-pointer"
+      onClick={handleClick}
+    >
+      <div className="w-full h-full rounded-[32px] overflow-hidden bg-brand-surface shadow-clay hover:shadow-clay-hover transition-all duration-300 transform group-hover:-translate-y-2 flex flex-col">
+        {/* Image Section - Top 50% */}
+        <div className="relative h-[50%] overflow-hidden">
+          <img
+            src={imageSrc}
+            alt={project.title}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            onError={() => {
+              if (!imageSrc.includes('picsum.photos')) {
+                setImageSrc(`https://picsum.photos/seed/${encodeURIComponent(project.title)}/800/1000`);
+              }
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          {/* Industry Tag Floating */}
+          <div className="absolute top-4 left-4">
+             <span className="text-[10px] font-bold uppercase tracking-widest text-brand-dark bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm">
+                {project.industry || 'Development'}
+             </span>
+          </div>
+        </div>
 
-        <div className="relative glass rounded-2xl overflow-hidden border border-slate-300/70 dark:border-slate-50/20 bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-slate-800 dark:via-slate-950 dark:to-slate-900 transform transition-all duration-300 shadow-xl group-hover:shadow-2xl group-hover:border-brand-primary/60">
-          <div className="relative aspect-[3/4] w-full flex items-center justify-center px-2 pt-5 pb-6">
-            <div className="absolute top-2 inset-x-0 flex justify-center items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-900 border border-slate-500 shadow-sm" />
-              <span className="w-10 h-1.5 rounded-full bg-slate-700/80" />
+        {/* Content Section - Bottom 50% */}
+        <div className="h-[50%] p-8 flex flex-col justify-between bg-brand-surface relative z-10">
+          <div>
+            {/* Tech Stack */}
+            <div className="flex -space-x-2 mb-4">
+               {project.technologies.slice(0, 3).map((tech, i) => (
+                  <div key={i} className="w-8 h-8 rounded-full bg-brand-bg border-2 border-brand-surface flex items-center justify-center text-[10px] text-brand-gray font-bold shadow-sm" title={tech}>
+                    {tech.charAt(0)}
+                  </div>
+                ))}
             </div>
-            <div className="relative w-[92%] h-[88%] rounded-xl overflow-hidden bg-black shadow-[0_0_0_1px_rgba(148,163,184,0.35)]">
-              <motion.img
-                src={imageSrc}
-                alt={project.title}
-                className="w-full h-full object-cover transform scale-[1.01] group-hover:scale-[1.05] transition-transform duration-[0.8s] ease-out"
-                onError={() => {
-                  if (!imageSrc.includes('picsum.photos')) {
-                    setImageSrc(`https://picsum.photos/seed/${encodeURIComponent(project.title)}/800/1000`);
-                  }
-                }}
-              />
-            </div>
+
+            <h3 className="text-2xl font-bold text-brand-dark mb-3 leading-tight group-hover:text-brand-primary transition-colors duration-300">
+              {project.title}
+            </h3>
+            
+            <p className="text-brand-gray text-sm line-clamp-2 leading-relaxed font-medium">
+              {project.description}
+            </p>
           </div>
 
-          <div className="px-3 py-3 bg-white/85 dark:bg-black/70 backdrop-blur-md flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h4 className="text-xs md:text-sm font-display font-semibold text-slate-900 dark:text-white truncate">
-                {project.title}
-              </h4>
-              <p className="text-[9px] md:text-[10px] font-mono tracking-[0.16em] text-slate-500 dark:text-slate-400 truncate">
-                {project.url}
-              </p>
-            </div>
-
-            <div className="flex -space-x-1 shrink-0">
-              {project.technologies.slice(0, 2).map((tech) => (
-                <div key={tech} className="w-4 h-4 rounded-full border border-white/80 dark:border-brand-obsidian bg-slate-100 dark:bg-white/10 flex items-center justify-center shadow-xs">
-                  <Code2 className="w-1.5 h-1.5 text-brand-primary" />
-                </div>
-              ))}
+          {/* Footer */}
+          <div className="flex items-center justify-between pt-4 border-t border-brand-gray/10 mt-2">
+            <span className="text-xs font-bold text-brand-primary flex items-center gap-2">
+               {project.result && (
+                 <>
+                  <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
+                  {project.result}
+                 </>
+               )}
+            </span>
+            
+            <div className="w-10 h-10 rounded-full bg-brand-bg flex items-center justify-center text-brand-dark group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 shadow-soft">
+               <ExternalLink className="w-4 h-4" />
             </div>
           </div>
         </div>
-      </TiltCard>
-    </ScrollReveal>
+      </div>
+    </div>
   );
 };
 
 const Projects: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
-  const sectionY = useTransform(scrollYProgress, [0, 1], [0, -20]);
-  const marqueeRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const autoScrollTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const scrollByAmount = (direction: 'left' | 'right') => {
-    const container = marqueeRef.current;
-    if (!container) return;
-    const amount = 260 * 2;
-    container.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' });
+  // Auto-scroll logic
+  useEffect(() => {
+    const startAutoScroll = () => {
+      autoScrollTimerRef.current = setInterval(() => {
+        if (!isHovered && containerRef.current) {
+          const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+          // Check if we've reached the end
+          if (scrollLeft + clientWidth >= scrollWidth - 10) {
+            containerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+             // Scroll by one card width approx
+             const cardWidth = containerRef.current.children[0]?.clientWidth || 300;
+             containerRef.current.scrollBy({ left: cardWidth + 32, behavior: 'smooth' });
+          }
+        }
+      }, 4000); // 4 seconds interval
+    };
+
+    startAutoScroll();
+
+    return () => {
+      if (autoScrollTimerRef.current) clearInterval(autoScrollTimerRef.current);
+    };
+  }, [isHovered]);
+
+  const scrollLeft = () => {
+    if (containerRef.current) {
+      const cardWidth = containerRef.current.children[0]?.clientWidth || 300;
+      containerRef.current.scrollBy({ left: -(cardWidth + 32), behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (containerRef.current) {
+      const cardWidth = containerRef.current.children[0]?.clientWidth || 300;
+      containerRef.current.scrollBy({ left: cardWidth + 32, behavior: 'smooth' });
+    }
   };
 
   return (
-    <SpotlightSection ref={containerRef} id="work" className="relative py-16 md:py-20 bg-slate-50 dark:bg-brand-obsidian overflow-hidden transition-colors duration-500">
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-40 -left-24 w-[420px] h-[420px] bg-brand-primary/8 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 right-[-10%] w-[520px] h-[520px] bg-brand-accent/8 rounded-full blur-3xl" />
+    <SpotlightSection id="work" className="py-24 bg-brand-bg overflow-hidden relative">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-30">
+         <div className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] rounded-full bg-brand-primary/10 blur-[120px]" />
+         <div className="absolute top-[40%] -left-[10%] w-[600px] h-[600px] rounded-full bg-brand-secondary/10 blur-[100px]" />
       </div>
-      <div className="container mx-auto px-6 max-w-[1200px] relative z-10" style={{ position: 'relative' }}>
-        <motion.div style={{ y: sectionY }} className="w-full">
-          <ScrollReveal className="mb-6 flex flex-col items-start gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-[2px] bg-brand-primary" />
-              <span className="text-brand-primary font-mono font-bold tracking-[0.3em] uppercase text-xs">Work Archive</span>
-            </div>
 
-            <div className="flex flex-col md:flex-row md:items-end justify-between w-full gap-6">
-              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-slate-900 dark:text-white tracking-tight leading-[1.1]">
-                Our Work
-              </h3>
-              <div className="flex items-end justify-between md:justify-end gap-4 w-full md:w-auto">
-                <p className="md:max-w-xs text-sm text-slate-500 font-light leading-relaxed md:text-right">
-                  A moving snapshot of long-term client partnerships across web, brand, and growth.
-                </p>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => scrollByAmount('left')}
-                    className="hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full glass border border-zinc-200/80 dark:border-white/10 text-zinc-600 dark:text-zinc-200 hover:border-brand-primary hover:text-brand-primary transition-colors"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollByAmount('right')}
-                    className="hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full glass border border-zinc-200/80 dark:border-white/10 text-zinc-600 dark:text-zinc-200 hover:border-brand-primary hover:text-brand-primary transition-colors"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+      <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
+        
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+          <ScrollReveal>
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-brand-surface shadow-clay text-brand-gray text-xs font-bold uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
+              Selected Work
             </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-brand-dark tracking-tight leading-tight">
+              Featured Case Studies
+            </h2>
           </ScrollReveal>
+          
+          <ScrollReveal delay={200}>
+             <div className="flex gap-4">
+               <button 
+                 onClick={scrollLeft}
+                 className="w-12 h-12 rounded-full bg-brand-surface shadow-soft flex items-center justify-center text-brand-dark hover:bg-brand-primary hover:text-white hover:shadow-clay-hover transition-all duration-300"
+                 aria-label="Previous projects"
+               >
+                 <ChevronLeft className="w-5 h-5" />
+               </button>
+               <button 
+                 onClick={scrollRight}
+                 className="w-12 h-12 rounded-full bg-brand-surface shadow-soft flex items-center justify-center text-brand-dark hover:bg-brand-primary hover:text-white hover:shadow-clay-hover transition-all duration-300"
+                 aria-label="Next projects"
+               >
+                 <ChevronRight className="w-5 h-5" />
+               </button>
+             </div>
+          </ScrollReveal>
+        </div>
 
-          <div className="relative">
-            <div
-              ref={marqueeRef}
-                className="overflow-x-auto scroll-smooth no-scrollbar snap-x snap-mandatory"
-            >
-              <div className="flex items-stretch gap-6 pr-6">
-                {PROJECTS.map((project, index) => (
-                    <div key={project.id} className="w-[240px] sm:w-[260px] shrink-0 snap-start">
-                    <ProjectCard project={project} index={index} />
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Horizontal Scroll Container */}
+        <div 
+          className="relative -mx-6 px-6 md:mx-0 md:px-0"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <div 
+            ref={containerRef}
+            className="flex gap-6 md:gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {PROJECTS.map((project, index) => (
+              <ProjectCard key={project.id} project={project} index={index} />
+            ))}
+             
+             {/* View All Card (Last item) */}
+             <div className="snap-center shrink-0 w-[85vw] max-w-[320px] md:w-[340px] lg:w-[380px] h-[480px] flex items-center justify-center">
+                <a href="#" className="group flex flex-col items-center justify-center text-center p-8 rounded-[32px] bg-brand-surface shadow-clay hover:shadow-clay-hover hover:-translate-y-2 transition-all duration-300 w-full h-full">
+                   <div className="w-20 h-20 rounded-full bg-brand-bg shadow-inner flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                     <ArrowRight className="w-8 h-8 text-brand-primary" />
+                   </div>
+                   <h3 className="text-2xl font-bold text-brand-dark mb-2">View All Projects</h3>
+                   <p className="text-brand-gray text-base max-w-xs font-medium">Explore our complete portfolio.</p>
+                </a>
+             </div>
           </div>
-        </motion.div>
+        </div>
+
       </div>
     </SpotlightSection>
   );

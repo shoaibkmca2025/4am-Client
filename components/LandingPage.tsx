@@ -5,7 +5,6 @@ import Hero from './Hero';
 import Services from './Services';
 import Projects from './Projects';
 import Contact from './Contact';
-import Articles from './Articles';
 import Testimonials from './Testimonials';
 import StatsSection from './Stats';
 import { scrollToSection } from '../utils/scroll';
@@ -26,7 +25,6 @@ const LandingPage: React.FC = () => {
       <StatsSection />
       <Services />
       <Projects />
-      {/* <Articles /> Removed for cleaner SaaS layout */}
       <Testimonials />
       <Contact />
     </main>

@@ -1,5 +1,4 @@
-
-import { Service, Client, NavItem, Article, Project } from './types';
+import { Service, Client, NavItem, Project } from './types';
 
 declare global {
   interface Window {
@@ -9,83 +8,246 @@ declare global {
 
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Home', href: '/', sectionId: 'home' },
-  { label: 'Services', href: '/', sectionId: 'services' },
+  { 
+    label: 'Services', 
+    href: '/', 
+    sectionId: 'services',
+    subItems: [
+      { label: 'Digital Marketing', href: '/services/digital-marketing' },
+      { label: 'Branding', href: '/services/branding' },
+      { label: 'Social Media', href: '/services/social-media-growth' },
+      { label: 'SEO', href: '/services/seo' },
+      { label: 'Web Dev', href: '/services/web-development' },
+      { label: 'Content', href: '/services/content-creation' },
+    ]
+  },
   { label: 'About', href: '/', sectionId: 'about' },
   { label: 'Work', href: '/', sectionId: 'work' },
-  { label: 'Insights', href: '/', sectionId: 'insights' },
   { label: 'Contact', href: '/', sectionId: 'contact' },
 ];
 
-export const INITIAL_ARTICLES: Article[] = [
+
+
+export const SERVICES: Service[] = [
   {
-    id: '1',
-    title: 'The Death of the Traditional Funnel: Why Mesh Networks are Winning',
-    excerpt: 'Linear funnels are bleeding efficiency. Learn how decentralized touchpoints create higher-velocity conversion loops in 2024.',
-    content: `The traditional marketing funnel is dead. The linear path from awareness to consideration to conversion no longer reflects how modern B2B buyers make decisions. In today's hyper-fragmented digital landscape, buyers are interacting with brands across dozens of touchpoints simultaneously, often in a non-linear fashion.
-
-This shift requires a new mental model: the Mesh Network. Instead of forcing users down a rigid path, successful brands are building ecosystems of content and engagement that allow users to self-educate and convert on their own terms.
-
-Key Components of a Mesh Network Strategy:
-1.  **Decentralized Content Nodes:** Distribute high-value content across multiple platforms (LinkedIn, YouTube, X, Newsletters) rather than gating everything behind a landing page.
-2.  **Signal-Based Retargeting:** Use engagement data from one node to trigger relevant messaging in another, creating a cohesive narrative without forcing a linear journey.
-3.  **Community-Led Growth:** Empower your existing customers to become advocates, creating a self-reinforcing loop of social proof and referral.
-
-By adopting a Mesh Network approach, brands can reduce CAC, increase LTV, and build deeper resilience against algorithm changes on any single platform.`,
-    author: 'Alex V.',
-    date: 'Oct 12, 2024',
-    category: 'Strategy',
-    readTime: '4 min read',
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'
+    id: 'digital-marketing',
+    title: 'Digital Marketing',
+    slug: 'digital-marketing',
+    description: 'Paid and organic campaigns engineered to turn attention into predictable pipeline.',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    longDescription: 'We don’t just run ads; we build revenue engines. Our digital marketing strategies are data-backed and performance-driven, ensuring every dollar spent contributes to your bottom line.',
+    features: [
+      'PPC & Paid Social Campaigns',
+      'Email Marketing Automation',
+      'Conversion Rate Optimization (CRO)',
+      'Retargeting & Audience Segmentation'
+    ],
+    benefits: [
+      'Higher ROI on ad spend',
+      'Scalable lead generation',
+      'Predictable revenue growth',
+      'Enhanced brand visibility'
+    ],
+    process: [
+      { title: 'Audit & Strategy', description: 'We analyze your current performance and market position to build a winning roadmap.' },
+      { title: 'Campaign Setup', description: 'Targeted ad structures, compelling copy, and high-converting creatives.' },
+      { title: 'Launch & Optimize', description: 'Real-time monitoring and rapid iteration to maximize results.' },
+      { title: 'Scale', description: 'Expanding reach and budget efficiency once profitability is proven.' }
+    ]
   },
   {
-    id: '2',
-    title: 'AI-Native SEO: dominating the generative search era',
-    excerpt: 'Google SGE is changing the game. We break down the new ranking factors for AI-driven search results.',
-    content: `Search Engine Optimization (SEO) is undergoing its biggest transformation in two decades. With the rise of Generative AI in search results (like Google's SGE), the goal is no longer just to rank for keywords, but to be cited as a source of truth by the AI models themselves.
-
-This shift demands a fundamental rethink of content strategy. "SEO content" stuffed with keywords is being de-prioritized in favor of deep, authoritative content that demonstrates genuine expertise and unique perspective.
-
-How to Win in the Age of Generative Search:
-1.  **Focus on Information Gain:** Create content that adds new data, original research, or unique viewpoints to the conversation. AI models prioritize sources that provide information not found elsewhere.
-2.  **Optimize for Entities, Not Just Keywords:** Ensure your brand and key concepts are clearly defined and linked within the Knowledge Graph.
-3.  **Prioritize E-E-A-T:** Experience, Expertise, Authoritativeness, and Trustworthiness are more critical than ever. Showcase your authors' credentials and cite primary sources.
-
-The future of search belongs to brands that can effectively communicate their expertise to both humans and machines.`,
-    author: 'Sarah J.',
-    date: 'Oct 08, 2024',
-    category: 'Technical',
-    readTime: '6 min read',
-    imageUrl: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop'
+    id: 'branding',
+    title: 'Branding',
+    slug: 'branding',
+    description: 'Visual identity and messaging systems that position you as the obvious choice.',
+    image: 'https://images.unsplash.com/photo-1626785774573-4b799314348d?auto=format&fit=crop&w=800&q=80',
+    longDescription: 'Your brand is more than a logo—it’s the feeling you leave behind. We craft cohesive identities that resonate with your audience and differentiate you from the noise.',
+    features: [
+      'Logo Design & Visual Identity',
+      'Brand Strategy & Positioning',
+      'Messaging & Tone of Voice',
+      'Brand Guidelines'
+    ],
+    benefits: [
+      'Instant market recognition',
+      'Increased customer trust',
+      'Premium pricing power',
+      'Consistent brand experience'
+    ],
+    process: [
+      { title: 'Discovery', description: 'Deep dive into your values, mission, and target audience.' },
+      { title: 'Concept Development', description: 'Exploring visual directions and narrative themes.' },
+      { title: 'Design & Refine', description: 'Crafting the assets and polishing the details.' },
+      { title: 'Delivery', description: 'Handing over a complete brand system ready for deployment.' }
+    ]
   },
   {
-    id: '3',
-    title: 'Visual Capital: Why Design is the Highest-Leverage Asset',
-    excerpt: 'In a noise-saturated market, premium visual identity is the only way to signal competence instantly.',
-    content: `We live in the attention economy, but most brands are bankrupt when it comes to visual capital. In a world where users scroll past thousands of messages a day, design is the primary filter they use to judge credibility.
-
-Visual Capital is the accumulated trust and authority your brand commands through its aesthetic presentation. A high-quality visual identity signals competence, attention to detail, and market leadership before a single word is read.
-
-The ROI of Premium Design:
-1.  **Instant Trust:** Users form an opinion about a website in 50 milliseconds. Premium design buys you the time to deliver your message.
-2.  **Price Elasticity:** Brands that look expensive can charge more. Visuals anchor price expectations.
-3.  **Talent Attraction:** Top talent wants to work for winning companies. Your visual identity tells them if you're a leader or a follower.
-
-Investing in visual capital isn't an expense; it's a leverage multiplier for every other marketing dollar you spend.`,
-    author: 'David K.',
-    date: 'Sep 28, 2024',
-    category: 'Design',
-    readTime: '3 min read',
-    imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop'
+    id: 'social-media-growth',
+    title: 'Social Media Growth',
+    slug: 'social-media-growth',
+    description: 'Always-on content and social strategy designed for engagement and authority.',
+    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80',
+    longDescription: 'Social media is the modern public square. We help you own the conversation with content that educates, entertains, and converts followers into loyal advocates.',
+    features: [
+      'Content Strategy & Calendar',
+      'Community Management',
+      'Viral Content Creation',
+      'Analytics & Reporting'
+    ],
+    benefits: [
+      'Explosive follower growth',
+      'High engagement rates',
+      'Stronger brand community',
+      'Direct channel to customers'
+    ],
+    process: [
+      { title: 'Analysis', description: 'Understanding your audience and competitors on social platforms.' },
+      { title: 'Content Plan', description: 'Developing a mix of educational, entertaining, and promotional content.' },
+      { title: 'Execution', description: 'Consistent posting and active community engagement.' },
+      { title: 'Growth', description: 'Leveraging viral loops and partnerships to expand reach.' }
+    ]
+  },
+  {
+    id: 'seo',
+    title: 'SEO',
+    slug: 'seo',
+    description: 'Search strategies that compound over time and bring in high-intent, ready-to-buy traffic.',
+    image: 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?auto=format&fit=crop&w=800&q=80',
+    longDescription: 'Stop renting traffic and start owning it. Our SEO strategies build long-term assets that drive qualified leads to your site 24/7 without ongoing ad spend.',
+    features: [
+      'On-Page & Technical SEO',
+      'Keyword Research & Strategy',
+      'Link Building & Authority',
+      'Content Optimization'
+    ],
+    benefits: [
+      'Sustainable organic traffic',
+      'Top search engine rankings',
+      'Reduced customer acquisition cost',
+      'Long-term business growth'
+    ],
+    process: [
+      { title: 'Site Audit', description: 'Identifying technical issues and opportunities for quick wins.' },
+      { title: 'Keyword Research', description: 'Finding the terms your ideal customers are searching for.' },
+      { title: 'Optimization', description: 'Improving site structure, content, and metadata.' },
+      { title: 'Monitoring', description: 'Tracking rankings and adjusting strategy for algorithm updates.' }
+    ]
+  },
+  {
+    id: 'web-development',
+    title: 'Web Development',
+    slug: 'web-development',
+    description: 'Conversion-focused websites and landing pages built for speed and clarity.',
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
+    longDescription: 'Your website is your 24/7 salesperson. We build fast, secure, and beautiful websites designed to convert visitors into customers seamlessly.',
+    features: [
+      'Custom Website Design',
+      'E-commerce Solutions',
+      'Landing Page Optimization',
+      'Performance Tuning'
+    ],
+    benefits: [
+      'Lightning-fast load times',
+      'Mobile-responsive design',
+      'High conversion rates',
+      'Seamless user experience'
+    ],
+    process: [
+      { title: 'Wireframing', description: 'Mapping out user journeys and site architecture.' },
+      { title: 'Design', description: 'Creating high-fidelity mockups of the interface.' },
+      { title: 'Development', description: 'Writing clean, efficient code to bring the design to life.' },
+      { title: 'Launch', description: 'Testing, deployment, and post-launch support.' }
+    ]
+  },
+  {
+    id: 'content-creation',
+    title: 'Content Creation',
+    slug: 'content-creation',
+    description: 'Video, copy, and creative assets that keep your brand present everywhere.',
+    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80',
+    longDescription: 'Content is king, but context is queen. We create compelling assets tailored to each platform, ensuring your message lands with impact every time.',
+    features: [
+      'Video Production & Editing',
+      'Copywriting & storytelling',
+      'Graphic Design',
+      'Photography'
+    ],
+    benefits: [
+      'Compelling brand storytelling',
+      'Consistent visual language',
+      'Higher audience retention',
+      'Versatile asset library'
+    ],
+    process: [
+      { title: 'Concept', description: 'Brainstorming ideas that align with your campaign goals.' },
+      { title: 'Production', description: 'Filming, writing, or designing the core assets.' },
+      { title: 'Editing', description: 'Polishing and refining to meet professional standards.' },
+      { title: 'Distribution', description: 'Formatting assets for optimal performance across channels.' }
+    ]
   }
 ];
 
 export const PROJECTS: Project[] = [
-  { id: 1, title: "Joker Media", category: "Client Website", url: "https://jokermedia.com/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
-  { id: 2, title: "Silver Thatch Pensions", category: "Client Website", url: "https://silverthatch.org.ky/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
-  { id: 3, title: "Century Boats", category: "Client Website", url: "https://centuryboats.com/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
-  { id: 4, title: "Greendale Physical Therapy", category: "Client Website", url: "https://greendalept.com/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
-  { id: 5, title: "RussellsOrlando", category: "Client Website", url: "https://russellsorlando.com/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
-  { id: 6, title: "Rolly Polly", category: "Client Website", url: "https://rolypoly.com/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
+  { 
+    id: 1, 
+    title: "Joker Media", 
+    category: "Client Website", 
+    url: "https://jokermedia.com/", 
+    description: "Custom website and digital marketing implementation.", 
+    technologies: ["Web Design", "SEO", "Analytics"],
+    result: "+240% conversions",
+    industry: "Entertainment"
+  },
+  { 
+    id: 2, 
+    title: "Silver Thatch Pensions", 
+    category: "Client Website", 
+    url: "https://silverthatch.org.ky/", 
+    description: "Custom website and digital marketing implementation.", 
+    technologies: ["Web Design", "SEO", "Analytics"],
+    result: "3x Traffic Growth",
+    industry: "Finance"
+  },
+  { 
+    id: 3, 
+    title: "Century Boats", 
+    category: "Client Website", 
+    url: "https://centuryboats.com/", 
+    description: "Custom website and digital marketing implementation.", 
+    technologies: ["Web Design", "SEO", "Analytics"],
+    result: "45% Lower CAC",
+    industry: "Marine"
+  },
+  { 
+    id: 4, 
+    title: "Greendale Physical Therapy", 
+    category: "Client Website", 
+    url: "https://greendalept.com/", 
+    description: "Custom website and digital marketing implementation.", 
+    technologies: ["Web Design", "SEO", "Analytics"],
+    result: "+180% Bookings",
+    industry: "Healthcare"
+  },
+  { 
+    id: 5, 
+    title: "RussellsOrlando", 
+    category: "Client Website", 
+    url: "https://russellsorlando.com/", 
+    description: "Custom website and digital marketing implementation.", 
+    technologies: ["Web Design", "SEO", "Analytics"],
+    result: "2.5x Engagement",
+    industry: "Hospitality"
+  },
+  { 
+    id: 6, 
+    title: "Rolly Polly", 
+    category: "Client Website", 
+    url: "https://rolypoly.com/", 
+    description: "Custom website and digital marketing implementation.", 
+    technologies: ["Web Design", "SEO", "Analytics"],
+    result: "+300% Online Orders",
+    industry: "Food & Beverage"
+  },
   { id: 7, title: "Verdant Isle Pension Plan", category: "Client Website", url: "https://verdantisle.org.ky/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
   { id: 8, title: "SCCOOS", category: "Client Website", url: "https://sccoos.org/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
   { id: 9, title: "GCOOS", category: "Client Website", url: "https://gcoos.org/", description: "Custom website and digital marketing implementation.", technologies: ["Web Design", "SEO", "Analytics"] },
@@ -180,118 +342,7 @@ export const PROJECTS: Project[] = [
 ];
 
 
-export const SERVICES: Service[] = [
-  {
-    id: 'development',
-    title: 'Software & App Engineering',
-    description: 'High-performance digital products engineered for extreme scale, sub-1ms speed, and high-ticket conversion.',
-    icon: 'code',
-    longDescription: 'We dont just build websites; we engineer revenue-generating assets. Our development philosophy is rooted in "Stateless Architecture"—ensuring your platform remains lightning-fast regardless of user load. We bridge the gap between complex backend logic and intuitive, world-class user interfaces.',
-    methodology: 'Agile Modular Framework: We break complex software into secure, independent micro-modules that allow for rapid deployment and easy horizontal scaling without downtime.',
-    features: [
-      'Custom React/Next.js Web Applications',
-      'Native iOS & Android Mobile Engineering',
-      'Scalable SaaS Infrastructure Architecture',
-      'High-Performance E-commerce Engines',
-      'Enterprise API Design & Integration',
-      'Web3 & Blockchain Middleware'
-    ],
-    outcomes: [
-      '99.9% Core System Uptime',
-      '40% Reduction in Technical Debt',
-      'Sub-2s Page Load Performance',
-      'Optimized Security Protocols'
-    ]
-  },
-  {
-    id: 'social',
-    title: 'Social Media Domination',
-    description: 'Strategic brand presence and high-end content production that drives market authority and viral engagement.',
-    icon: 'share-2',
-    longDescription: 'Social media is no longer about posting; it is about psychological positioning. We use "Attention-First" strategies to ensure your brand isn’t just seen, but remembered. We produce cinematic-quality content that signals elite status to your target audience.',
-    methodology: 'The Narrative Loop: We create content cycles that build trust over 7 unique touchpoints, transforming passive scrollers into high-intent leads through authority-driven storytelling.',
-    features: [
-      'Cinematic Content Production (Reels/TikTok)',
-      'Brand Identity & Voice Development',
-      'Influencer & Creator Management',
-      'High-Growth Community Building',
-      'Social Sentiment Data Analysis',
-      'Viral Hook Engineering'
-    ],
-    outcomes: [
-      '300% Average Engagement Growth',
-      'Primary Authority Positioning',
-      'Sustainable Organic Reach',
-      'High-Intent Lead Generation'
-    ]
-  },
-  {
-    id: 'ads',
-    title: 'Performance Paid Ads',
-    description: 'ROI-focused performance marketing that converts traffic into consistent, scalable revenue streams.',
-    icon: 'zap',
-    longDescription: 'We approach paid ads as a pure engineering problem. By treating every dollar spent as a data point, we ruthlessly optimize for Return on Ad Spend (ROAS). We handle the full funnel—from cold interest to high-frequency retargeting.',
-    methodology: 'High-Velocity Testing (HVT): We deploy dozens of ad variations simultaneously to identify winning variables within 48 hours, allowing us to scale profitable campaigns with surgical precision.',
-    features: [
-      'Meta & Instagram Ads Scaling',
-      'Google Search & Display Mastery',
-      'High-Ticket YouTube Ad Funnels',
-      'Precision Retargeting Frameworks',
-      'Dynamic Creative Optimization',
-      'Advanced Attribution Tracking'
-    ],
-    outcomes: [
-      'Guaranteed ROAS Improvement',
-      'Scalable Daily Lead Volume',
-      'Reduced Customer Acquisition Cost (CAC)',
-      'Predictable Revenue Growth'
-    ]
-  },
-  {
-    id: 'seo',
-    title: 'SEO & Topical Authority',
-    description: 'Long-term organic growth frameworks that establish your brand as the definitive leader in your category.',
-    icon: 'search',
-    longDescription: 'Modern SEO isn’t about keywords; it’s about becoming the "Topical Authority." We build semantic content ecosystems that search engines cannot ignore. We focus on ranking for the high-intent queries that actually drive revenue, not just vanity traffic.',
-    methodology: 'Semantic Hub-and-Spoke: We build massive "Pillar Pages" supported by deep-dive clusters, signaling to search engines that your brand is the definitive expert in your niche.',
-    features: [
-      'Technical SEO Infrastructure Audits',
-      'Semantic Search Content Strategy',
-      'High-Authority Link Acquisition',
-      'AI-Driven Market Intent Mapping',
-      'Local & Global SERP Domination',
-      'Content Velocity Scaling'
-    ],
-    outcomes: [
-      'Rank 1 for High-Intent Queries',
-      'Consistent Organic Traffic Flow',
-      'Reduced Long-Term Ad Spend',
-      'Compound Market Influence'
-    ]
-  },
-  {
-    id: 'creative',
-    title: 'Branding & Visual Identity',
-    description: 'Premium visual design and creative direction that positions your brand for undisputed market leadership.',
-    icon: 'palette',
-    longDescription: 'Visuals speak before words. We design "Signal-Heavy" identities—visual systems that immediately communicate high value and technical competence. Our designs are built to look futuristic, clean, and authoritative across all digital nodes.',
-    methodology: 'Cognitive Branding: We use color theory and spatial design to evoke specific emotional responses that align with your business objectives and audience psychology.',
-    features: [
-      'High-End Logo & Identity Design',
-      'UI/UX Design Systems (Figma)',
-      'Motion Graphics & AR Assets',
-      'Brand Style Guides & Typography',
-      'Marketing Collateral Creation',
-      'Futuristic UI Elements'
-    ],
-    outcomes: [
-      'Instant Brand Recognition',
-      'High-End Market Positioning',
-      'Cohesive Visual Ecosystem',
-      'Enhanced User Trust Scores'
-    ]
-  }
-];
+
 
 export const CLIENTS: Client[] = [
   { id: 1, name: "Nexus Labs", url: "#" },

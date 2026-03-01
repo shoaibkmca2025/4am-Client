@@ -2,12 +2,14 @@
 export interface Service {
   id: string;
   title: string;
+  slug: string;
   description: string;
-  icon: string;
+  image: string;
   longDescription?: string;
-  features?: string[];
-  methodology?: string;
-  outcomes?: string[];
+  features: string[]; // What We Offer
+  benefits: string[]; // Benefits / Results
+  process: { title: string; description: string }[]; // Process Section
+  cta?: string;
 }
 
 export interface Client {
@@ -21,19 +23,10 @@ export interface NavItem {
   href: string;
   icon?: string;
   sectionId?: string;
+  subItems?: NavItem[];
 }
 
-export interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  author: string;
-  date: string;
-  category: string;
-  readTime: string;
-  imageUrl?: string;
-}
+
 
 export interface Project {
   id: number;
@@ -43,6 +36,8 @@ export interface Project {
   url: string;
   description: string;
   technologies: string[];
+  result?: string;
+  industry?: string;
 }
 
 // FIX: Added User interface to resolve multiple errors in components using AuthContext

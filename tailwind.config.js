@@ -5,7 +5,6 @@ module.exports = {
     "./*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -15,44 +14,46 @@ module.exports = {
       },
       colors: {
         brand: {
-          obsidian: '#0B0F19',
-          dark: '#0B0F19',
-          primary: '#7C3AED',
-          accent: '#7C3AED',
-          signal: '#7C3AED'
+          primary: '#FF8A3D', // Warm Orange
+          secondary: '#FFC56A', // Gold
+          accent: '#0F7B65', // Deep Green
+          sage: '#7FAF9C', // Muted Sage
+          dark: '#1F1F1F', // Dark Charcoal
+          gray: '#6B6B6B', // Soft Gray
+          bg: '#F4F1EC', // Soft Warm Gray
+          surface: '#FFFFFF', // White
         }
       },
       boxShadow: {
-        'premium': '0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.05), 0 12px 24px rgba(0,0,0,0.05)',
-        'premium-dark': '0 0 0 1px rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.4), 0 24px 48px rgba(0,0,0,0.4)',
-        'glow': '0 0 20px rgba(37, 99, 235, 0.15)',
+        'soft': '0 10px 30px rgba(0, 0, 0, 0.08)',
+        'clay': 'inset 2px 2px 6px rgba(255, 255, 255, 0.6), inset -2px -2px 6px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.08)',
+        'clay-hover': 'inset 2px 2px 6px rgba(255, 255, 255, 0.6), inset -2px -2px 6px rgba(0, 0, 0, 0.05), 0 15px 40px rgba(0, 0, 0, 0.12)',
+        'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.3)',
       },
-      animation: {
-        'mesh': 'mesh 20s ease infinite',
-        'scanline': 'scanline 10s linear infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'grain': 'grain 8s steps(10) infinite',
+      backgroundImage: {
+        'gradient-primary': 'linear-gradient(135deg, #FF8A3D 0%, #FFC56A 100%)',
+        'gradient-clay': 'linear-gradient(145deg, #ffffff, #f0f0f0)',
       },
       keyframes: {
-        mesh: {
-          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-          '33%': { transform: 'translate(5%, -5%) scale(1.05)' },
-          '66%': { transform: 'translate(-5%, 5%) scale(0.95)' },
+        shimmer: {
+          '0%': { backgroundPosition: '200% center' },
+          '100%': { backgroundPosition: '-200% center' },
         },
-        grain: {
-          '0%, 100%': { transform: 'translate(0, 0)' },
-          '10%': { transform: 'translate(-5%, -10%)' },
-          '20%': { transform: 'translate(-15%, 5%)' },
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        scanline: {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(100%)' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-15px)' },
+        scroll: {
+          '0%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(6px)' },
+          '100%': { transform: 'translateY(0)' },
         }
-      }
+      },
+      animation: {
+        'text-shimmer': 'shimmer 8s ease-in-out infinite',
+        'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
+        'scroll': 'scroll 1.5s ease-in-out infinite',
+      },
     },
   },
   plugins: [],

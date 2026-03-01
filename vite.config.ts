@@ -11,9 +11,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
-        },
+        manualChunks: undefined,
       },
     },
   },

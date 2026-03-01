@@ -1,37 +1,25 @@
-
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Zap } from 'lucide-react';
+import { Menu, X, Zap, ChevronDown } from 'lucide-react';
 import { NAV_ITEMS } from '../constants';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import MonkeyThemeToggle from './MonkeyThemeToggle';
 import LogoImage from '../assets/logo.jpeg';
 import { scrollToSection } from '../utils/scroll';
 
 const ConnectButton: React.FC<{ className?: string; onClick?: () => void }> = ({ className, onClick }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
-    <motion.button
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+    <button
       onClick={onClick}
-      className={`relative group px-3 md:px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all duration-300 ease-out flex items-center justify-center gap-2 overflow-hidden cursor-pointer shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 bg-gradient-to-r from-purple-600 via-indigo-500 to-cyan-500 text-white border border-white/10 hover:border-white/20 ${className || 'w-auto'}`}
+      className={`px-4 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-clay-sm hover:shadow-clay-hover hover:-translate-y-0.5 border border-white/20 transition-all duration-300 ${className || 'w-auto'}`}
     >
-      <div className="flex items-center gap-1.5 relative z-20">
-        <Zap className={`w-3 h-3 transition-transform duration-300 ${isHovered ? 'scale-110 rotate-12' : ''}`} />
-        <span className="font-mono relative top-[1px] whitespace-nowrap">
-          <span className="hidden xl:inline">Get Free </span>
+      <div className="flex items-center justify-center">
+        <Zap className="w-3.5 h-3.5 mr-2 fill-white/20" />
+        <span className="font-bold text-[11px] tracking-wide uppercase">
+          <span className="hidden xl:inline">Get Started</span>
           <span className="hidden md:inline xl:hidden">Let's Talk</span>
           <span className="md:hidden">Book</span>
         </span>
       </div>
-      
-      {/* Shine effect */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-    </motion.button>
+    </button>
   );
 };
 
@@ -40,6 +28,7 @@ const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [activeSection, setActiveSection] = useState<string | null>('home');
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const lastScrollY = React.useRef(0);
   const location = useLocation();
   const navigate = useNavigate();
@@ -79,6 +68,15 @@ const Navbar: React.FC = () => {
     setIsOpen(false);
   };
 
+  const handleContactClick = () => {
+    if (location.pathname === '/') {
+      scrollToSection('contact');
+    } else {
+      navigate('/', { state: { scrollTo: 'contact' } });
+    }
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -110,7 +108,7 @@ const Navbar: React.FC = () => {
       return;
     }
 
-    const sectionIds = ['home', 'services', 'about', 'work', 'insights', 'contact'];
+    const sectionIds = ['home', 'services', 'about', 'work', 'contact'];
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -136,12 +134,16 @@ const Navbar: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-[9999] transform-gpu transition-all duration-300 ease-in-out ${
-        scrolled ? 'py-1.5' : 'py-2.5'
+      className={`fixed top-0 left-0 right-0 z-[9999] transform-gpu transition-all duration-500 ease-in-out ${
+        scrolled ? 'py-2' : 'py-4'
       } ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
     >
       <div className="max-w-[1200px] mx-auto px-6 w-full">
-        <div className="flex w-full items-center justify-between gap-2 md:gap-4 lg:gap-6 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_18px_45px_rgba(15,23,42,0.30)] px-4 py-2">
+        <div className={`flex w-full items-center justify-between gap-2 md:gap-4 lg:gap-6 rounded-full px-4 py-2.5 transition-all duration-300 ${
+          scrolled 
+            ? 'bg-brand-surface/90 backdrop-blur-md shadow-clay border border-white/40' 
+            : 'bg-brand-surface/50 backdrop-blur-sm border border-white/20'
+        }`}>
 
         {/* 1. Left Section: Logo */}
         <div className="flex items-center gap-3 shrink-0">
@@ -150,7 +152,7 @@ const Navbar: React.FC = () => {
             onClick={handleLogoClick}
             className="flex items-center gap-3 group shrink-0"
           >
-            <div className="w-9 h-9 rounded-xl overflow-hidden bg-zinc-900/90 dark:bg-black flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-105">
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-brand-surface flex items-center justify-center shadow-clay group-hover:shadow-clay-hover transition-all duration-300 transform group-hover:scale-105">
               <img
                 src={LogoImage}
                 alt="4AM Global Media logo"
@@ -158,7 +160,7 @@ const Navbar: React.FC = () => {
               />
             </div>
             <div className="hidden lg:block">
-              <span className="text-lg font-display font-semibold text-zinc-900 dark:text-white uppercase tracking-wide block">
+              <span className="text-lg font-display font-bold text-brand-dark uppercase tracking-wide block">
                 4AM Global Media
               </span>
             </div>
@@ -166,7 +168,7 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* 2. Center Section: Navigation Links (Desktop) */}
-        <nav className="hidden md:flex flex-1 items-center justify-center gap-4 lg:gap-8">
+        <nav className="hidden md:flex flex-1 items-center justify-center gap-6 lg:gap-8">
           {NAV_ITEMS.map((item) => {
             const isHomeItem = item.label.toLowerCase() === 'home';
             let active = false;
@@ -181,133 +183,123 @@ const Navbar: React.FC = () => {
               active = location.pathname === item.href;
             }
 
-            if (item.sectionId && location.pathname === '/') {
-              return (
-                <button
-                  key={item.label}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection(item.sectionId!);
-                    setIsOpen(false);
-                  }}
-                  className={`group relative text-[11px] font-semibold tracking-[0.24em] uppercase transition-colors duration-300 cursor-pointer ${
+            return (
+              <div key={item.label} className="relative group">
+                <Link
+                  to={item.href}
+                  onClick={(event) => handleNavClick(event, item)}
+                  className={`flex items-center gap-1 text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer px-3 py-1.5 rounded-full ${
                     active
-                      ? 'text-zinc-900 dark:text-white'
-                      : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                      ? 'text-brand-primary bg-brand-primary/5'
+                      : 'text-brand-gray hover:text-brand-dark hover:bg-brand-dark/5'
                   }`}
                 >
-                  <span className="relative z-10">{item.label}</span>
-                  <span
-                    className={`absolute -bottom-2 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-brand-primary to-brand-accent origin-center transform-gpu transition-all duration-300 ease-out ${
-                      active ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0 group-hover:scale-x-50 group-hover:opacity-50'
-                    }`}
-                  />
-                </button>
-              );
-            }
+                  {item.label}
+                  {item.subItems && <ChevronDown className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" />}
+                </Link>
 
-            return (
-              <Link
-                key={item.label}
-                to={item.href}
-                onClick={(event) => handleNavClick(event, item)}
-                className={`group relative text-[11px] font-semibold tracking-[0.24em] uppercase transition-colors duration-300 cursor-pointer ${
-                  active
-                    ? 'text-zinc-900 dark:text-white'
-                    : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
-                }`}
-              >
-                <span className="relative z-10">{item.label}</span>
-                <span
-                  className={`absolute -bottom-2 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-brand-primary to-brand-accent origin-center transform-gpu transition-all duration-300 ease-out ${
-                    active
-                      ? 'scale-x-100 opacity-100'
-                      : 'scale-x-0 opacity-0 group-hover:scale-x-50 group-hover:opacity-50'
-                  }`}
-                />
-              </Link>
+                {/* Desktop Dropdown */}
+                {item.subItems && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                    <div className="bg-brand-surface border border-white/60 rounded-2xl shadow-clay p-2 w-64 flex flex-col gap-1 overflow-hidden">
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.label}
+                          to={subItem.href}
+                          onClick={(event) => handleNavClick(event, subItem)}
+                          className="text-xs font-bold text-brand-gray px-4 py-3 hover:bg-brand-bg hover:text-brand-primary rounded-xl transition-all duration-200 text-left block tracking-wide uppercase"
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
 
-        {/* 3. Right Section: Utils & CTA */}
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-          <div className="hidden md:block scale-90">
-            <MonkeyThemeToggle compact={true} />
+        {/* 3. Right Section: CTA & Mobile Menu */}
+        <div className="flex items-center gap-3 md:gap-4 shrink-0">
+          <ConnectButton 
+            onClick={handleContactClick}
+            className="hidden sm:flex"
+          />
+          
+          <div className="md:hidden flex items-center gap-2">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2.5 text-brand-gray hover:text-brand-primary hover:bg-brand-bg rounded-xl transition-all duration-300 shadow-sm border border-transparent hover:border-brand-gray/10"
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
-
-          <div className="hidden md:block">
-            <ConnectButton onClick={() => scrollToSection('contact')} />
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
-          </motion.button>
-        </div>
         </div>
       </div>
-
+      
       {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            className="absolute top-full left-0 right-0 md:hidden px-4 pb-4 max-h-[calc(100vh-80px)] overflow-y-auto pointer-events-auto"
-          >
-            <div className="glass bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl border border-zinc-200/80 dark:border-white/5 rounded-2xl shadow-[0_18px_45px_rgba(15,23,42,0.3)] p-4 flex flex-col gap-3">
-              {NAV_ITEMS.map((item) => {
-                if (item.sectionId && location.pathname === '/') {
-                  return (
-                    <button
-                      key={item.label}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsOpen(false);
-                        scrollToSection(item.sectionId!); 
-                      }}
-                      className="text-sm font-semibold uppercase tracking-[0.22em] text-center text-zinc-600 dark:text-zinc-200 py-3 hover:text-brand-primary active:bg-zinc-100 dark:active:bg-white/5 rounded-xl transition-colors w-full"
-                    >
-                      {item.label}
-                    </button>
-                  );
-                }
-                return (
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-4 px-4 pb-4">
+          <div className="bg-brand-surface border border-white/60 rounded-[32px] shadow-clay p-6 flex flex-col gap-4 max-h-[80vh] overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
+            {NAV_ITEMS.map((item) => (
+              <div key={item.label} className="w-full">
+                <div className="flex items-center justify-between w-full">
                   <Link
-                    key={item.label}
                     to={item.href}
                     onClick={(event) => handleNavClick(event, item)}
-                    className="text-sm font-semibold uppercase tracking-[0.22em] text-center text-zinc-600 dark:text-zinc-200 py-3 hover:text-brand-primary active:bg-zinc-100 dark:active:bg-white/5 rounded-xl transition-colors"
+                    className="flex-1 text-sm font-bold uppercase tracking-[0.2em] text-brand-dark py-3 hover:text-brand-primary active:bg-brand-bg rounded-xl transition-colors text-center"
                   >
                     {item.label}
                   </Link>
-                );
-              })}
-              <div className="pt-2 border-t border-zinc-100 dark:border-white/10 flex flex-col gap-3">
-                <div className="w-full">
-                  <ConnectButton 
-                    className="w-full py-2.5" 
-                    onClick={() => {
-                      setIsOpen(false);
-                      scrollToSection('contact');
-                    }}
-                  />
+                  {item.subItems && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setExpandedItem(expandedItem === item.label ? null : item.label);
+                      }}
+                      className="p-3 text-brand-gray hover:text-brand-dark"
+                    >
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          expandedItem === item.label ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+                  )}
                 </div>
-                <div className="flex justify-center py-2">
-                  <MonkeyThemeToggle />
-                </div>
+                
+                {/* Mobile Submenu */}
+                {item.subItems && expandedItem === item.label && (
+                  <div className="bg-brand-bg/50 rounded-2xl p-2 mb-2 space-y-1 mt-2">
+                    {item.subItems.map((subItem) => (
+                      <Link
+                        key={subItem.label}
+                        to={subItem.href}
+                        onClick={(event) => handleNavClick(event, subItem)}
+                        className="block text-xs font-bold text-brand-gray py-3 px-4 hover:text-brand-primary hover:bg-white rounded-xl transition-all text-center uppercase tracking-wider shadow-sm hover:shadow-md"
+                      >
+                        {subItem.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
+            ))}
+            
+            <div className="pt-4 border-t border-brand-gray/10 flex flex-col gap-3">
+              <ConnectButton 
+                onClick={handleContactClick}
+                className="w-full justify-center py-4 text-sm"
+              />
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
+      </div>
     </header>
   );
 };

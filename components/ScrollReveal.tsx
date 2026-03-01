@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 interface ScrollRevealProps {
   children: React.ReactNode;
@@ -7,54 +7,43 @@ interface ScrollRevealProps {
   delay?: number;
 }
 
-const ScrollReveal: React.FC<ScrollRevealProps> = ({ children, as: Component = 'div', className = '', delay = 0 }) => {
-  const ref = useRef<HTMLElement | null>(null);
+const ScrollReveal: React.FC<ScrollRevealProps> = ({ 
+  children, 
+  as: Component = 'div', 
+  className = '', 
+  delay = 0 
+}) => {
   const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) {
-      setIsVisible(true);
-      return;
-    }
-
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (delay) {
-              window.setTimeout(() => setIsVisible(true), delay);
-            } else {
-              setIsVisible(true);
-            }
-            observer.unobserve(entry.target);
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect(); // Animate only once
+        }
       },
-      {
-        threshold: 0.15
+      { 
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px' 
       }
     );
 
-    observer.observe(node);
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
 
     return () => observer.disconnect();
-  }, [delay]);
-
-  const baseClasses = 'transition-all duration-500 ease-out will-change-transform will-change-opacity';
-  const stateClasses = isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5';
+  }, []);
 
   return (
     <Component
-      ref={ref as any}
-      className={`${baseClasses} ${stateClasses} ${className}`}
+      ref={ref}
+      className={`transition-all duration-700 ease-out transform will-change-transform motion-reduce:transition-none ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      } ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
     </Component>
@@ -62,4 +51,3 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({ children, as: Component = '
 };
 
 export default ScrollReveal;
-

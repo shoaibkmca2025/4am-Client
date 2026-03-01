@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Instagram, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
 import LogoImage from '../assets/logo.jpeg';
@@ -6,47 +5,47 @@ import { scrollToSection } from '../utils/scroll';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="relative z-50 border-t border-zinc-200 dark:border-zinc-800 bg-slate-50 text-slate-900 dark:bg-brand-obsidian dark:text-zinc-100 transition-colors duration-500">
-      <div className="container mx-auto px-6 max-w-[1200px] py-16 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 mb-12">
+    <footer className="relative z-50 border-t border-brand-gray/10 bg-brand-bg text-brand-dark transition-colors duration-500">
+      <div className="container mx-auto px-6 max-w-[1200px] py-10 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 mb-12">
           <div className="md:col-span-4 space-y-6">
             <a 
               href="#home"
               onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}
-              className="inline-flex items-center gap-3"
+              className="inline-flex items-center gap-3 group"
             >
-              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-black flex items-center justify-center shadow-lg shadow-brand-primary/40">
+              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-brand-surface flex items-center justify-center shadow-clay group-hover:shadow-clay-hover transition-all duration-300">
                 <img
                   src={LogoImage}
                   alt="4AM Global Media logo"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="text-2xl font-display font-bold uppercase tracking-tight">
+              <span className="text-2xl font-display font-bold uppercase tracking-tight text-brand-dark">
                 4AM Global Media
               </span>
             </a>
-            <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 max-w-sm leading-relaxed">
+            <p className="text-sm md:text-base text-brand-gray max-w-sm leading-relaxed">
               The growth engine that never sleeps. Powering founders, operators, and teams across the globe.
             </p>
-              <div className="inline-flex items-center gap-3 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-emerald-700 dark:text-emerald-200">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand-surface border border-white/50 shadow-clay-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)] animate-pulse" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-brand-gray/80 font-bold">
                 Systems online
               </span>
             </div>
           </div>
 
           <div className="md:col-span-5 grid grid-cols-2 lg:grid-cols-3 gap-10">
-            <div className="space-y-4">
-              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-500">
+            <div className="space-y-6">
+              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-brand-primary/80">
                 Services
               </h4>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-3 text-sm">
                 <a
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="flex items-center gap-1 text-slate-900 dark:text-zinc-100 font-semibold hover:text-brand-primary transition-colors"
+                  className="inline-flex items-center gap-1 text-brand-dark font-bold hover:text-brand-primary transition-colors"
                 >
                   Full service menu
                   <ArrowRight className="w-3 h-3" />
@@ -54,96 +53,82 @@ const Footer: React.FC = () => {
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
                   Product & web
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
                   Paid growth
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
                   SEO & content
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
                   Brand systems
                 </a>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-500">
+            <div className="space-y-6">
+              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-brand-primary/80">
                 Resources
               </h4>
-              <div className="space-y-2 text-sm">
-                <a 
-                  href="#insights"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('insights'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
-                >
-                  Blog
-                </a>
+              <div className="space-y-3 text-sm">
                 <a 
                   href="#work"
                   onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
                   Case studies
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
                   Service overview
                 </a>
-                <span className="block text-zinc-600 dark:text-zinc-400">
+                <span className="block text-brand-gray/60 cursor-not-allowed">
                   ROI & performance reports
                 </span>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-500">
+            <div className="space-y-6">
+              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-brand-primary/80">
                 Company
               </h4>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-3 text-sm">
                 <a 
                   href="#work"
                   onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
-                  Case studies
-                </a>
-                <a 
-                  href="#insights"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('insights'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
-                >
-                  Blog
+                  Our Work
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
-                  Pricing overview
+                  Pricing
                 </a>
                 <a 
                   href="#contact"
                   onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}
-                  className="block text-zinc-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+                  className="block text-brand-gray hover:text-brand-dark transition-colors"
                 >
                   Partner with us
                 </a>
@@ -152,19 +137,19 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="md:col-span-3 space-y-6">
-            <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-500">
+            <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-brand-primary/80">
               Contact
             </h4>
 
             <div className="space-y-4">
               <a
                 href="mailto:4amhustles@gmail.com"
-                className="block rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700/80 dark:bg-zinc-900/40 px-4 py-3 hover:border-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 transition-colors"
+                className="block rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 px-5 py-4 transition-all duration-300 group"
               >
-                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500 mb-1">
+                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand-gray/70 mb-1 group-hover:text-brand-primary transition-colors">
                   Email
                 </p>
-                <p className="text-sm font-medium text-slate-900 dark:text-zinc-100">
+                <p className="text-sm font-bold text-brand-dark">
                   4amhustles@gmail.com
                 </p>
               </a>
@@ -174,17 +159,17 @@ const Footer: React.FC = () => {
                   href="https://www.instagram.com/reel/DUBIUl5DfBU/?utm_source=ig_web_copy_link"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700/80 dark:bg-zinc-900/40 px-4 py-3 hover:border-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 transition-colors flex items-center justify-between"
+                  className="flex-1 rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 px-5 py-4 transition-all duration-300 flex items-center justify-between group"
                 >
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500 mb-1">
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand-gray/70 mb-1 group-hover:text-brand-primary transition-colors">
                       Instagram
                     </p>
-                    <p className="text-sm font-medium text-slate-900 dark:text-zinc-100">
+                    <p className="text-sm font-bold text-brand-dark">
                       @4amglobalmedia
                     </p>
                   </div>
-                  <Instagram className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                  <Instagram className="w-5 h-5 text-brand-gray group-hover:text-brand-primary transition-colors" />
                 </a>
               </div>
 
@@ -192,28 +177,20 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="pt-6 mt-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-zinc-500">
+        <div className="pt-8 mt-4 border-t border-brand-gray/10 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-brand-gray/60">
           <p className="font-mono uppercase tracking-[0.2em]">
             &copy; {new Date().getFullYear()} 4AM Global Media. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-2">
-              <ShieldCheck className="w-3 h-3" />
-              <span>256‑bit SSL</span>
-            </span>
-            <span className="hidden md:inline-block h-3 w-px bg-zinc-700" />
-            <span className="hidden md:inline-block">
-              Satisfaction focused
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="inline-flex items-center gap-1 hover:text-zinc-300 transition-colors">
-              <Lock className="w-3 h-3" />
-              <span>Privacy</span>
-            </button>
-            <button className="hover:text-zinc-300 transition-colors">
-              Terms
-            </button>
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3 h-3 text-emerald-600" />
+              <span className="font-medium text-brand-gray">Secure</span>
+            </div>
+            <span className="w-1 h-1 rounded-full bg-brand-gray/30" />
+            <div className="flex items-center gap-1.5">
+              <Lock className="w-3 h-3 text-brand-gray/50" />
+              <span>Encrypted</span>
+            </div>
           </div>
         </div>
       </div>

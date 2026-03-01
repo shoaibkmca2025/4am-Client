@@ -35,38 +35,26 @@ const StatsSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="about" className="py-16 md:py-20 bg-gradient-to-b from-slate-50 via-white to-transparent dark:from-brand-dark dark:via-[#050816] dark:to-transparent">
-      <div className="container mx-auto px-6 max-w-[1200px]">
-        <ScrollReveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-12">
-          <div>
-            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-500">
-              Results / Stats
-            </p>
-            <h2 className="mt-3 text-2xl md:text-[32px] font-display font-semibold text-slate-900 dark:text-white">
-              Numbers from 4AM Global Media clients
-            </h2>
+    <section id="about" className="py-16 bg-brand-bg">
+      <div className="w-full max-w-[1200px] mx-auto px-6">
+        <div className="bg-brand-surface shadow-clay rounded-[32px] p-10 md:p-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-center divide-y md:divide-y-0 md:divide-x divide-brand-gray/10">
+            {stats.map((stat, index) => (
+              <div 
+                key={index}
+                className="relative group text-center py-4 md:py-0"
+              >
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <div className="text-4xl md:text-5xl font-bold text-brand-dark tracking-tight group-hover:scale-110 transition-transform duration-300 drop-shadow-sm">
+                    {values[index]}{stat.suffix}
+                  </div>
+                  <div className="text-sm font-semibold text-brand-gray uppercase tracking-widest">
+                    {stat.label}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 max-w-md">
-            We focus on visibility that converts: measurable lifts in traffic, trust,
-            and qualified pipeline for founders and teams.
-          </p>
-        </ScrollReveal>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {stats.map((stat, index) => (
-            <ScrollReveal
-              key={stat.label}
-              delay={index * 80}
-              className="glass rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5 md:p-6 flex flex-col gap-2"
-            >
-              <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
-                {stat.label}
-              </span>
-              <span className="text-2xl md:text-3xl font-display font-semibold text-slate-900 dark:text-white">
-                {values[index]}
-                {stat.suffix}
-              </span>
-            </ScrollReveal>
-          ))}
         </div>
       </div>
     </section>
