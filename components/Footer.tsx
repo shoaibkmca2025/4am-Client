@@ -1,5 +1,5 @@
 import React from 'react';
-import { Instagram, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Instagram, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
 import LogoImage from '../assets/logo.jpeg';
 import { scrollToSection } from '../utils/scroll';
 
@@ -141,38 +141,25 @@ const Footer: React.FC = () => {
               Contact
             </h4>
 
-            <div className="space-y-4">
+            <div className="flex gap-3">
               <a
                 href="mailto:4amhustles@gmail.com"
-                className="block rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 px-5 py-4 transition-all duration-300 group"
+                aria-label="Email us"
+                className="w-14 h-14 rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group"
+                title="Email"
               >
-                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand-gray/70 mb-1 group-hover:text-brand-primary transition-colors">
-                  Email
-                </p>
-                <p className="text-sm font-bold text-brand-dark">
-                  4amhustles@gmail.com
-                </p>
+                <Mail className="w-6 h-6 text-brand-gray group-hover:text-brand-primary transition-colors" />
               </a>
-
-              <div className="flex gap-3">
-                <a
-                  href="https://www.instagram.com/reel/DUBIUl5DfBU/?utm_source=ig_web_copy_link"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex-1 rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 px-5 py-4 transition-all duration-300 flex items-center justify-between group"
-                >
-                  <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand-gray/70 mb-1 group-hover:text-brand-primary transition-colors">
-                      Instagram
-                    </p>
-                    <p className="text-sm font-bold text-brand-dark">
-                      @4amglobalmedia
-                    </p>
-                  </div>
-                  <Instagram className="w-5 h-5 text-brand-gray group-hover:text-brand-primary transition-colors" />
-                </a>
-              </div>
-
+              <a
+                href="https://www.instagram.com/reel/DUBIUl5DfBU/?utm_source=ig_web_copy_link"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="w-14 h-14 rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group"
+                title="Instagram"
+              >
+                <Instagram className="w-6 h-6 text-brand-gray group-hover:text-brand-primary transition-colors" />
+              </a>
             </div>
           </div>
         </div>

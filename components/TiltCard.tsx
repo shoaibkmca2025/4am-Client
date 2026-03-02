@@ -63,7 +63,7 @@ const TiltCard: React.FC<TiltCardProps> = ({
         transformStyle: "preserve-3d",
         perspective: perspective,
       }}
-      className={`relative will-change-transform ${className}`}
+      className={`relative ${className}`}
     >
       {children}
     </motion.div>

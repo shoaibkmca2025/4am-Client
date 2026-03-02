@@ -5,25 +5,32 @@ import TiltCard from './TiltCard';
 
 const Contact: React.FC = () => {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [form, setForm] = useState({
+    fullName: '',
+    workEmail: '',
+    phone: '',
+    company: '',
+    interestedIn: '',
+    budget: '',
+    message: '',
+  });
+
+  const updateField = (field: keyof typeof form, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
-    setTimeout(() => setStatus('success'), 1500);
+    setTimeout(() => setStatus('success'), 900);
   };
 
   return (
-    <SpotlightSection id="contact" className="py-24 relative bg-transparent overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[10%] -left-[10%] w-[600px] h-[600px] rounded-full bg-brand-primary/5 blur-[100px]" />
-        <div className="absolute bottom-[10%] right-[10%] w-[500px] h-[500px] rounded-full bg-brand-secondary/5 blur-[80px]" />
-      </div>
-
+    <SpotlightSection id="contact" className="py-20 md:py-24 relative bg-transparent overflow-hidden">
       <div className="container mx-auto px-6 max-w-[1000px] relative z-10">
         
         {/* Header */}
-        <div className="max-w-2xl mx-auto text-center mb-16">
+        <div className="max-w-2xl mx-auto text-center mb-12 md:mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 shadow-lg mb-6">
             <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
             <span className="text-xs font-bold text-gray-300 tracking-widest uppercase">Contact Us</span>
@@ -92,7 +99,18 @@ const Contact: React.FC = () => {
                     Our growth architects will analyze your coordinates and reach out within 24 hours.
                   </p>
                   <button 
-                    onClick={() => setStatus('idle')} 
+                    onClick={() => {
+                      setStatus('idle');
+                      setForm({
+                        fullName: '',
+                        workEmail: '',
+                        phone: '',
+                        company: '',
+                        interestedIn: '',
+                        budget: '',
+                        message: '',
+                      });
+                    }} 
                     className="text-brand-primary font-bold uppercase tracking-widest text-xs hover:text-brand-accent transition-colors"
                   >
                     Send another message
@@ -106,6 +124,8 @@ const Contact: React.FC = () => {
                       <input 
                         required 
                         type="text" 
+                        value={form.fullName}
+                        onChange={(e) => updateField('fullName', e.currentTarget.value)}
                         className="w-full bg-black/20 rounded-xl px-5 py-3.5 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all duration-300 shadow-inner focus:shadow-inner-light text-sm font-medium border border-white/10" 
                         placeholder="John Doe" 
                       />
@@ -115,9 +135,68 @@ const Contact: React.FC = () => {
                       <input 
                         required 
                         type="email" 
+                        value={form.workEmail}
+                        onChange={(e) => updateField('workEmail', e.currentTarget.value)}
                         className="w-full bg-black/20 rounded-xl px-5 py-3.5 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all duration-300 shadow-inner focus:shadow-inner-light text-sm font-medium border border-white/10" 
                         placeholder="john@company.com" 
                       />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-300 uppercase tracking-widest ml-1">Phone</label>
+                      <input
+                        type="tel"
+                        value={form.phone}
+                        onChange={(e) => updateField('phone', e.currentTarget.value)}
+                        className="w-full bg-black/20 rounded-xl px-5 py-3.5 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all duration-300 shadow-inner focus:shadow-inner-light text-sm font-medium border border-white/10"
+                        placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-300 uppercase tracking-widest ml-1">Company</label>
+                      <input
+                        type="text"
+                        value={form.company}
+                        onChange={(e) => updateField('company', e.currentTarget.value)}
+                        className="w-full bg-black/20 rounded-xl px-5 py-3.5 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all duration-300 shadow-inner focus:shadow-inner-light text-sm font-medium border border-white/10"
+                        placeholder="Company name"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-300 uppercase tracking-widest ml-1">Interested In</label>
+                      <select
+                        value={form.interestedIn}
+                        onChange={(e) => updateField('interestedIn', e.currentTarget.value)}
+                        className="w-full bg-black/20 rounded-xl px-5 py-3.5 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all duration-300 shadow-inner focus:shadow-inner-light text-sm font-medium border border-white/10"
+                      >
+                        <option value="" className="bg-[#050B12]">Select a service</option>
+                        <option value="web-development" className="bg-[#050B12]">Web Development</option>
+                        <option value="social-media" className="bg-[#050B12]">Social Media Management</option>
+                        <option value="seo" className="bg-[#050B12]">SEO</option>
+                        <option value="paid-ads" className="bg-[#050B12]">Paid Ads</option>
+                        <option value="branding" className="bg-[#050B12]">Branding</option>
+                        <option value="other" className="bg-[#050B12]">Other</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-300 uppercase tracking-widest ml-1">Budget Range</label>
+                      <select
+                        value={form.budget}
+                        onChange={(e) => updateField('budget', e.currentTarget.value)}
+                        className="w-full bg-black/20 rounded-xl px-5 py-3.5 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all duration-300 shadow-inner focus:shadow-inner-light text-sm font-medium border border-white/10"
+                      >
+                        <option value="" className="bg-[#050B12]">Select a range</option>
+                        <option value="under-500" className="bg-[#050B12]">Under $500</option>
+                        <option value="500-1500" className="bg-[#050B12]">$500 – $1,500</option>
+                        <option value="1500-5000" className="bg-[#050B12]">$1,500 – $5,000</option>
+                        <option value="5000-15000" className="bg-[#050B12]">$5,000 – $15,000</option>
+                        <option value="15000-plus" className="bg-[#050B12]">$15,000+</option>
+                      </select>
                     </div>
                   </div>
 
@@ -126,6 +205,8 @@ const Contact: React.FC = () => {
                     <textarea 
                       required 
                       rows={4} 
+                      value={form.message}
+                      onChange={(e) => updateField('message', e.currentTarget.value)}
                       className="w-full bg-black/20 rounded-xl px-5 py-3.5 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all duration-300 shadow-inner focus:shadow-inner-light resize-none text-sm font-medium border border-white/10" 
                       placeholder="Tell us about your project..." 
                     />

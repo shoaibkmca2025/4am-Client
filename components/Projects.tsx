@@ -23,7 +23,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
 
   return (
     <div 
-      className="snap-center shrink-0 w-[85vw] max-w-[320px] md:w-[340px] lg:w-[380px] h-[480px] relative group cursor-pointer"
+      className="snap-center shrink-0 w-[85vw] max-w-[320px] md:w-[340px] lg:w-[380px] h-[420px] md:h-[480px] relative group cursor-pointer"
       onClick={handleClick}
     >
       <TiltCard className="h-full w-full">
@@ -33,6 +33,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
           <img
             src={imageSrc}
             alt={project.title}
+            loading="lazy"
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
             onError={() => {
               if (!imageSrc.includes('picsum.photos')) {
@@ -138,7 +139,7 @@ const Projects: React.FC = () => {
   };
 
   return (
-    <SpotlightSection id="work" className="py-24 bg-transparent overflow-hidden relative">
+    <SpotlightSection id="work" className="py-20 md:py-24 bg-transparent overflow-hidden relative">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
          <div className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] rounded-full bg-brand-primary/10 blur-[120px]" />
@@ -195,7 +196,7 @@ const Projects: React.FC = () => {
             ))}
              
              {/* View All Card (Last item) */}
-             <div className="snap-center shrink-0 w-[85vw] max-w-[320px] md:w-[340px] lg:w-[380px] h-[480px] flex items-center justify-center">
+             <div className="snap-center shrink-0 w-[85vw] max-w-[320px] md:w-[340px] lg:w-[380px] h-[420px] md:h-[480px] flex items-center justify-center">
                 <a href="#" className="group flex flex-col items-center justify-center text-center p-8 rounded-[32px] bg-white/5 border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300 w-full h-full backdrop-blur-sm">
                    <div className="w-20 h-20 rounded-full bg-black/20 shadow-inner flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/5">
                      <ArrowRight className="w-8 h-8 text-brand-primary" />

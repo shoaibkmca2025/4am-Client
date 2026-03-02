@@ -26,21 +26,27 @@ const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
 function App() {
   return (
-      <Router>
+    <Router>
       <ScrollToTop />
-        <AuthProvider>
-          <Navbar />
-          <LayoutWrapper>
-            <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-sm text-stone-500">Loading 4AM experience…</div>}>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/services/:slug" element={<ServicePage />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </Suspense>
-          </LayoutWrapper>
-          <AIChatbot />
-        </AuthProvider>
+      <AuthProvider>
+        <Navbar />
+        <LayoutWrapper>
+          <Suspense
+            fallback={
+              <div className="min-h-[60vh] flex items-center justify-center text-sm text-stone-500">
+                Loading 4AM experience…
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/services/:slug" element={<ServicePage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </LayoutWrapper>
+        <AIChatbot />
+      </AuthProvider>
     </Router>
   );
 }

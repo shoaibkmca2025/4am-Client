@@ -13,7 +13,7 @@ const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, i
       <TiltCard className="h-full">
         <Link 
           to={`/services/${service.slug}`}
-          className="block group relative h-[280px] w-full overflow-hidden rounded-[24px] bg-white/5 border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 scroll-mt-24 cursor-pointer backdrop-blur-sm"
+          className="block group relative h-[240px] md:h-[280px] w-full overflow-hidden rounded-[24px] bg-white/5 border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 scroll-mt-24 cursor-pointer backdrop-blur-sm"
         >
           {/* Background Image */}
         <div className="absolute inset-0">
@@ -61,7 +61,7 @@ const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, i
 
 const Services: React.FC = () => {
   return (
-    <SpotlightSection id="services" className="py-24 relative overflow-hidden bg-transparent">
+    <SpotlightSection id="services" className="py-20 md:py-24 relative overflow-hidden bg-transparent">
       <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <ScrollReveal>

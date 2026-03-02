@@ -25,9 +25,9 @@ module.exports = {
         }
       },
       boxShadow: {
-        'soft': '0 10px 30px rgba(0, 0, 0, 0.08)',
-        'clay': 'inset 2px 2px 6px rgba(255, 255, 255, 0.6), inset -2px -2px 6px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.08)',
-        'clay-hover': 'inset 2px 2px 6px rgba(255, 255, 255, 0.6), inset -2px -2px 6px rgba(0, 0, 0, 0.05), 0 15px 40px rgba(0, 0, 0, 0.12)',
+        'soft': '0 8px 20px rgba(0, 0, 0, 0.08)',
+        'clay': 'inset 2px 2px 6px rgba(255, 255, 255, 0.6), inset -2px -2px 6px rgba(0, 0, 0, 0.05), 0 8px 20px rgba(0, 0, 0, 0.08)',
+        'clay-hover': 'inset 2px 2px 6px rgba(255, 255, 255, 0.6), inset -2px -2px 6px rgba(0, 0, 0, 0.05), 0 12px 25px rgba(0, 0, 0, 0.12)',
         'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.3)',
       },
       backgroundImage: {
