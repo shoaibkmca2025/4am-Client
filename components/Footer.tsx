@@ -143,7 +143,7 @@ const Footer: React.FC = () => {
 
             <div className="flex gap-3">
               <a
-                href="mailto:4amhustles@gmail.com"
+                href="mailto:4amglobalmedia@gmail.com"
                 aria-label="Email us"
                 className="w-14 h-14 rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group"
                 title="Email"
