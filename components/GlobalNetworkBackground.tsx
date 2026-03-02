@@ -334,7 +334,7 @@ const EarthScene = () => {
 
 const GlobalNetworkBackground: React.FC = () => {
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden bg-[#050B12]">
+    <div className="fixed inset-0 z-0 overflow-hidden bg-[#050B12]">
       <Canvas 
         camera={{ position: [0, 0, 13], fov: 45 }}
         gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping }}

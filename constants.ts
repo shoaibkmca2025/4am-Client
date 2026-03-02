@@ -53,6 +53,11 @@ export const SERVICES: Service[] = [
       { title: 'Campaign Setup', description: 'Targeted ad structures, compelling copy, and high-converting creatives.' },
       { title: 'Launch & Optimize', description: 'Real-time monitoring and rapid iteration to maximize results.' },
       { title: 'Scale', description: 'Expanding reach and budget efficiency once profitability is proven.' }
+    ],
+    relatedImages: [
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=800&q=80'
     ]
   },
   {
@@ -60,7 +65,7 @@ export const SERVICES: Service[] = [
     title: 'Branding',
     slug: 'branding',
     description: 'Visual identity and messaging systems that position you as the obvious choice.',
-    image: 'https://images.unsplash.com/photo-1626785774573-4b799314348d?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80',
     longDescription: 'Your brand is more than a logo—it’s the feeling you leave behind. We craft cohesive identities that resonate with your audience and differentiate you from the noise.',
     features: [
       'Logo Design & Visual Identity',
@@ -79,6 +84,11 @@ export const SERVICES: Service[] = [
       { title: 'Concept Development', description: 'Exploring visual directions and narrative themes.' },
       { title: 'Design & Refine', description: 'Crafting the assets and polishing the details.' },
       { title: 'Delivery', description: 'Handing over a complete brand system ready for deployment.' }
+    ],
+    relatedImages: [
+      'https://images.unsplash.com/photo-1634942537034-2531766767d1?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1626785774573-4b799314348d?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1586717791821-3f44a5638d48?auto=format&fit=crop&w=800&q=80'
     ]
   },
   {
@@ -105,6 +115,11 @@ export const SERVICES: Service[] = [
       { title: 'Content Plan', description: 'Developing a mix of educational, entertaining, and promotional content.' },
       { title: 'Execution', description: 'Consistent posting and active community engagement.' },
       { title: 'Growth', description: 'Leveraging viral loops and partnerships to expand reach.' }
+    ],
+    relatedImages: [
+      'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=800&q=80'
     ]
   },
   {
@@ -131,6 +146,11 @@ export const SERVICES: Service[] = [
       { title: 'Keyword Research', description: 'Finding the terms your ideal customers are searching for.' },
       { title: 'Optimization', description: 'Improving site structure, content, and metadata.' },
       { title: 'Monitoring', description: 'Tracking rankings and adjusting strategy for algorithm updates.' }
+    ],
+    relatedImages: [
+      'https://images.unsplash.com/photo-1572021335469-31706a17aaef?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=800&q=80'
     ]
   },
   {
@@ -157,6 +177,11 @@ export const SERVICES: Service[] = [
       { title: 'Design', description: 'Creating high-fidelity mockups of the interface.' },
       { title: 'Development', description: 'Writing clean, efficient code to bring the design to life.' },
       { title: 'Launch', description: 'Testing, deployment, and post-launch support.' }
+    ],
+    relatedImages: [
+      'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80'
     ]
   },
   {
@@ -183,6 +208,11 @@ export const SERVICES: Service[] = [
       { title: 'Production', description: 'Filming, writing, or designing the core assets.' },
       { title: 'Editing', description: 'Polishing and refining to meet professional standards.' },
       { title: 'Distribution', description: 'Formatting assets for optimal performance across channels.' }
+    ],
+    relatedImages: [
+      'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=800&q=80'
     ]
   }
 ];

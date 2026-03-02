@@ -7,6 +7,7 @@ import Projects from './Projects';
 import Contact from './Contact';
 import Testimonials from './Testimonials';
 import StatsSection from './Stats';
+import GlobalNetworkBackground from './GlobalNetworkBackground';
 import { scrollToSection } from '../utils/scroll';
 
 const LandingPage: React.FC = () => {
@@ -20,14 +21,17 @@ const LandingPage: React.FC = () => {
   }, [location.state]);
 
   return (
-    <main>
-      <Hero />
-      <StatsSection />
-      <Services />
-      <Projects />
-      <Testimonials />
-      <Contact />
-    </main>
+    <>
+      <GlobalNetworkBackground />
+      <div className="relative z-10">
+        <Hero />
+        <StatsSection />
+        <Services />
+        <Projects />
+        <Testimonials />
+        <Contact />
+      </div>
+    </>
   );
 };
 

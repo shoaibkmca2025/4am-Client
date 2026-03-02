@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { SERVICES, PROJECTS } from '../constants';
 import ScrollReveal from './ScrollReveal';
+import TiltCard from './TiltCard';
 
 const ServicePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -267,6 +268,43 @@ const ServicePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* 5.5 Related Images Section */}
+      {service.relatedImages && service.relatedImages.length > 0 && (
+        <section className="py-24 bg-brand-surface relative overflow-hidden">
+          <div className="container mx-auto px-6 max-w-[1200px]">
+            <ScrollReveal>
+              <div className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-dark mb-4">
+                  {service.title} In Action
+                </h2>
+                <p className="text-brand-gray max-w-2xl mx-auto text-lg">
+                  Visualizing the impact of our {service.title.toLowerCase()} services.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {service.relatedImages.map((img, index) => (
+                <ScrollReveal key={index} delay={index * 100}>
+                  <TiltCard className="h-64 md:h-80 rounded-[32px] overflow-hidden shadow-clay border border-white/60 group relative cursor-pointer">
+                    <img 
+                      src={img} 
+                      alt={`${service.title} example ${index + 1}`} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
+                      <span className="text-white font-bold tracking-widest uppercase text-sm bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30">
+                        View Detail
+                      </span>
+                    </div>
+                  </TiltCard>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 6. Success Stories / Projects */}
       <section className="py-24 bg-brand-bg border-t border-brand-gray/10">

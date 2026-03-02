@@ -1,5 +1,6 @@
 import React from 'react';
 import ScrollReveal from './ScrollReveal';
+import TiltCard from './TiltCard';
 
 const StatsSection: React.FC = () => {
   const stats = [
@@ -35,27 +36,29 @@ const StatsSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="about" className="py-16 bg-brand-bg">
+    <section id="about" className="py-16 bg-transparent">
       <div className="w-full max-w-[1200px] mx-auto px-6">
-        <div className="bg-brand-surface shadow-clay rounded-[32px] p-10 md:p-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-center divide-y md:divide-y-0 md:divide-x divide-brand-gray/10">
-            {stats.map((stat, index) => (
-              <div 
-                key={index}
-                className="relative group text-center py-4 md:py-0"
-              >
-                <div className="flex flex-col items-center justify-center space-y-2">
-                  <div className="text-4xl md:text-5xl font-bold text-brand-dark tracking-tight group-hover:scale-110 transition-transform duration-300 drop-shadow-sm">
-                    {values[index]}{stat.suffix}
-                  </div>
-                  <div className="text-sm font-semibold text-brand-gray uppercase tracking-widest">
-                    {stat.label}
+        <TiltCard className="w-full">
+          <div className="bg-white/5 border border-white/10 shadow-lg backdrop-blur-sm rounded-[32px] p-10 md:p-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 items-center justify-center divide-y md:divide-y-0 md:divide-x divide-white/10">
+              {stats.map((stat, index) => (
+                <div 
+                  key={index}
+                  className="relative group text-center py-4 md:py-0"
+                >
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <div className="text-4xl md:text-5xl font-bold text-white tracking-tight group-hover:scale-110 transition-transform duration-300 drop-shadow-sm">
+                      {values[index]}{stat.suffix}
+                    </div>
+                    <div className="text-sm font-semibold text-gray-400 uppercase tracking-widest">
+                      {stat.label}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        </TiltCard>
       </div>
     </section>
   );

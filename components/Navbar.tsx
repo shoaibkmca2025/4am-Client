@@ -9,10 +9,10 @@ const ConnectButton: React.FC<{ className?: string; onClick?: () => void }> = ({
   return (
     <button
       onClick={onClick}
-      className={`px-4 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-clay-sm hover:shadow-clay-hover hover:-translate-y-0.5 border border-white/20 transition-all duration-300 ${className || 'w-auto'}`}
+      className={`px-4 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary text-brand-dark shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-white/40 transition-all duration-300 ${className || 'w-auto'}`}
     >
       <div className="flex items-center justify-center">
-        <Zap className="w-3.5 h-3.5 mr-2 fill-white/20" />
+        <Zap className="w-3.5 h-3.5 mr-2 fill-black/10" />
         <span className="font-bold text-[11px] tracking-wide uppercase">
           <span className="hidden xl:inline">Get Started</span>
           <span className="hidden md:inline xl:hidden">Let's Talk</span>
@@ -139,10 +139,10 @@ const Navbar: React.FC = () => {
       } ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
     >
       <div className="max-w-[1200px] mx-auto px-6 w-full">
-        <div className={`flex w-full items-center justify-between gap-2 md:gap-4 lg:gap-6 rounded-full px-4 py-2.5 transition-all duration-300 ${
+        <div className={`flex w-full items-center justify-between gap-2 md:gap-4 lg:gap-6 rounded-full px-4 py-2.5 transition-all duration-500 ${
           scrolled 
-            ? 'bg-brand-surface/90 backdrop-blur-md shadow-clay border border-white/40' 
-            : 'bg-brand-surface/50 backdrop-blur-sm border border-white/20'
+            ? 'bg-white/80 backdrop-blur-xl shadow-lg border border-white/50' 
+            : 'bg-white/10 backdrop-blur-lg border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)]'
         }`}>
 
         {/* 1. Left Section: Logo */}
@@ -152,7 +152,7 @@ const Navbar: React.FC = () => {
             onClick={handleLogoClick}
             className="flex items-center gap-3 group shrink-0"
           >
-            <div className="w-10 h-10 rounded-xl overflow-hidden bg-brand-surface flex items-center justify-center shadow-clay group-hover:shadow-clay-hover transition-all duration-300 transform group-hover:scale-105">
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/90 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105 ring-1 ring-white/50">
               <img
                 src={LogoImage}
                 alt="4AM Global Media logo"
@@ -160,7 +160,7 @@ const Navbar: React.FC = () => {
               />
             </div>
             <div className="hidden lg:block">
-              <span className="text-lg font-display font-bold text-brand-dark uppercase tracking-wide block">
+              <span className={`text-lg font-display font-bold uppercase tracking-wide block transition-colors duration-300 ${scrolled ? 'text-brand-dark' : 'text-white'}`}>
                 4AM Global Media
               </span>
             </div>
@@ -190,8 +190,10 @@ const Navbar: React.FC = () => {
                   onClick={(event) => handleNavClick(event, item)}
                   className={`flex items-center gap-1 text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer px-3 py-1.5 rounded-full ${
                     active
-                      ? 'text-brand-primary bg-brand-primary/5'
-                      : 'text-brand-gray hover:text-brand-dark hover:bg-brand-dark/5'
+                      ? 'text-brand-primary bg-white/20 shadow-inner'
+                      : scrolled 
+                        ? 'text-brand-gray hover:text-brand-primary hover:bg-brand-primary/5' 
+                        : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   {item.label}
@@ -201,13 +203,13 @@ const Navbar: React.FC = () => {
                 {/* Desktop Dropdown */}
                 {item.subItems && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 pt-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                    <div className="bg-brand-surface border border-white/60 rounded-2xl shadow-clay p-2 w-64 flex flex-col gap-1 overflow-hidden">
+                    <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-2xl shadow-xl p-2 w-64 flex flex-col gap-1 overflow-hidden ring-1 ring-black/5">
                       {item.subItems.map((subItem) => (
                         <Link
                           key={subItem.label}
                           to={subItem.href}
                           onClick={(event) => handleNavClick(event, subItem)}
-                          className="text-xs font-bold text-brand-gray px-4 py-3 hover:bg-brand-bg hover:text-brand-primary rounded-xl transition-all duration-200 text-left block tracking-wide uppercase"
+                          className="text-xs font-bold text-brand-gray px-4 py-3 hover:bg-brand-primary/10 hover:text-brand-primary rounded-xl transition-all duration-200 text-left block tracking-wide uppercase"
                         >
                           {subItem.label}
                         </Link>
@@ -231,7 +233,7 @@ const Navbar: React.FC = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2.5 text-brand-gray hover:text-brand-primary hover:bg-brand-bg rounded-xl transition-all duration-300 shadow-sm border border-transparent hover:border-brand-gray/10"
+              className={`p-2.5 rounded-xl transition-all duration-300 shadow-sm border border-transparent ${scrolled ? 'text-brand-gray hover:text-brand-primary hover:bg-brand-bg' : 'text-white hover:bg-white/10 hover:border-white/20'}`}
               aria-label="Toggle menu"
             >
               {isOpen ? <X size={22} /> : <Menu size={22} />}

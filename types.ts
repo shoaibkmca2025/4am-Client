@@ -9,6 +9,7 @@ export interface Service {
   features: string[]; // What We Offer
   benefits: string[]; // Benefits / Results
   process: { title: string; description: string }[]; // Process Section
+  relatedImages?: string[]; // New field for related images
   cta?: string;
 }
 

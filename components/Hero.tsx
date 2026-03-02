@@ -2,15 +2,14 @@
 import React, { useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { scrollToSection } from '../utils/scroll';
-import GlobalNetworkBackground from './GlobalNetworkBackground';
 
 const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section id="home" ref={containerRef} className="relative min-h-[85vh] flex items-center justify-center pt-24 pb-12 overflow-hidden bg-[#050B12]">
+    <section id="home" ref={containerRef} className="relative min-h-[85vh] flex items-center justify-center pt-24 pb-12 overflow-hidden bg-transparent">
       {/* Background Elements */}
-      <GlobalNetworkBackground />
+      {/* GlobalNetworkBackground is now in LandingPage */}
 
       <div className="relative z-10 w-full max-w-[1000px] mx-auto px-6 text-center">
         <div className="space-y-8">

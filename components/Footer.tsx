@@ -5,7 +5,7 @@ import { scrollToSection } from '../utils/scroll';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="relative z-50 border-t border-brand-gray/10 bg-brand-bg text-brand-dark transition-colors duration-500">
+    <footer className="relative z-50 border-t border-white/10 bg-black/20 backdrop-blur-md text-white transition-colors duration-500">
       <div className="container mx-auto px-6 max-w-[1200px] py-10 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 mb-12">
           <div className="md:col-span-4 space-y-6">
@@ -14,23 +14,23 @@ const Footer: React.FC = () => {
               onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}
               className="inline-flex items-center gap-3 group"
             >
-              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-brand-surface flex items-center justify-center shadow-clay group-hover:shadow-clay-hover transition-all duration-300">
+              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                 <img
                   src={LogoImage}
                   alt="4AM Global Media logo"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="text-2xl font-display font-bold uppercase tracking-tight text-brand-dark">
+              <span className="text-2xl font-display font-bold uppercase tracking-tight text-white">
                 4AM Global Media
               </span>
             </a>
-            <p className="text-sm md:text-base text-brand-gray max-w-sm leading-relaxed">
+            <p className="text-sm md:text-base text-gray-400 max-w-sm leading-relaxed">
               The growth engine that never sleeps. Powering founders, operators, and teams across the globe.
             </p>
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand-surface border border-white/50 shadow-clay-sm">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)] animate-pulse" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-brand-gray/80 font-bold">
+              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-gray-300 font-bold">
                 Systems online
               </span>
             </div>
@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
                 <a
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="inline-flex items-center gap-1 text-brand-dark font-bold hover:text-brand-primary transition-colors"
+                  className="inline-flex items-center gap-1 text-white font-bold hover:text-brand-primary transition-colors"
                 >
                   Full service menu
                   <ArrowRight className="w-3 h-3" />
@@ -53,28 +53,28 @@ const Footer: React.FC = () => {
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   Product & web
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   Paid growth
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   SEO & content
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   Brand systems
                 </a>
@@ -89,14 +89,14 @@ const Footer: React.FC = () => {
                 <a 
                   href="#work"
                   onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   Case studies
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   Service overview
                 </a>
