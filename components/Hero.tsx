@@ -25,13 +25,8 @@ const Hero: React.FC = () => {
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed animate-fade-in-up animation-delay-200 font-medium">
-            Elevate your brand with premium web design, strategic marketing, and content that converts. 
-            We turn vision into authority.
-          </p>
-
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 animate-fade-in-up animation-delay-300">
-            <button 
+            <button
               onClick={() => scrollToSection('work')}
               className="group relative px-8 py-4 bg-gradient-primary text-white rounded-full font-bold tracking-wide shadow-[0_0_20px_rgba(255,138,61,0.4)] hover:shadow-[0_0_30px_rgba(255,138,61,0.6)] hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto overflow-hidden"
             >
@@ -41,8 +36,8 @@ const Hero: React.FC = () => {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </span>
             </button>
-            
-            <button 
+
+            <button
               onClick={() => scrollToSection('contact')}
               className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white border border-white/10 rounded-full font-bold tracking-wide shadow-lg hover:bg-white/10 hover:border-white/20 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto"
             >
