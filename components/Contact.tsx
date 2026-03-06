@@ -94,11 +94,11 @@ const Contact: React.FC = () => {
                     <div className="w-12 h-12 rounded-2xl bg-black/20 shadow-inner flex items-center justify-center text-brand-primary group-hover:scale-110 transition-transform duration-300 border border-white/5">
                       <item.icon className="w-5 h-5" />
                     </div>
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
                         {item.label}
                       </p>
-                      <p className="text-lg font-bold text-white group-hover:text-brand-primary transition-colors">
+                      <p className="text-base sm:text-lg font-bold text-white group-hover:text-brand-primary transition-colors break-words [overflow-wrap:anywhere] leading-tight">
                         {item.value}
                       </p>
                     </div>
