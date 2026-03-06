@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { scrollToSection } from '../utils/scroll';
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -7,22 +8,7 @@ const ScrollToTop = () => {
   useEffect(() => {
     if (hash) {
       const id = hash.replace('#', '');
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        // Retry logic for dynamic content
-        const checkForElement = setInterval(() => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
-            clearInterval(checkForElement);
-          }
-        }, 100);
-        
-        // Clear interval after 2 seconds to prevent infinite loop
-        setTimeout(() => clearInterval(checkForElement), 2000);
-      }
+      scrollToSection(id, { retries: 20, retryDelayMs: 100 });
     } else {
       window.scrollTo(0, 0);
     }

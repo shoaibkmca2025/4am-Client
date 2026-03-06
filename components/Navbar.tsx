@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Zap, ChevronDown } from 'lucide-react';
 import { NAV_ITEMS } from '../constants';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { scrollToSection } from '../utils/scroll';
+import { scrollToSection, scrollToTop } from '../utils/scroll';
 
 const ConnectButton: React.FC<{ className?: string; onClick?: () => void }> = ({ className, onClick }) => {
   return (
@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
 
   const handleLogoClick = () => {
     if (location.pathname === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToTop();
     } else {
       navigate('/');
     }
@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
 
     if (item.href === '/') {
       if (location.pathname === '/') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToTop();
       } else {
         navigate('/');
       }

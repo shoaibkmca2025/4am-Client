@@ -19,9 +19,9 @@ const Hero: React.FC = () => {
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.1] animate-fade-in-up animation-delay-100 drop-shadow-2xl">
-            We Build <br className="hidden md:block" />
+            Digital Marketing &amp;<br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary bg-[length:200%_auto] animate-text-shimmer">
-              Digital Legacies
+              Software Development Solutions
             </span>
           </h1>
 

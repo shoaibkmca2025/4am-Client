@@ -1,8 +1,6 @@
 
-import React, { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Hero from './Hero';
 import Services from './Services';
 import Projects from './Projects';
@@ -11,14 +9,13 @@ import Testimonials from './Testimonials';
 import StatsSection from './Stats';
 import { scrollToSection } from '../utils/scroll';
 
-gsap.registerPlugin(ScrollTrigger);
-ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
 const GlobalNetworkBackground = lazy(() => import('./GlobalNetworkBackground'));
 
 const LandingPage: React.FC = () => {
   const location = useLocation();
   const mainRef = useRef<HTMLDivElement>(null);
   const [renderDynamicBackground, setRenderDynamicBackground] = useState(false);
+  const [pauseBackground, setPauseBackground] = useState(false);
 
   useEffect(() => {
     const state = location.state as { scrollTo?: string } | null;
@@ -31,100 +28,59 @@ const LandingPage: React.FC = () => {
   }, [location.state]);
 
   useEffect(() => {
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (isMobile || prefersReducedMotion) return;
+    const saveData = typeof navigator !== 'undefined' && 'connection' in navigator
+      ? (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
+      : false;
+    const lowCpu = typeof navigator !== 'undefined' && navigator.hardwareConcurrency
+      ? navigator.hardwareConcurrency < 8
+      : false;
+
+    if (isMobile || prefersReducedMotion || saveData || lowCpu) return;
 
     // Keep the first paint lightweight, then mount heavy 3D background.
-    const timer = window.setTimeout(() => setRenderDynamicBackground(true), 1200);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    const ctx = gsap.context(() => {
-      mm.add(
-        {
-          desktop: '(min-width: 641px) and (prefers-reduced-motion: no-preference)',
-          mobile: '(max-width: 640px) and (prefers-reduced-motion: no-preference)',
-          reduced: '(prefers-reduced-motion: reduce)',
-        },
-        (context) => {
-          const conditions = context.conditions as {
-            desktop?: boolean;
-            mobile?: boolean;
-            reduced?: boolean;
-          };
-
-          const sections = gsap.utils.toArray<HTMLElement>('.gsap-section');
-          if (!sections.length) return;
-
-          if (conditions.reduced) {
-            gsap.set(sections, { opacity: 1, y: 0, clearProps: 'willChange' });
-            return;
-          }
-
-          if (conditions.mobile) {
-            sections.forEach((section, index) => {
-              if (index === 0) return;
-              gsap.fromTo(
-                section,
-                { opacity: 0, y: 18 },
-                {
-                  opacity: 1,
-                  y: 0,
-                  ease: 'none',
-                  force3D: true,
-                  scrollTrigger: {
-                    trigger: section,
-                    start: 'top 92%',
-                    end: 'top 70%',
-                    scrub: 1,
-                  },
-                }
-              );
-            });
-            return;
-          }
-
-          // Desktop optimization: avoid permanent will-change to save memory
-          gsap.set(sections, { opacity: 1, y: 0 });
-
-          // Simple reveal animation for desktop (non-scrubbing for performance)
-          sections.forEach((section, index) => {
-            if (index === 0) return;
-            
-            gsap.fromTo(section, 
-              { 
-                opacity: 0, 
-                y: 50 
-              },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: "power2.out",
-                force3D: true,
-                scrollTrigger: {
-                  trigger: section,
-                  start: "top 85%",
-                  end: "top 50%",
-                  toggleActions: "play none none reverse"
-                }
-              }
-            );
-          });
-
-          ScrollTrigger.refresh();
-        }
-      );
-    }, mainRef);
+    const schedule = () => setRenderDynamicBackground(true);
+    let idleId: number | null = null;
+    const timeoutId = window.setTimeout(() => {
+      if ('requestIdleCallback' in window) {
+        idleId = (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(
+          schedule,
+          { timeout: 1400 }
+        );
+      } else {
+        schedule();
+      }
+    }, 900);
 
     return () => {
-      ctx.revert();
-      mm.revert();
+      window.clearTimeout(timeoutId);
+      if (idleId !== null && 'cancelIdleCallback' in window) {
+        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (!renderDynamicBackground) return;
+    let stopTimer: number | null = null;
+
+    const handleScroll = () => {
+      setPauseBackground(true);
+      if (stopTimer !== null) {
+        window.clearTimeout(stopTimer);
+      }
+      stopTimer = window.setTimeout(() => setPauseBackground(false), 140);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (stopTimer !== null) {
+        window.clearTimeout(stopTimer);
+      }
+    };
+  }, [renderDynamicBackground]);
 
   return (
     <>
@@ -134,32 +90,32 @@ const LandingPage: React.FC = () => {
       </div>
       {renderDynamicBackground && (
         <Suspense fallback={null}>
-          <GlobalNetworkBackground />
+          <GlobalNetworkBackground paused={pauseBackground} />
         </Suspense>
       )}
       
       <div ref={mainRef} className="relative z-10">
-        <div className="gsap-section flex flex-col justify-center">
+        <div className="flex flex-col justify-center">
           <Hero />
         </div>
         
-        <div className="gsap-section">
+        <div>
           <StatsSection />
         </div>
         
-        <div className="gsap-section">
+        <div>
           <Services />
         </div>
         
-        <div className="gsap-section">
+        <div>
           <Projects />
         </div>
         
-        <div className="gsap-section">
+        <div>
           <Testimonials />
         </div>
         
-        <div className="gsap-section">
+        <div>
           <Contact />
         </div>
       </div>
