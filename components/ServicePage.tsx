@@ -410,7 +410,7 @@ const ServicePage: React.FC = () => {
                 <ArrowRight className="ml-2 w-6 h-6" />
               </button>
               <a
-                href="tel:+1234567890"
+                href="tel:8826406545"
                 className="inline-flex items-center justify-center px-10 py-5 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg tracking-wide hover:bg-white/10 transition-all backdrop-blur-sm"
               >
                 Schedule a Call

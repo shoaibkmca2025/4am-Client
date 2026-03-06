@@ -83,7 +83,7 @@ const Contact: React.FC = () => {
               <div className="space-y-4">
                 {[
                   { label: 'Email', value: '4amglobalmedia@gmail.com', icon: Mail, href: 'mailto:4amglobalmedia@gmail.com' },
-                  { label: 'Phone', value: '+91 90005 98600', icon: Phone, href: 'tel:+919000598600' },
+                  { label: 'Phone', value: '8826406545', icon: Phone, href: 'tel:8826406545' },
                   { label: 'Location', value: 'Global / Remote team', icon: MapPin },
                 ].map((item) => (
                   <a
