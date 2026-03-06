@@ -15,6 +15,7 @@ import {
 import { SERVICES, PROJECTS } from '../constants';
 import ScrollReveal from './ScrollReveal';
 import TiltCard from './TiltCard';
+import { optimizeImageUrl } from '../utils/image';
 
 const ServicePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -39,8 +40,13 @@ const ServicePage: React.FC = () => {
         {/* Background Image with Premium Overlay */}
         <div className="absolute inset-0 z-0">
           <img
-            src={service.image}
+            src={optimizeImageUrl(service.image, { width: 1920, height: 1080, quality: 72, format: 'webp' })}
             alt={service.title}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            width={1920}
+            height={1080}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/90 to-brand-dark/60" />
@@ -289,15 +295,21 @@ const ServicePage: React.FC = () => {
                 <ScrollReveal key={index} delay={index * 100}>
                   <TiltCard className="h-64 md:h-80 rounded-[32px] overflow-hidden shadow-clay border border-white/60 group relative cursor-pointer">
                     <img 
-                      src={img} 
+                      src={optimizeImageUrl(img, { width: 1200, height: 900, quality: 70, format: 'webp' })} 
                       alt={`${service.title} example ${index + 1}`} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
                       decoding="async"
+                      fetchPriority="low"
+                      width={1200}
+                      height={900}
                       referrerPolicy="no-referrer"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = `https://picsum.photos/seed/${service.slug}-example-${index}/1200/900`;
+                        e.currentTarget.src = optimizeImageUrl(
+                          `https://picsum.photos/seed/${service.slug}-example-${index}/1200/900`,
+                          { width: 1200, height: 900, quality: 68, format: 'webp' }
+                        );
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
@@ -331,7 +343,21 @@ const ServicePage: React.FC = () => {
                   <ScrollReveal key={project.id} delay={idx * 100}>
                      <div className="group bg-brand-surface rounded-[32px] overflow-hidden shadow-clay hover:shadow-clay-hover transition-all duration-300 border border-white/60 flex flex-col h-full hover:-translate-y-2">
                         <div className="h-56 overflow-hidden relative">
-                           <img src={`https://picsum.photos/seed/${project.title}/600/400`} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                           <img
+                             src={optimizeImageUrl(`https://picsum.photos/seed/${project.title}/600/400`, {
+                               width: 600,
+                               height: 400,
+                               quality: 68,
+                               format: 'webp',
+                             })}
+                             alt={project.title}
+                             loading="lazy"
+                             decoding="async"
+                             fetchPriority="low"
+                             width={600}
+                             height={400}
+                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                           />
                            <div className="absolute inset-0 bg-brand-dark/20 group-hover:bg-brand-dark/10 transition-colors" />
                            <div className="absolute top-4 left-4">
                               <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-brand-dark shadow-sm">

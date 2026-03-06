@@ -1,14 +1,14 @@
 
-import React, { Suspense, lazy } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import AIChatbot from './components/AIChatbot';
 import { AuthProvider } from './components/AuthContext';
 
 const LandingPage = lazy(() => import('./components/LandingPage'));
 const ServicePage = lazy(() => import('./components/ServicePage'));
+const AIChatbot = lazy(() => import('./components/AIChatbot'));
 
 const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -25,6 +25,14 @@ const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 };
 
 function App() {
+  const [showChatbot, setShowChatbot] = useState(false);
+
+  useEffect(() => {
+    // Delay non-critical chatbot code to protect first contentful rendering.
+    const timer = window.setTimeout(() => setShowChatbot(true), 1800);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
     <Router>
       <ScrollToTop />
@@ -45,7 +53,11 @@ function App() {
             </Routes>
           </Suspense>
         </LayoutWrapper>
-        <AIChatbot />
+        {showChatbot && (
+          <Suspense fallback={null}>
+            <AIChatbot />
+          </Suspense>
+        )}
       </AuthProvider>
     </Router>
   );

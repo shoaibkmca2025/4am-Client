@@ -5,15 +5,24 @@ import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-reac
 import ScrollReveal from './ScrollReveal';
 import SpotlightSection from './SpotlightSection';
 import TiltCard from './TiltCard';
+import { optimizeImageUrl } from '../utils/image';
 
-const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
-  const getFaviconUrl = (url: string, title: string) => {
-    return `https://picsum.photos/seed/${encodeURIComponent(title)}/800/1000`;
+const FEATURED_PROJECTS = PROJECTS.slice(0, 18);
+
+const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
+  const getProjectPreviewUrl = (title: string) => {
+    return optimizeImageUrl(`https://picsum.photos/seed/${encodeURIComponent(title)}/800/1000`, {
+      width: 800,
+      height: 1000,
+      quality: 68,
+      format: 'webp',
+    });
   };
 
   const primaryImage =
-    project.image ||
-    getFaviconUrl(project.url, project.title);
+    (project.image
+      ? optimizeImageUrl(project.image, { width: 800, height: 1000, quality: 70, format: 'webp' })
+      : '') || getProjectPreviewUrl(project.title);
 
   const [imageSrc, setImageSrc] = useState(primaryImage);
 
@@ -34,10 +43,14 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
             src={imageSrc}
             alt={project.title}
             loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            width={800}
+            height={1000}
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
             onError={() => {
               if (!imageSrc.includes('picsum.photos')) {
-                setImageSrc(`https://picsum.photos/seed/${encodeURIComponent(project.title)}/800/1000`);
+                setImageSrc(getProjectPreviewUrl(project.title));
               }
             }}
           />
@@ -97,32 +110,33 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
 const Projects: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const autoScrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(false);
+
+  useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setAutoScrollEnabled(!isMobile && !prefersReducedMotion);
+  }, []);
 
   // Auto-scroll logic
   useEffect(() => {
-    const startAutoScroll = () => {
-      autoScrollTimerRef.current = setInterval(() => {
-        if (!isHovered && containerRef.current) {
-          const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
-          // Check if we've reached the end
-          if (scrollLeft + clientWidth >= scrollWidth - 10) {
-            containerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-          } else {
-             // Scroll by one card width approx
-             const cardWidth = containerRef.current.children[0]?.clientWidth || 300;
-             containerRef.current.scrollBy({ left: cardWidth + 32, behavior: 'smooth' });
-          }
-        }
-      }, 4000); // 4 seconds interval
-    };
+    if (!autoScrollEnabled || isHovered) return;
 
-    startAutoScroll();
+    const interval = window.setInterval(() => {
+      if (document.hidden || !containerRef.current) return;
+      const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 10) {
+        containerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        const cardWidth = containerRef.current.children[0]?.clientWidth || 300;
+        containerRef.current.scrollBy({ left: cardWidth + 32, behavior: 'smooth' });
+      }
+    }, 4000);
 
     return () => {
-      if (autoScrollTimerRef.current) clearInterval(autoScrollTimerRef.current);
+      window.clearInterval(interval);
     };
-  }, [isHovered]);
+  }, [autoScrollEnabled, isHovered]);
 
   const scrollLeft = () => {
     if (containerRef.current) {
@@ -191,8 +205,8 @@ const Projects: React.FC = () => {
             className="flex gap-6 md:gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {PROJECTS.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
+            {FEATURED_PROJECTS.map((project) => (
+              <ProjectCard key={project.id} project={project} />
             ))}
              
              {/* View All Card (Last item) */}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Instagram, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
-import LogoImage from '../assets/logo.jpeg';
 import { scrollToSection } from '../utils/scroll';
 
 const Footer: React.FC = () => {
@@ -16,7 +15,7 @@ const Footer: React.FC = () => {
             >
               <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
                 <img
-                  src={LogoImage}
+                  src="/assets/logo.jpeg"
                   alt="4AM Global Media logo"
                   className="w-full h-full object-cover"
                 />

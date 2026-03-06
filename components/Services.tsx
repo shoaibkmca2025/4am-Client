@@ -6,6 +6,7 @@ import SpotlightSection from './SpotlightSection';
 import TiltCard from './TiltCard';
 import { SERVICES } from '../constants';
 import { Service } from '../types';
+import { optimizeImageUrl } from '../utils/image';
 
 const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, index }) => {
   return (
@@ -18,12 +19,19 @@ const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, i
           {/* Background Image */}
         <div className="absolute inset-0">
           <img 
-            src={service.image} 
+            src={optimizeImageUrl(service.image, { width: 760, height: 560, quality: 70, format: 'webp' })} 
             alt={service.title} 
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 opacity-90 group-hover:opacity-100"
             loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            width={760}
+            height={560}
             onError={(e) => {
-              e.currentTarget.src = 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80';
+              e.currentTarget.src = optimizeImageUrl(
+                'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80',
+                { width: 760, height: 560, quality: 68, format: 'webp' }
+              );
             }}
           />
         </div>

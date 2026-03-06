@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 interface TiltCardProps {
@@ -15,6 +15,7 @@ const TiltCard: React.FC<TiltCardProps> = ({
   perspective = 1000
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [isInteractive, setIsInteractive] = useState(false);
   
   // Motion values for mouse position
   const x = useMotionValue(0);
@@ -29,6 +30,12 @@ const TiltCard: React.FC<TiltCardProps> = ({
   // When mouse is at top (negative Y), we want to rotate X positively (tilt up)
   const rotateX = useTransform(mouseY, [-0.5, 0.5], [intensity, -intensity]);
   const rotateY = useTransform(mouseX, [-0.5, 0.5], [-intensity, intensity]);
+
+  useEffect(() => {
+    const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setIsInteractive(supportsHover && !prefersReducedMotion);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return;
@@ -55,13 +62,13 @@ const TiltCard: React.FC<TiltCardProps> = ({
   return (
     <motion.div
       ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={isInteractive ? handleMouseMove : undefined}
+      onMouseLeave={isInteractive ? handleMouseLeave : undefined}
       style={{
-        rotateX,
-        rotateY,
-        transformStyle: "preserve-3d",
-        perspective: perspective,
+        rotateX: isInteractive ? rotateX : 0,
+        rotateY: isInteractive ? rotateY : 0,
+        transformStyle: isInteractive ? "preserve-3d" : "flat",
+        perspective: isInteractive ? perspective : undefined,
       }}
       className={`relative ${className}`}
     >

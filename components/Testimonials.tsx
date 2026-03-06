@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Star, Terminal, Zap, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 import TiltCard from './TiltCard';
@@ -31,12 +31,19 @@ const Testimonials: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [autoSlideEnabled, setAutoSlideEnabled] = useState(true);
   
   const active = testimonials[index];
 
+  useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setAutoSlideEnabled(!isMobile && !prefersReducedMotion);
+  }, []);
+
   // Auto-slide logic
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || !autoSlideEnabled) return;
     
     const interval = setInterval(() => {
       setDirection(1);
@@ -44,7 +51,7 @@ const Testimonials: React.FC = () => {
     }, 6000); // 6 seconds
 
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, autoSlideEnabled]);
 
   const handlePrev = useCallback(() => {
     setDirection(-1);

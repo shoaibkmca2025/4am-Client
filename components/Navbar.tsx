@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Zap, ChevronDown } from 'lucide-react';
 import { NAV_ITEMS } from '../constants';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import LogoImage from '../assets/logo.jpeg';
 import { scrollToSection } from '../utils/scroll';
 
 const ConnectButton: React.FC<{ className?: string; onClick?: () => void }> = ({ className, onClick }) => {
@@ -154,7 +153,7 @@ const Navbar: React.FC = () => {
           >
             <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/90 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105 ring-1 ring-white/50">
               <img
-                src={LogoImage}
+                src="/assets/logo.jpeg"
                 alt="4AM Global Media logo"
                 className="w-full h-full object-cover"
               />

@@ -1,5 +1,5 @@
 
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,17 +9,18 @@ import Projects from './Projects';
 import Contact from './Contact';
 import Testimonials from './Testimonials';
 import StatsSection from './Stats';
-import GlobalNetworkBackground from './GlobalNetworkBackground';
 import { scrollToSection } from '../utils/scroll';
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
+const GlobalNetworkBackground = lazy(() => import('./GlobalNetworkBackground'));
 
 const LandingPage: React.FC = () => {
   const location = useLocation();
   const mainRef = useRef<HTMLDivElement>(null);
+  const [renderDynamicBackground, setRenderDynamicBackground] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const state = location.state as { scrollTo?: string } | null;
     if (!state || !state.scrollTo) return;
 
@@ -28,6 +29,16 @@ const LandingPage: React.FC = () => {
       scrollToSection(state.scrollTo!);
     }, 100);
   }, [location.state]);
+
+  useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isMobile || prefersReducedMotion) return;
+
+    // Keep the first paint lightweight, then mount heavy 3D background.
+    const timer = window.setTimeout(() => setRenderDynamicBackground(true), 1200);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
@@ -117,7 +128,15 @@ const LandingPage: React.FC = () => {
 
   return (
     <>
-      <GlobalNetworkBackground />
+      <div className="fixed inset-0 z-0 overflow-hidden bg-[#050B12] pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050B12] via-transparent to-[#050B12]/80" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050B12_100%)] opacity-40" />
+      </div>
+      {renderDynamicBackground && (
+        <Suspense fallback={null}>
+          <GlobalNetworkBackground />
+        </Suspense>
+      )}
       
       <div ref={mainRef} className="relative z-10">
         <div className="gsap-section flex flex-col justify-center">
