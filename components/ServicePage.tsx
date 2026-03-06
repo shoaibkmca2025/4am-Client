@@ -17,6 +17,14 @@ import ScrollReveal from './ScrollReveal';
 import TiltCard from './TiltCard';
 import { optimizeImageUrl } from '../utils/image';
 
+const SERVICE_SEO_OVERRIDES: Record<string, { title: string; description: string }> = {
+  'digital-marketing': {
+    title: 'Digital Marketing Services | SEO & Social Media | 4AM Global Media',
+    description:
+      'Boost your online presence with digital marketing services from 4AM Global Media including SEO, social media marketing, and content strategies.',
+  },
+};
+
 const ServicePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -25,6 +33,23 @@ const ServicePage: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  useEffect(() => {
+    if (!service) return;
+
+    const fallbackTitle = `${service.title} Services | 4AM Global Media`;
+    const fallbackDescription = `Explore ${service.title.toLowerCase()} services from 4AM Global Media designed to help businesses scale with strategy, execution, and measurable growth.`;
+    const seo = SERVICE_SEO_OVERRIDES[service.slug] ?? {
+      title: fallbackTitle,
+      description: fallbackDescription,
+    };
+
+    document.title = seo.title;
+    const descriptionTag = document.querySelector('meta[name="description"]');
+    if (descriptionTag) {
+      descriptionTag.setAttribute('content', seo.description);
+    }
+  }, [service]);
 
   if (!service) {
     return <Navigate to="/" replace />;

@@ -10,6 +10,9 @@ import StatsSection from './Stats';
 import { scrollToSection } from '../utils/scroll';
 
 const GlobalNetworkBackground = lazy(() => import('./GlobalNetworkBackground'));
+const HOME_PAGE_TITLE = 'Digital Marketing & Software Development | 4AM Global Media';
+const HOME_PAGE_DESCRIPTION =
+  '4AM Global Media provides digital marketing and software development services including web and mobile app solutions to help businesses grow online.';
 
 const LandingPage: React.FC = () => {
   const location = useLocation();
@@ -81,6 +84,14 @@ const LandingPage: React.FC = () => {
       }
     };
   }, [renderDynamicBackground]);
+
+  useEffect(() => {
+    document.title = HOME_PAGE_TITLE;
+    const descriptionTag = document.querySelector('meta[name="description"]');
+    if (descriptionTag) {
+      descriptionTag.setAttribute('content', HOME_PAGE_DESCRIPTION);
+    }
+  }, []);
 
   return (
     <>
