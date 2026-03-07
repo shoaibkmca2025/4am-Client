@@ -1,13 +1,54 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { scrollToSection } from '../utils/scroll';
 
+const ROTATING_TEXTS = [
+  'Web Solutions',
+  'Digital Marketing',
+  'SEO',
+  'Branding',
+  'Social Media Growth',
+  'Web Development',
+  'Content Creation',
+];
+
 const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % ROTATING_TEXTS.length);
+        setIsAnimating(false);
+      }, 500);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section id="home" ref={containerRef} className="relative min-h-[85vh] flex items-center justify-center pt-24 pb-12 overflow-hidden bg-transparent">
+      {/* Rotating text animation styles */}
+      <style>{`
+        @keyframes rotateTextIn {
+          0% { opacity: 0; transform: translateY(30px) rotateX(-40deg); filter: blur(4px); }
+          100% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+        }
+        @keyframes rotateTextOut {
+          0% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+          100% { opacity: 0; transform: translateY(-30px) rotateX(40deg); filter: blur(4px); }
+        }
+        .text-rotate-in {
+          animation: rotateTextIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .text-rotate-out {
+          animation: rotateTextOut 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+        }
+      `}</style>
+
       {/* Background Elements */}
       {/* GlobalNetworkBackground is now in LandingPage */}
 
@@ -19,9 +60,15 @@ const Hero: React.FC = () => {
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.1] animate-fade-in-up animation-delay-100 drop-shadow-2xl">
-            Digital Marketing &amp;<br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary bg-[length:200%_auto] animate-text-shimmer">
-              Software Development Solutions
+            We Build Growth Through<br className="hidden md:block" />
+            <span className="inline-block overflow-hidden" style={{ perspective: '600px' }}>
+              <span
+                key={currentIndex}
+                className={`inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary bg-[length:200%_auto] animate-text-shimmer ${isAnimating ? 'text-rotate-out' : 'text-rotate-in'
+                  }`}
+              >
+                {ROTATING_TEXTS[currentIndex]}
+              </span>
             </span>
           </h1>
 
@@ -58,3 +105,4 @@ const Hero: React.FC = () => {
 };
 
 export default Hero;
+
