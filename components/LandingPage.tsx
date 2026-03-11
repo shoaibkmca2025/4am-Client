@@ -10,6 +10,9 @@ import StatsSection from './Stats';
 import { scrollToSection } from '../utils/scroll';
 
 const GlobalNetworkBackground = lazy(() => import('./GlobalNetworkBackground'));
+
+// Start downloading the background chunk immediately so it's ready when we mount it.
+import('./GlobalNetworkBackground').catch(() => {});
 const HOME_PAGE_TITLE = 'Digital Marketing & Software Development | 4AM Global Media';
 const HOME_PAGE_DESCRIPTION =
   '4AM Global Media provides digital marketing and software development services including web and mobile app solutions to help businesses grow online.';
@@ -37,30 +40,16 @@ const LandingPage: React.FC = () => {
       ? (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
       : false;
     const lowCpu = typeof navigator !== 'undefined' && navigator.hardwareConcurrency
-      ? navigator.hardwareConcurrency < 8
+      ? navigator.hardwareConcurrency < 4
       : false;
 
     if (isMobile || prefersReducedMotion || saveData || lowCpu) return;
 
-    // Keep the first paint lightweight, then mount heavy 3D background.
-    const schedule = () => setRenderDynamicBackground(true);
-    let idleId: number | null = null;
-    const timeoutId = window.setTimeout(() => {
-      if ('requestIdleCallback' in window) {
-        idleId = (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(
-          schedule,
-          { timeout: 1400 }
-        );
-      } else {
-        schedule();
-      }
-    }, 900);
+    // Mount background quickly after first paint.
+    const timeoutId = window.setTimeout(() => setRenderDynamicBackground(true), 100);
 
     return () => {
       window.clearTimeout(timeoutId);
-      if (idleId !== null && 'cancelIdleCallback' in window) {
-        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
-      }
     };
   }, []);
 

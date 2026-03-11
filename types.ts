@@ -66,5 +66,3 @@ export interface Opportunity {
   description: string;
   requirements: string[];
 }
-
-export const types = true;

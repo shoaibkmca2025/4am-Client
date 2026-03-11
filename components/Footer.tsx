@@ -113,21 +113,21 @@ const Footer: React.FC = () => {
                 <a 
                   href="#work"
                   onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   Our Work
                 </a>
                 <a 
                   href="#services"
                   onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   Pricing
                 </a>
                 <a 
                   href="#contact"
                   onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}
-                  className="block text-brand-gray hover:text-brand-dark transition-colors"
+                  className="block text-gray-400 hover:text-white transition-colors"
                 >
                   Partner with us
                 </a>

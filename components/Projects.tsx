@@ -215,8 +215,8 @@ const Projects: React.FC = () => {
                    <div className="w-20 h-20 rounded-full bg-black/20 shadow-inner flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/5">
                      <ArrowRight className="w-8 h-8 text-brand-primary" />
                    </div>
-                   <h3 className="text-2xl font-bold text-brand-dark mb-2">View All Projects</h3>
-                   <p className="text-brand-gray text-base max-w-xs font-medium">Explore our complete portfolio.</p>
+                   <h3 className="text-2xl font-bold text-white mb-2">View All Projects</h3>
+                   <p className="text-gray-400 text-base max-w-xs font-medium">Explore our complete portfolio.</p>
                 </a>
              </div>
           </div>

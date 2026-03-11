@@ -1,9 +1,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, Rocket, Bot, Sparkles, User, Terminal } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, Bot } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { useAuth } from './AuthContext';
-import { useLocation } from 'react-router-dom';
 
 interface Message {
   role: 'user' | 'model';
@@ -12,7 +11,6 @@ interface Message {
 }
 
 const AIChatbot: React.FC = () => {
-  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -91,10 +89,6 @@ const AIChatbot: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  if (location.pathname === '/contact') {
-    return null;
-  }
 
   return (
     <div className="fixed bottom-5 right-5 z-[9999] md:bottom-8 md:right-8 font-sans">
