@@ -14,7 +14,7 @@ const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   return (
     <div className="min-h-screen selection:bg-brand-primary/20 selection:text-brand-primary overflow-x-hidden text-white">
       <div className="flex flex-col min-h-screen">
-        <main className="flex-1 flex flex-col overflow-x-hidden relative z-10">
+        <main className="flex-1 flex flex-col overflow-x-hidden relative">
           {children}
         </main>
 

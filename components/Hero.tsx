@@ -50,12 +50,12 @@ const Hero: React.FC = () => {
 
         /* Hero background effects */
         @keyframes hero-pulse-1 {
-          0%, 100% { opacity: 0.18; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 0.32; transform: translate(-50%, -50%) scale(1.15); }
+          0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+          50% { opacity: 0.65; transform: translate(-50%, -50%) scale(1.15); }
         }
         @keyframes hero-pulse-2 {
-          0%, 100% { opacity: 0.12; transform: translate(-50%, -50%) scale(1.1); }
-          50% { opacity: 0.24; transform: translate(-50%, -50%) scale(0.9); }
+          0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.1); }
+          50% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.9); }
         }
         @keyframes hero-float-1 {
           0%, 100% { transform: translate(0, 0) rotate(0deg); }
@@ -69,8 +69,8 @@ const Hero: React.FC = () => {
           66% { transform: translate(20px, 30px) rotate(1.5deg); }
         }
         @keyframes hero-grid-fade {
-          0%, 100% { opacity: 0.04; }
-          50% { opacity: 0.08; }
+          0%, 100% { opacity: 0.08; }
+          50% { opacity: 0.16; }
         }
         @keyframes hero-beam {
           0% { transform: translateX(-100%) rotate(-45deg); }
@@ -115,8 +115,8 @@ const Hero: React.FC = () => {
           style={{
             top: '40%',
             left: '25%',
-            background: 'radial-gradient(circle, rgba(255,138,61,0.22) 0%, rgba(255,138,61,0.05) 40%, transparent 70%)',
-            filter: 'blur(60px)',
+            background: 'radial-gradient(circle, rgba(255,138,61,0.45) 0%, rgba(255,138,61,0.12) 40%, transparent 70%)',
+            filter: 'blur(80px)',
           }}
         />
         {/* Secondary gold glow — top-right */}
@@ -125,8 +125,8 @@ const Hero: React.FC = () => {
           style={{
             top: '10%',
             right: '10%',
-            background: 'radial-gradient(circle, rgba(255,197,106,0.16) 0%, rgba(255,197,106,0.04) 45%, transparent 70%)',
-            filter: 'blur(50px)',
+            background: 'radial-gradient(circle, rgba(255,197,106,0.35) 0%, rgba(255,197,106,0.10) 45%, transparent 70%)',
+            filter: 'blur(70px)',
           }}
         />
         {/* Accent cyan glow — bottom-right (tech feel) */}
@@ -135,8 +135,8 @@ const Hero: React.FC = () => {
           style={{
             bottom: '5%',
             right: '20%',
-            background: 'radial-gradient(circle, rgba(0,209,255,0.10) 0%, rgba(0,209,255,0.03) 45%, transparent 70%)',
-            filter: 'blur(45px)',
+            background: 'radial-gradient(circle, rgba(0,209,255,0.25) 0%, rgba(0,209,255,0.08) 45%, transparent 70%)',
+            filter: 'blur(60px)',
           }}
         />
 
@@ -145,8 +145,8 @@ const Hero: React.FC = () => {
           className="hero-grid absolute inset-0"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(255,138,61,0.06) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,138,61,0.06) 1px, transparent 1px)
+              linear-gradient(rgba(255,138,61,0.12) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,138,61,0.12) 1px, transparent 1px)
             `,
             backgroundSize: '80px 80px',
             maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 70%)',
@@ -155,7 +155,7 @@ const Hero: React.FC = () => {
         />
 
         {/* ── Diagonal light beams ── */}
-        <div className="absolute inset-0 overflow-hidden opacity-[0.03]">
+        <div className="absolute inset-0 overflow-hidden opacity-[0.08]">
           <div
             className="hero-beam absolute top-0 left-0 w-[200%] h-[120px]"
             style={{
@@ -174,7 +174,7 @@ const Hero: React.FC = () => {
 
         {/* ── Subtle noise texture ── */}
         <div
-          className="absolute inset-0 opacity-[0.025]"
+          className="absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
             backgroundRepeat: 'repeat',
@@ -213,7 +213,7 @@ const Hero: React.FC = () => {
           className="absolute left-0 right-0 h-px"
           style={{
             top: '82%',
-            background: 'linear-gradient(90deg, transparent 5%, rgba(255,138,61,0.12) 30%, rgba(0,209,255,0.08) 70%, transparent 95%)',
+            background: 'linear-gradient(90deg, transparent 5%, rgba(255,138,61,0.25) 30%, rgba(0,209,255,0.18) 70%, transparent 95%)',
           }}
         />
       </div>

@@ -479,7 +479,7 @@ const GlobalNetworkBackground: React.FC<GlobalNetworkBackgroundProps> = ({ pause
   const animate = !prefersReducedMotion && !paused;
 
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden bg-[#050B12] pointer-events-none">
+    <div className="fixed inset-0 z-[1] overflow-hidden pointer-events-none">
       <Canvas
         style={{ pointerEvents: 'none' }}
         camera={{ position: [0, 0, 13], fov: 45 }}

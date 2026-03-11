@@ -94,7 +94,7 @@ const LandingPage: React.FC = () => {
         </Suspense>
       )}
       
-      <div ref={mainRef} className="relative z-10">
+      <div ref={mainRef} className="relative z-[2]">
         <div className="flex flex-col justify-center">
           <Hero />
         </div>
