@@ -1,6 +1,6 @@
 
 import React, { useRef, useState, useEffect } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { scrollToSection } from '../utils/scroll';
 
 const ROTATING_TEXTS = [
@@ -31,7 +31,7 @@ const Hero: React.FC = () => {
 
   return (
     <section id="home" ref={containerRef} className="relative min-h-[85vh] flex items-center justify-center pt-24 pb-12 overflow-hidden bg-transparent">
-      {/* Rotating text animation styles */}
+      {/* ── Animated hero background visualization ── */}
       <style>{`
         @keyframes rotateTextIn {
           0% { opacity: 0; transform: translateY(30px) rotateX(-40deg); filter: blur(4px); }
@@ -47,11 +47,178 @@ const Hero: React.FC = () => {
         .text-rotate-out {
           animation: rotateTextOut 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
         }
+
+        /* Hero background effects */
+        @keyframes hero-pulse-1 {
+          0%, 100% { opacity: 0.18; transform: translate(-50%, -50%) scale(1); }
+          50% { opacity: 0.32; transform: translate(-50%, -50%) scale(1.15); }
+        }
+        @keyframes hero-pulse-2 {
+          0%, 100% { opacity: 0.12; transform: translate(-50%, -50%) scale(1.1); }
+          50% { opacity: 0.24; transform: translate(-50%, -50%) scale(0.9); }
+        }
+        @keyframes hero-float-1 {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(30px, -20px) rotate(2deg); }
+          50% { transform: translate(-10px, -40px) rotate(-1deg); }
+          75% { transform: translate(-30px, -10px) rotate(1deg); }
+        }
+        @keyframes hero-float-2 {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          33% { transform: translate(-25px, 20px) rotate(-2deg); }
+          66% { transform: translate(20px, 30px) rotate(1.5deg); }
+        }
+        @keyframes hero-grid-fade {
+          0%, 100% { opacity: 0.04; }
+          50% { opacity: 0.08; }
+        }
+        @keyframes hero-beam {
+          0% { transform: translateX(-100%) rotate(-45deg); }
+          100% { transform: translateX(200%) rotate(-45deg); }
+        }
+        @keyframes hero-sparkle {
+          0%, 100% { opacity: 0; transform: scale(0); }
+          50% { opacity: 1; transform: scale(1); }
+        }
+        .hero-orb-1 {
+          animation: hero-pulse-1 6s ease-in-out infinite, hero-float-1 20s ease-in-out infinite;
+        }
+        .hero-orb-2 {
+          animation: hero-pulse-2 8s ease-in-out infinite, hero-float-2 25s ease-in-out infinite;
+        }
+        .hero-orb-3 {
+          animation: hero-pulse-1 10s ease-in-out infinite 2s, hero-float-2 18s ease-in-out infinite;
+        }
+        .hero-grid {
+          animation: hero-grid-fade 8s ease-in-out infinite;
+        }
+        .hero-beam {
+          animation: hero-beam 8s ease-in-out infinite;
+        }
+        .hero-beam-2 {
+          animation: hero-beam 12s ease-in-out infinite 3s;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hero-orb-1, .hero-orb-2, .hero-orb-3, .hero-grid,
+          .hero-beam, .hero-beam-2 {
+            animation: none !important;
+          }
+        }
       `}</style>
 
-      {/* Background Elements */}
-      {/* GlobalNetworkBackground is now in LandingPage */}
+      {/* ── Background Layer: Gradient orbs ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        {/* Primary brand glow — center-left */}
+        <div
+          className="hero-orb-1 absolute w-[600px] h-[600px] md:w-[900px] md:h-[900px] rounded-full"
+          style={{
+            top: '40%',
+            left: '25%',
+            background: 'radial-gradient(circle, rgba(255,138,61,0.22) 0%, rgba(255,138,61,0.05) 40%, transparent 70%)',
+            filter: 'blur(60px)',
+          }}
+        />
+        {/* Secondary gold glow — top-right */}
+        <div
+          className="hero-orb-2 absolute w-[500px] h-[500px] md:w-[700px] md:h-[700px] rounded-full"
+          style={{
+            top: '10%',
+            right: '10%',
+            background: 'radial-gradient(circle, rgba(255,197,106,0.16) 0%, rgba(255,197,106,0.04) 45%, transparent 70%)',
+            filter: 'blur(50px)',
+          }}
+        />
+        {/* Accent cyan glow — bottom-right (tech feel) */}
+        <div
+          className="hero-orb-3 absolute w-[400px] h-[400px] md:w-[600px] md:h-[600px] rounded-full"
+          style={{
+            bottom: '5%',
+            right: '20%',
+            background: 'radial-gradient(circle, rgba(0,209,255,0.10) 0%, rgba(0,209,255,0.03) 45%, transparent 70%)',
+            filter: 'blur(45px)',
+          }}
+        />
 
+        {/* ── Grid overlay ── */}
+        <div
+          className="hero-grid absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(255,138,61,0.06) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,138,61,0.06) 1px, transparent 1px)
+            `,
+            backgroundSize: '80px 80px',
+            maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 70%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 70%)',
+          }}
+        />
+
+        {/* ── Diagonal light beams ── */}
+        <div className="absolute inset-0 overflow-hidden opacity-[0.03]">
+          <div
+            className="hero-beam absolute top-0 left-0 w-[200%] h-[120px]"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(255,138,61,0.8), transparent)',
+              transformOrigin: 'top left',
+            }}
+          />
+          <div
+            className="hero-beam-2 absolute top-[30%] left-0 w-[200%] h-[80px]"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(0,209,255,0.6), transparent)',
+              transformOrigin: 'top left',
+            }}
+          />
+        </div>
+
+        {/* ── Subtle noise texture ── */}
+        <div
+          className="absolute inset-0 opacity-[0.025]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '128px 128px',
+          }}
+        />
+
+        {/* ── Floating sparkle dots ── */}
+        {[
+          { top: '18%', left: '12%', delay: '0s', size: 3 },
+          { top: '72%', left: '8%', delay: '2s', size: 2 },
+          { top: '25%', right: '18%', delay: '1s', size: 4 },
+          { top: '65%', right: '12%', delay: '3s', size: 2 },
+          { top: '45%', left: '5%', delay: '4s', size: 3 },
+          { top: '80%', right: '30%', delay: '1.5s', size: 2 },
+          { top: '10%', left: '45%', delay: '2.5s', size: 3 },
+          { top: '55%', right: '5%', delay: '0.5s', size: 2 },
+        ].map((dot, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white"
+            style={{
+              top: dot.top,
+              left: dot.left,
+              right: (dot as { right?: string }).right,
+              width: dot.size,
+              height: dot.size,
+              opacity: 0,
+              animation: `hero-sparkle 4s ease-in-out ${dot.delay} infinite`,
+            }}
+          />
+        ))}
+
+        {/* ── Horizontal accent line across hero ── */}
+        <div
+          className="absolute left-0 right-0 h-px"
+          style={{
+            top: '82%',
+            background: 'linear-gradient(90deg, transparent 5%, rgba(255,138,61,0.12) 30%, rgba(0,209,255,0.08) 70%, transparent 95%)',
+          }}
+        />
+      </div>
+
+      {/* ── Main content ── */}
       <div className="relative z-10 w-full max-w-[1000px] mx-auto px-6 text-center">
         <div className="space-y-8">
           <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-lg text-gray-300 text-sm font-medium tracking-wide uppercase animate-fade-in-up">
@@ -71,6 +238,10 @@ const Hero: React.FC = () => {
               </span>
             </span>
           </h1>
+
+          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium animate-fade-in-up animation-delay-200">
+            Powering founders, operators, and teams across the globe with strategy, execution, and measurable growth.
+          </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 animate-fade-in-up animation-delay-300">
             <button
