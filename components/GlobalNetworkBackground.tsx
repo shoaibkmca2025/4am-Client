@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface Point {
@@ -118,7 +117,8 @@ const Globe: React.FC<{ isMobile: boolean; paused: boolean }> = ({ isMobile, pau
 
   return (
     <group>
-      <Sphere args={[5, isMobile ? 32 : 52, isMobile ? 32 : 52]}>
+      <mesh>
+        <sphereGeometry args={[5, isMobile ? 32 : 52, isMobile ? 32 : 52]} />
         <meshPhongMaterial
           color={CONFIG.globeColor}
           emissive={CONFIG.globeEmissive}
@@ -126,9 +126,10 @@ const Globe: React.FC<{ isMobile: boolean; paused: boolean }> = ({ isMobile, pau
           shininess={48}
           specular={specular}
         />
-      </Sphere>
+      </mesh>
 
-      <Sphere args={[5.01, isMobile ? 18 : 30, isMobile ? 18 : 30]}>
+      <mesh>
+        <sphereGeometry args={[5.01, isMobile ? 18 : 30, isMobile ? 18 : 30]} />
         <meshBasicMaterial
           ref={wireRef}
           color={CONFIG.wireColor}
@@ -136,9 +137,10 @@ const Globe: React.FC<{ isMobile: boolean; paused: boolean }> = ({ isMobile, pau
           transparent
           opacity={0.04}
         />
-      </Sphere>
+      </mesh>
 
-      <Sphere args={[5.2, isMobile ? 20 : 34, isMobile ? 20 : 34]}>
+      <mesh>
+        <sphereGeometry args={[5.2, isMobile ? 20 : 34, isMobile ? 20 : 34]} />
         <meshBasicMaterial
           ref={atmosphereRef}
           color={CONFIG.atmosphereColor}
@@ -147,9 +149,10 @@ const Globe: React.FC<{ isMobile: boolean; paused: boolean }> = ({ isMobile, pau
           side={THREE.BackSide}
           blending={THREE.AdditiveBlending}
         />
-      </Sphere>
+      </mesh>
 
-      <Sphere args={[5.28, isMobile ? 16 : 28, isMobile ? 16 : 28]}>
+      <mesh>
+        <sphereGeometry args={[5.28, isMobile ? 16 : 28, isMobile ? 16 : 28]} />
         <meshBasicMaterial
           ref={rimRef}
           color="#FFA347"
@@ -158,7 +161,7 @@ const Globe: React.FC<{ isMobile: boolean; paused: boolean }> = ({ isMobile, pau
           side={THREE.BackSide}
           blending={THREE.AdditiveBlending}
         />
-      </Sphere>
+      </mesh>
     </group>
   );
 };
@@ -443,10 +446,11 @@ const StarField: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
   return <points geometry={geometry} material={material} />;
 };
 
-const EarthScene: React.FC<{ isMobile: boolean; animate: boolean; paused: boolean }> = ({
+const EarthScene: React.FC<{ isMobile: boolean; animate: boolean; paused: boolean; showRouteBeams: boolean }> = ({
   isMobile,
   animate,
   paused,
+  showRouteBeams,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -461,7 +465,7 @@ const EarthScene: React.FC<{ isMobile: boolean; animate: boolean; paused: boolea
       <CityPoints isMobile={isMobile} paused={paused} />
       <Connections isMobile={isMobile} paused={paused} />
       <CountryLabels isMobile={isMobile} />
-      {!isMobile && <RouteBeams isMobile={isMobile} paused={paused} />}
+      {showRouteBeams && <RouteBeams isMobile={isMobile} paused={paused} />}
     </group>
   );
 };
@@ -475,8 +479,25 @@ const GlobalNetworkBackground: React.FC<GlobalNetworkBackgroundProps> = ({ pause
     typeof window !== 'undefined' &&
     window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isTablet =
+    typeof window !== 'undefined' &&
+    window.matchMedia &&
+    window.matchMedia('(max-width: 1200px)').matches;
+  const [isTabVisible, setIsTabVisible] = useState(
+    typeof document === 'undefined' ? true : document.visibilityState === 'visible'
+  );
 
-  const animate = !prefersReducedMotion && !paused;
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const onVisibilityChange = () => {
+      setIsTabVisible(document.visibilityState === 'visible');
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, []);
+
+  const animate = !prefersReducedMotion && !paused && isTabVisible;
 
   return (
     <div className="fixed inset-0 z-[1] overflow-hidden pointer-events-none">
@@ -491,8 +512,8 @@ const GlobalNetworkBackground: React.FC<GlobalNetworkBackgroundProps> = ({ pause
           depth: true,
           toneMapping: THREE.NoToneMapping,
         }}
-        dpr={isMobile ? 0.85 : 1}
-        frameloop={paused ? 'demand' : 'always'}
+        dpr={isMobile ? 0.75 : 0.9}
+        frameloop={animate ? 'always' : 'demand'}
       >
         <fog attach="fog" args={['#050B12', 10, 25]} />
         <ambientLight intensity={0.58} color="#00D1FF" />
@@ -500,7 +521,7 @@ const GlobalNetworkBackground: React.FC<GlobalNetworkBackgroundProps> = ({ pause
         <pointLight position={[-10, -10, -10]} intensity={0.42} color="#00D1FF" />
         <pointLight position={[8, 0, 10]} intensity={0.34} color="#FFA347" />
 
-        <EarthScene isMobile={isMobile} animate={animate} paused={paused} />
+        <EarthScene isMobile={isMobile} animate={animate} paused={paused} showRouteBeams={!isTablet} />
         <StarField isMobile={isMobile} />
       </Canvas>
 

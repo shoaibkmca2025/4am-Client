@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -16,20 +15,18 @@ const TiltCard: React.FC<TiltCardProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isInteractive, setIsInteractive] = useState(false);
-  
-  // Motion values for mouse position
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  const frameRef = useRef<number | null>(null);
+  const pendingRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // Smooth spring animation for the tilt
-  const mouseX = useSpring(x, { stiffness: 150, damping: 20 });
-  const mouseY = useSpring(y, { stiffness: 150, damping: 20 });
-
-  // Transform mouse position to rotation values
-  // Note: RotateX is based on Y axis movement, RotateY is based on X axis movement
-  // When mouse is at top (negative Y), we want to rotate X positively (tilt up)
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], [intensity, -intensity]);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-intensity, intensity]);
+  const applyTilt = (xRatio: number, yRatio: number, animated: boolean) => {
+    if (!ref.current) return;
+    const rotateX = -yRatio * intensity;
+    const rotateY = xRatio * intensity;
+    ref.current.style.transition = animated
+      ? 'transform 260ms cubic-bezier(0.22, 1, 0.36, 1)'
+      : 'none';
+    ref.current.style.transform = `perspective(${perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  };
 
   useEffect(() => {
     const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -49,31 +46,42 @@ const TiltCard: React.FC<TiltCardProps> = ({
     const mouseXRelative = (e.clientX - rect.left) / width - 0.5;
     const mouseYRelative = (e.clientY - rect.top) / height - 0.5;
 
-    x.set(mouseXRelative);
-    y.set(mouseYRelative);
+    pendingRef.current = { x: mouseXRelative, y: mouseYRelative };
+    if (frameRef.current !== null) return;
+
+    frameRef.current = window.requestAnimationFrame(() => {
+      frameRef.current = null;
+      applyTilt(pendingRef.current.x, pendingRef.current.y, false);
+    });
   };
 
   const handleMouseLeave = () => {
-    // Reset to center
-    x.set(0);
-    y.set(0);
+    applyTilt(0, 0, true);
   };
 
+  useEffect(() => {
+    if (!isInteractive && ref.current) {
+      ref.current.style.transform = 'none';
+      ref.current.style.transition = 'none';
+    }
+
+    return () => {
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current);
+      }
+    };
+  }, [isInteractive]);
+
   return (
-    <motion.div
+    <div
       ref={ref}
       onMouseMove={isInteractive ? handleMouseMove : undefined}
       onMouseLeave={isInteractive ? handleMouseLeave : undefined}
-      style={{
-        rotateX: isInteractive ? rotateX : 0,
-        rotateY: isInteractive ? rotateY : 0,
-        transformStyle: isInteractive ? "preserve-3d" : "flat",
-        perspective: isInteractive ? perspective : undefined,
-      }}
+      style={{ transformStyle: isInteractive ? 'preserve-3d' : 'flat' }}
       className={`relative ${className}`}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 

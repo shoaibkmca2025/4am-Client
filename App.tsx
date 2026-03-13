@@ -28,9 +28,36 @@ function App() {
   const [showChatbot, setShowChatbot] = useState(false);
 
   useEffect(() => {
-    // Delay non-critical chatbot code to protect first contentful rendering.
-    const timer = window.setTimeout(() => setShowChatbot(true), 1800);
-    return () => window.clearTimeout(timer);
+    // Keep chatbot as non-critical: load only when the main thread is likely idle.
+    let timer: number | null = null;
+    let idleId: number | null = null;
+    const saveData =
+      typeof navigator !== 'undefined' && 'connection' in navigator
+        ? (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
+        : false;
+
+    if (saveData) {
+      timer = window.setTimeout(() => setShowChatbot(true), 12000);
+    } else {
+      const requestIdle = (window as Window & {
+        requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      }).requestIdleCallback;
+
+      if (requestIdle) {
+        idleId = requestIdle(() => setShowChatbot(true), { timeout: 10000 });
+      } else {
+        timer = window.setTimeout(() => setShowChatbot(true), 6000);
+      }
+    }
+
+    return () => {
+      if (timer !== null) {
+        window.clearTimeout(timer);
+      }
+      if (idleId !== null && 'cancelIdleCallback' in window) {
+        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
+      }
+    };
   }, []);
 
   return (
