@@ -1,5 +1,4 @@
-
-import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Hero from './Hero';
 import Services from './Services';
@@ -7,131 +6,84 @@ import Projects from './Projects';
 import Contact from './Contact';
 import Testimonials from './Testimonials';
 import StatsSection from './Stats';
+import NetworkAndTrends from './NetworkAndTrends';
+import ProcessSection from './ProcessSection';
+import Marquee from './Marquee';
 import { scrollToSection } from '../utils/scroll';
 
-const GlobalNetworkBackground = lazy(() => import('./GlobalNetworkBackground'));
-const HOME_PAGE_TITLE = 'Digital Marketing & Software Development | 4AM Global Media';
+const HOME_PAGE_TITLE = 'A Creative Network made for today & tomorrow | 4AM Global Media';
 const HOME_PAGE_DESCRIPTION =
   '4AM Global Media provides digital marketing and software development services including web and mobile app solutions to help businesses grow online.';
 
+// Client / partner names shown in the scrolling strip
+const CLIENTS = [
+  'Nike', 'Spotify', 'Shopify', 'Airbnb', 'Notion', 'Stripe',
+  'Linear', 'Figma', 'Vercel', 'Framer', 'Arc', 'Loom',
+];
+
 const LandingPage: React.FC = () => {
   const location = useLocation();
-  const mainRef = useRef<HTMLDivElement>(null);
-  const [renderDynamicBackground, setRenderDynamicBackground] = useState(false);
-  const [pauseBackground, setPauseBackground] = useState(false);
+  const mainRef  = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const state = location.state as { scrollTo?: string } | null;
     if (!state || !state.scrollTo) return;
-
-    // Small delay to ensure DOM is ready and animations don't interfere with scroll
-    setTimeout(() => {
-      scrollToSection(state.scrollTo!);
-    }, 100);
+    setTimeout(() => { scrollToSection(state.scrollTo!); }, 100);
   }, [location.state]);
-
-  useEffect(() => {
-    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const saveData = typeof navigator !== 'undefined' && 'connection' in navigator
-      ? (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
-      : false;
-    const lowCpu = typeof navigator !== 'undefined' && navigator.hardwareConcurrency
-      ? navigator.hardwareConcurrency < 4
-      : false;
-
-    if (isMobile || prefersReducedMotion || saveData || lowCpu) return;
-
-    // Defer expensive 3D code until the browser is idle to protect initial responsiveness.
-    let timeoutId: number | null = null;
-    let idleId: number | null = null;
-    const requestIdle = (window as Window & {
-      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-    }).requestIdleCallback;
-
-    if (requestIdle) {
-      idleId = requestIdle(() => setRenderDynamicBackground(true), { timeout: 1800 });
-    } else {
-      timeoutId = window.setTimeout(() => setRenderDynamicBackground(true), 1400);
-    }
-
-    return () => {
-      if (timeoutId !== null) {
-        window.clearTimeout(timeoutId);
-      }
-      if (idleId !== null && 'cancelIdleCallback' in window) {
-        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!renderDynamicBackground) return;
-    let stopTimer: number | null = null;
-
-    const handleScroll = () => {
-      setPauseBackground(true);
-      if (stopTimer !== null) {
-        window.clearTimeout(stopTimer);
-      }
-      stopTimer = window.setTimeout(() => setPauseBackground(false), 140);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (stopTimer !== null) {
-        window.clearTimeout(stopTimer);
-      }
-    };
-  }, [renderDynamicBackground]);
 
   useEffect(() => {
     document.title = HOME_PAGE_TITLE;
     const descriptionTag = document.querySelector('meta[name="description"]');
-    if (descriptionTag) {
-      descriptionTag.setAttribute('content', HOME_PAGE_DESCRIPTION);
-    }
+    if (descriptionTag) descriptionTag.setAttribute('content', HOME_PAGE_DESCRIPTION);
   }, []);
 
   return (
-    <>
-      <div className="fixed inset-0 z-0 overflow-hidden bg-[#050B12] pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050B12] via-transparent to-[#050B12]/80" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050B12_100%)] opacity-40" />
+    <div ref={mainRef} className="relative z-[2] bg-black">
+
+      <Hero />
+
+      {/* ── Kinetic marquee #1 — after hero ── */}
+      <Marquee
+        items={['Strategy', 'Design', 'Engineering', 'Growth', 'Brand', 'Content', 'Digital']}
+        speed={30}
+        className="border-y border-white/[0.06] py-4 md:py-6 text-[9vw] md:text-[5vw] font-black uppercase tracking-[-0.02em] text-white/80"
+      />
+
+      <StatsSection />
+      <ProcessSection />
+
+      {/* ── Kinetic marquee #2 — between process and services ── */}
+      <Marquee
+        items={['Accepting New Projects', '4AM Global Media', "Let's Build Something", 'Available Worldwide', 'Est. 2024']}
+        speed={45}
+        direction="right"
+        separator="—"
+        className="border-y border-white/[0.06] py-4 md:py-6 text-[4vw] md:text-[2vw] font-black uppercase tracking-[0.08em] text-white/25"
+      />
+
+      <Services />
+      <Projects />
+
+      {/* ── Clients strip ── */}
+      <div className="border-t border-white/[0.06] py-8 md:py-10">
+        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 mb-5">
+          <p className="text-[9px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-white/15">
+            Brands We've Worked With
+          </p>
+        </div>
+        <Marquee
+          items={CLIENTS}
+          speed={55}
+          separator="·"
+          scrollVelocity={false}
+          className="text-[3.5vw] md:text-[1.6vw] font-black uppercase tracking-[0.08em] text-white/12"
+        />
       </div>
-      {renderDynamicBackground && (
-        <Suspense fallback={null}>
-          <GlobalNetworkBackground paused={pauseBackground} />
-        </Suspense>
-      )}
-      
-      <div ref={mainRef} className="relative z-[2]">
-        <div className="flex flex-col justify-center">
-          <Hero />
-        </div>
-        
-        <div>
-          <StatsSection />
-        </div>
-        
-        <div>
-          <Services />
-        </div>
-        
-        <div>
-          <Projects />
-        </div>
-        
-        <div>
-          <Testimonials />
-        </div>
-        
-        <div>
-          <Contact />
-        </div>
-      </div>
-    </>
+
+      <NetworkAndTrends />
+      <Testimonials />
+      <Contact />
+    </div>
   );
 };
 

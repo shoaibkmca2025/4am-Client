@@ -1,456 +1,365 @@
-import React, { useEffect } from 'react';
-import { useParams, Navigate, Link, useNavigate } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  CheckCircle, 
-  ArrowUpRight, 
-  Check, 
-  Star, 
-  Zap, 
-  TrendingUp, 
-  Users, 
-  Award,
-  ChevronRight
-} from 'lucide-react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SERVICES, PROJECTS } from '../constants';
-import ScrollReveal from './ScrollReveal';
-import TiltCard from './TiltCard';
 import { optimizeImageUrl } from '../utils/image';
+import { scrollToSection } from '../utils/scroll';
+import RevealText from './RevealText';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const SERVICE_SEO_OVERRIDES: Record<string, { title: string; description: string }> = {
   'digital-marketing': {
     title: 'Digital Marketing Services | SEO & Social Media | 4AM Global Media',
-    description:
-      'Boost your online presence with digital marketing services from 4AM Global Media including SEO, social media marketing, and content strategies.',
+    description: 'Boost your online presence with digital marketing services from 4AM Global Media.',
   },
 };
 
 const ServicePage: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
-  const service = SERVICES.find((s) => s.slug === slug);
+  const { slug }   = useParams<{ slug: string }>();
+  const navigate   = useNavigate();
+  const pageRef    = useRef<HTMLDivElement>(null);
+  const heroImgRef = useRef<HTMLDivElement>(null);
+  const service    = SERVICES.find((s) => s.slug === slug);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug]);
+  useEffect(() => { window.scrollTo(0, 0); }, [slug]);
 
   useEffect(() => {
     if (!service) return;
-
-    const fallbackTitle = `${service.title} Services | 4AM Global Media`;
-    const fallbackDescription = `Explore ${service.title.toLowerCase()} services from 4AM Global Media designed to help businesses scale with strategy, execution, and measurable growth.`;
-    const seo = SERVICE_SEO_OVERRIDES[service.slug] ?? {
-      title: fallbackTitle,
-      description: fallbackDescription,
-    };
-
+    const fb  = `${service.title} Services | 4AM Global Media`;
+    const fd  = `Explore ${service.title.toLowerCase()} services from 4AM Global Media.`;
+    const seo = SERVICE_SEO_OVERRIDES[service.slug] ?? { title: fb, description: fd };
     document.title = seo.title;
-    const descriptionTag = document.querySelector('meta[name="description"]');
-    if (descriptionTag) {
-      descriptionTag.setAttribute('content', seo.description);
-    }
+    const tag = document.querySelector('meta[name="description"]');
+    if (tag) tag.setAttribute('content', seo.description);
   }, [service]);
 
-  if (!service) {
-    return <Navigate to="/" replace />;
-  }
+  // ── Page animations ──────────────────────────────────────────────────
+  useLayoutEffect(() => {
+    const page = pageRef.current;
+    if (!page || !service) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
 
-  // Get relevant projects (first 3 for now, or filter by category if possible)
-  const relatedProjects = PROJECTS.slice(0, 3);
+    const ctx = gsap.context(() => {
+      // Hero image parallax
+      if (heroImgRef.current) {
+        gsap.to(heroImgRef.current, {
+          yPercent: 15,
+          ease: 'none',
+          scrollTrigger: { trigger: heroImgRef.current, start: 'top top', end: 'bottom top', scrub: 2 },
+        });
+      }
+
+      // Hero text entrance
+      const heroText = page.querySelector('.sp-hero-text');
+      if (heroText) {
+        const children = heroText.children;
+        gsap.fromTo(children,
+          { y: 40, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 1.1, stagger: 0.1, ease: 'expo.out', delay: 0.2 }
+        );
+      }
+
+      // Feature grid cards
+      const features = gsap.utils.toArray<HTMLElement>('.sp-feature', page);
+      features.forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 50, autoAlpha: 0 },
+          {
+            y: 0, autoAlpha: 1, duration: 0.9, delay: i * 0.07, ease: 'expo.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+          }
+        );
+      });
+
+      // Benefit cards
+      const benefits = gsap.utils.toArray<HTMLElement>('.sp-benefit', page);
+      benefits.forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 40, autoAlpha: 0 },
+          {
+            y: 0, autoAlpha: 1, duration: 0.9, delay: i * 0.08, ease: 'expo.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+          }
+        );
+      });
+
+      // Process steps — slide in from left
+      const steps = gsap.utils.toArray<HTMLElement>('.sp-step', page);
+      steps.forEach((el, i) => {
+        gsap.fromTo(el,
+          { x: -30, autoAlpha: 0 },
+          {
+            x: 0, autoAlpha: 1, duration: 1, delay: i * 0.1, ease: 'expo.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+          }
+        );
+      });
+
+      // Related project cards
+      const relCards = gsap.utils.toArray<HTMLElement>('.sp-rel-card', page);
+      relCards.forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 50, autoAlpha: 0 },
+          {
+            y: 0, autoAlpha: 1, duration: 1, delay: i * 0.1, ease: 'expo.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+          }
+        );
+        // Image hover scale
+        const img = el.querySelector<HTMLElement>('img');
+        if (img) {
+          const onEnter = () => gsap.to(img, { scale: 1.07, duration: 0.8, ease: 'expo.out' });
+          const onLeave = () => gsap.to(img, { scale: 1,    duration: 0.7, ease: 'expo.out' });
+          el.addEventListener('mouseenter', onEnter);
+          el.addEventListener('mouseleave', onLeave);
+        }
+      });
+
+      // Stats counter-up numbers
+      const statNums = gsap.utils.toArray<HTMLElement>('.sp-stat-num', page);
+      statNums.forEach((el) => {
+        const target = parseFloat(el.getAttribute('data-val') ?? '0');
+        const suffix = el.getAttribute('data-suffix') ?? '';
+        const isDecimal = target % 1 !== 0;
+        const proxy = { val: 0 };
+        gsap.to(proxy, {
+          val: target,
+          duration: 1.8,
+          ease: 'power3.out',
+          onUpdate: () => {
+            el.textContent = (isDecimal ? proxy.val.toFixed(1) : Math.round(proxy.val)) + suffix;
+          },
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+        });
+      });
+
+      // CTA section entrance
+      gsap.fromTo('.sp-cta',
+        { y: 40, autoAlpha: 0 },
+        {
+          y: 0, autoAlpha: 1, duration: 1.2, ease: 'expo.out',
+          scrollTrigger: { trigger: '.sp-cta', start: 'top 85%', once: true },
+        }
+      );
+    }, page);
+
+    return () => ctx.revert();
+  }, [service]);
+
+  if (!service) return <Navigate to="/" replace />;
+
+  const relatedProjects = PROJECTS.slice(0, 4);
 
   return (
-    <div className="bg-brand-bg min-h-screen">
-      {/* 1. Hero Section - Enhanced with Gradient & Texture */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden">
-        {/* Background Image with Premium Overlay */}
-        <div className="absolute inset-0 z-0">
+    <div ref={pageRef} className="bg-black min-h-screen text-white">
+
+      {/* ── Hero ── */}
+      <section className="relative min-h-[75vh] flex items-end overflow-hidden pt-[70px] md:pt-[80px]">
+        <div ref={heroImgRef} className="absolute inset-0 z-0">
           <img
             src={optimizeImageUrl(service.image, { width: 1920, height: 1080, quality: 72, format: 'webp' })}
             alt={service.title}
             loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            width={1920}
-            height={1080}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/90 to-brand-dark/60" />
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center py-24">
-          <ScrollReveal>
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-primary/20 border border-brand-primary/30 backdrop-blur-sm text-brand-primary text-sm font-bold tracking-wide mb-8 shadow-sm">
-                <Star className="w-4 h-4 fill-brand-primary" />
-                <span>Premium {service.title} Services</span>
-              </div>
-              <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-8 leading-tight drop-shadow-lg">
-                {service.title}
-              </h1>
-              <p className="text-xl text-stone-200 mb-10 leading-relaxed font-light max-w-lg">
-                {service.longDescription || service.description}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-5">
-                <button
-                  onClick={() => navigate('/', { state: { scrollTo: 'contact' } })}
-                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-full font-bold tracking-wide hover:shadow-clay-hover transition-all transform hover:-translate-y-1 shadow-clay cursor-pointer"
-                >
-                  Book Consultation
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </button>
-                <a
-                  href="#process"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white rounded-full font-bold tracking-wide hover:bg-white/20 transition-all backdrop-blur-md border border-white/20 hover:border-white/40"
-                >
-                  See Our Process
-                </a>
-              </div>
-            </div>
-          </ScrollReveal>
-          
-          {/* Abstract Visual/Illustration on the right (Desktop) */}
-          <div className="hidden md:block relative">
-             <div className="relative z-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-[32px] p-10 transform rotate-3 hover:rotate-0 transition-transform duration-500 shadow-2xl">
-                <div className="flex items-center justify-between mb-8">
-                   <div className="flex -space-x-3">
-                      {[1,2,3].map(i => (
-                        <div key={i} className="w-12 h-12 rounded-full bg-brand-dark border-2 border-brand-gray/50 flex items-center justify-center text-xs text-white shadow-lg">
-                           <Users className="w-5 h-5 text-brand-gray" />
-                        </div>
-                      ))}
-                   </div>
-                   <div className="text-right">
-                      <div className="text-3xl font-bold text-white">200+</div>
-                      <div className="text-xs text-stone-300 uppercase tracking-wider font-semibold">Happy Clients</div>
-                   </div>
-                </div>
-                <div className="space-y-5">
-                   <div className="h-3 bg-white/10 rounded-full w-3/4" />
-                   <div className="h-3 bg-white/10 rounded-full w-1/2" />
-                   <div className="h-3 bg-white/10 rounded-full w-full" />
-                </div>
-                <div className="mt-10 pt-8 border-t border-white/10 flex items-center gap-5">
-                   <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30">
-                      <TrendingUp className="w-7 h-7" />
-                   </div>
-                   <div>
-                      <div className="text-sm text-stone-300 uppercase tracking-wider font-semibold">Average ROI</div>
-                      <div className="text-2xl font-bold text-white">+150% Growth</div>
-                   </div>
-                </div>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Stats / Trust Strip */}
-      <div className="bg-brand-surface border-b border-brand-gray/10 py-10 relative z-20 -mt-8 rounded-t-[40px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-        <div className="container mx-auto px-6 flex flex-wrap justify-center md:justify-between gap-8 items-center">
-           {['Trusted by 50+ Brands', '98% Client Satisfaction', 'Award Winning Agency', '24/7 Support'].map((stat, i) => (
-             <div key={i} className="flex items-center gap-3 font-bold text-brand-gray text-sm md:text-base uppercase tracking-wide">
-               <CheckCircle className="w-5 h-5 text-brand-primary" />
-               {stat}
-             </div>
-           ))}
-        </div>
-      </div>
-
-      {/* 3. What We Offer - Enhanced Cards */}
-      <section className="py-20 bg-brand-bg relative overflow-hidden">
-        {/* Background Decor */}
-        <div className="absolute top-20 left-0 w-96 h-96 bg-brand-primary/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-20 right-0 w-96 h-96 bg-brand-secondary/5 rounded-full blur-[100px] pointer-events-none" />
-
-        <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-16 max-w-3xl mx-auto">
-              <span className="text-brand-primary font-bold tracking-[0.2em] uppercase text-xs mb-3 block">Our Expertise</span>
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-brand-dark mb-6">
-                Comprehensive {service.title} Solutions
-              </h2>
-              <p className="text-lg text-brand-gray leading-relaxed">
-                We provide end-to-end services designed to tackle your unique challenges and drive measurable business results.
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {service.features.map((feature, index) => (
-              <ScrollReveal key={index} delay={index * 100}>
-                <div className="bg-brand-surface p-10 rounded-[32px] border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-2 transition-all duration-300 group h-full flex flex-col">
-                  <div className="w-16 h-16 rounded-2xl bg-brand-bg flex items-center justify-center mb-8 group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 shadow-inner">
-                    <Zap className="w-8 h-8 text-brand-primary group-hover:text-white transition-colors" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-brand-dark mb-4">{feature}</h3>
-                  <p className="text-brand-gray leading-relaxed mb-8 flex-grow">
-                    Professional {feature.toLowerCase()} tailored to elevate your brand presence and engage your target audience effectively.
-                  </p>
-                  <div className="flex items-center text-brand-primary font-bold text-sm uppercase tracking-wider group-hover:translate-x-2 transition-transform cursor-pointer">
-                    Learn more <ChevronRight className="w-4 h-4 ml-1" />
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Benefits / Results - Dark Premium Section (Refined for Warmth) */}
-      <section className="py-20 bg-brand-dark text-white relative overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-primary/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-900/20 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <ScrollReveal>
-              <h2 className="text-3xl md:text-5xl font-display font-bold mb-8 leading-tight">
-                Real Results for<br/>Real Businesses
-              </h2>
-              <p className="text-stone-400 text-lg mb-10 leading-relaxed max-w-md font-light">
-                We don't just deliver tasks; we deliver measurable outcomes. Our strategic approach ensures every action contributes to your bottom line.
-              </p>
-              
-              <div className="space-y-8">
-                <div className="flex items-center gap-6">
-                   <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shadow-lg backdrop-blur-sm">
-                      <TrendingUp className="w-7 h-7 text-emerald-400" />
-                   </div>
-                   <div>
-                      <div className="text-3xl font-bold">240%</div>
-                      <div className="text-sm text-stone-400 uppercase tracking-wider">Average Traffic Increase</div>
-                   </div>
-                </div>
-                <div className="flex items-center gap-6">
-                   <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shadow-lg backdrop-blur-sm">
-                      <Award className="w-7 h-7 text-brand-secondary" />
-                   </div>
-                   <div>
-                      <div className="text-3xl font-bold">#1</div>
-                      <div className="text-sm text-stone-400 uppercase tracking-wider">Ranked Agency</div>
-                   </div>
-                </div>
-              </div>
-
-              <div className="mt-12">
-                <button
-                  onClick={() => navigate('/', { state: { scrollTo: 'contact' } })}
-                  className="inline-flex items-center text-white border-b-2 border-brand-primary pb-1 hover:text-brand-primary transition-colors font-bold cursor-pointer bg-transparent tracking-wide"
-                >
-                  Start your growth journey <ArrowUpRight className="ml-2 w-5 h-5" />
-                </button>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid sm:grid-cols-2 gap-6">
-              {service.benefits.map((benefit, index) => (
-                <ScrollReveal key={index} delay={index * 100}>
-                  <div className="bg-white/5 p-8 rounded-[24px] border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-md group hover:-translate-y-1 duration-300">
-                    <div className="mb-6 w-12 h-12 rounded-2xl bg-brand-primary/20 flex items-center justify-center text-brand-primary group-hover:scale-110 transition-transform border border-brand-primary/20">
-                      <Check className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-3">{benefit}</h3>
-                    <p className="text-stone-400 text-sm leading-relaxed">Experience the advantage of {benefit.toLowerCase()} with our proven strategies.</p>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Process Section - Timeline Style */}
-      <section id="process" className="py-24 bg-brand-surface relative">
-        <div className="container mx-auto px-6 max-w-[1200px]">
-          <ScrollReveal>
-            <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-brand-dark mb-6">
-                How We Work
-              </h2>
-              <p className="text-brand-gray max-w-2xl mx-auto text-lg">
-                A proven 4-step framework designed for transparency, efficiency, and consistent results.
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid md:grid-cols-4 gap-8 relative">
-            {/* Connecting Line */}
-            <div className="hidden md:block absolute top-14 left-0 w-full h-[3px] bg-brand-gray/10 rounded-full" />
-
-            {service.process.map((step, index) => (
-              <ScrollReveal key={index} delay={index * 150}>
-                <div className="relative pt-10 group">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-28 bg-brand-surface rounded-full flex items-center justify-center border-8 border-brand-surface z-10">
-                     <div className="w-20 h-20 rounded-full bg-brand-bg text-brand-dark flex items-center justify-center text-2xl font-bold shadow-clay group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 border border-white/50">
-                        {index + 1}
-                     </div>
-                  </div>
-                  
-                  <div className="mt-16 bg-brand-bg p-8 rounded-[32px] border border-white/60 text-center h-full shadow-clay hover:shadow-clay-hover transition-all duration-300 hover:-translate-y-2">
-                    <h3 className="text-xl font-bold text-brand-dark mb-4 mt-4">{step.title}</h3>
-                    <p className="text-brand-gray text-sm leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5.5 Related Images Section */}
-      {service.relatedImages && service.relatedImages.length > 0 && (
-        <section className="py-24 bg-brand-surface relative overflow-hidden">
-          <div className="container mx-auto px-6 max-w-[1200px]">
-            <ScrollReveal>
-              <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-dark mb-4">
-                  {service.title} In Action
-                </h2>
-                <p className="text-brand-gray max-w-2xl mx-auto text-lg">
-                  Visualizing the impact of our {service.title.toLowerCase()} services.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {service.relatedImages.map((img, index) => (
-                <ScrollReveal key={index} delay={index * 100}>
-                  <TiltCard className="h-64 md:h-80 rounded-[32px] overflow-hidden shadow-clay border border-white/60 group relative cursor-pointer">
-                    <img 
-                      src={optimizeImageUrl(img, { width: 1200, height: 900, quality: 70, format: 'webp' })} 
-                      alt={`${service.title} example ${index + 1}`} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      loading="lazy"
-                      decoding="async"
-                      fetchPriority="low"
-                      width={1200}
-                      height={900}
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = optimizeImageUrl(
-                          `https://picsum.photos/seed/${service.slug}-example-${index}/1200/900`,
-                          { width: 1200, height: 900, quality: 68, format: 'webp' }
-                        );
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
-                      <span className="text-white font-bold tracking-widest uppercase text-sm bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30">
-                        View Detail
-                      </span>
-                    </div>
-                  </TiltCard>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 6. Success Stories / Projects */}
-      <section className="py-24 bg-brand-bg border-t border-brand-gray/10">
-         <div className="container mx-auto px-6 max-w-[1200px]">
-            <ScrollReveal>
-               <div className="flex justify-between items-end mb-12">
-                  <div>
-                     <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-dark mb-4">Success Stories</h2>
-                     <p className="text-brand-gray">See how we've helped others achieve their goals.</p>
-                  </div>
-                  <Link to="/" className="text-brand-primary font-bold hover:underline hidden md:block uppercase tracking-wider text-sm">View all projects</Link>
-               </div>
-            </ScrollReveal>
-
-            <div className="grid md:grid-cols-3 gap-8">
-               {relatedProjects.map((project, idx) => (
-                  <ScrollReveal key={project.id} delay={idx * 100}>
-                     <div className="group bg-brand-surface rounded-[32px] overflow-hidden shadow-clay hover:shadow-clay-hover transition-all duration-300 border border-white/60 flex flex-col h-full hover:-translate-y-2">
-                        <div className="h-56 overflow-hidden relative">
-                           <img
-                             src={optimizeImageUrl(`https://picsum.photos/seed/${project.title}/600/400`, {
-                               width: 600,
-                               height: 400,
-                               quality: 68,
-                               format: 'webp',
-                             })}
-                             alt={project.title}
-                             loading="lazy"
-                             decoding="async"
-                             fetchPriority="low"
-                             width={600}
-                             height={400}
-                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                           />
-                           <div className="absolute inset-0 bg-brand-dark/20 group-hover:bg-brand-dark/10 transition-colors" />
-                           <div className="absolute top-4 left-4">
-                              <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-brand-dark shadow-sm">
-                                {project.industry}
-                              </span>
-                           </div>
-                        </div>
-                        <div className="p-8 flex-grow flex flex-col">
-                           <h3 className="text-xl font-bold text-brand-dark mb-3">{project.title}</h3>
-                           <div className="flex items-center gap-2 text-sm text-brand-gray mb-6">
-                              <TrendingUp className="w-4 h-4 text-emerald-500" />
-                              <span className="font-semibold">{project.result || 'Significant Growth'}</span>
-                           </div>
-                           <div className="mt-auto pt-6 border-t border-brand-gray/10">
-                              <div className="text-brand-primary font-bold text-sm flex items-center uppercase tracking-wider group-hover:translate-x-2 transition-transform">
-                                 View Case Study <ArrowRight className="w-4 h-4 ml-1" />
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </ScrollReveal>
-               ))}
-            </div>
-         </div>
-      </section>
-
-      {/* 7. Strong CTA Section */}
-      <section className="py-24 relative overflow-hidden bg-brand-dark">
-        <div className="absolute inset-0 bg-brand-dark z-0">
-           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-primary/20 rounded-full blur-[150px]" />
-           <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-secondary/10 rounded-full blur-[150px]" />
-        </div>
-        
-        <div className="container mx-auto px-6 max-w-4xl text-center relative z-10">
-          <ScrollReveal>
-            <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-8 leading-tight">
-              Ready to transform your<br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">{service.title}?</span>
-            </h2>
-            <p className="text-xl text-stone-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-              Don't let another day pass with average results. Partner with us to build a strategy that scales.
+        <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10 py-16 md:py-24">
+          <div className="sp-hero-text max-w-3xl">
+            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/40 block mb-6">
+              Our Services
+            </span>
+            <RevealText
+              as="h1"
+              className="block text-section-title text-white mb-6"
+              start="top 90%"
+            >
+              {service.title.toUpperCase()}
+            </RevealText>
+            <p className="text-xl text-white/55 max-w-2xl leading-relaxed font-medium mb-10">
+              {service.longDescription || service.description}
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => navigate('/', { state: { scrollTo: 'contact' } })}
-                className="inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-full font-bold text-lg tracking-wide hover:shadow-lg transition-all transform hover:-translate-y-1 shadow-brand-primary/30 cursor-pointer"
+                data-ripple
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-black font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/85 active:scale-95 transition-all duration-200"
               >
-                Start Your Project
-                <ArrowRight className="ml-2 w-6 h-6" />
+                Book Consultation
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </button>
               <a
-                href="tel:8826406545"
-                className="inline-flex items-center justify-center px-10 py-5 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg tracking-wide hover:bg-white/10 transition-all backdrop-blur-sm"
+                href="#process"
+                className="inline-flex items-center justify-center px-8 py-4 border border-white/20 text-white font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/8 transition-all duration-200"
               >
-                Schedule a Call
+                See Our Process
               </a>
             </div>
-            <div className="mt-12 flex items-center justify-center gap-6 text-stone-400 text-sm font-medium">
-               <div className="flex items-center gap-2">
-                 <CheckCircle className="w-5 h-5 text-emerald-500" /> No obligation
-               </div>
-               <div className="w-1.5 h-1.5 rounded-full bg-stone-700" />
-               <div className="flex items-center gap-2">
-                 <CheckCircle className="w-5 h-5 text-emerald-500" /> Free strategy session
-               </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Features ── */}
+      <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+        <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
+          <div className="mb-16">
+            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">What We Offer</span>
+            <RevealText as="h2" className="block text-section-title text-white">COMPREHENSIVE</RevealText>
+            <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>SOLUTIONS</RevealText>
+          </div>
+          <div className="grid md:grid-cols-2 gap-px bg-white/[0.04]">
+            {service.features.map((feature, i) => (
+              <div key={i} className="sp-feature bg-black p-8 md:p-10 hover:bg-white/[0.025] transition-colors duration-500 group">
+                <span className="text-sm font-bold tracking-[0.15em] text-white/15 block mb-4">0{i + 1}</span>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 uppercase tracking-tight group-hover:text-white/80 transition-colors duration-300">{feature}</h3>
+                <p className="text-white/35 text-sm leading-relaxed font-medium">
+                  Professional {feature.toLowerCase()} tailored to elevate your brand presence.
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Impact / Stats ── */}
+      <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+        <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            <div>
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Results</span>
+              <RevealText as="h2" className="block text-section-title text-white mb-2">REAL</RevealText>
+              <RevealText as="h2" className="block text-section-title text-transparent mb-8" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>IMPACT</RevealText>
+              <p className="text-white/45 text-lg leading-relaxed font-medium max-w-md mb-12">
+                We deliver measurable outcomes. Every action contributes to your bottom line.
+              </p>
+              <div className="grid grid-cols-2 gap-8 border-t border-white/[0.07] pt-10">
+                <div>
+                  <div className="sp-stat-num text-5xl md:text-6xl font-black text-white tracking-[-0.03em]" data-val="240" data-suffix="%">0%</div>
+                  <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/25 mt-2">Avg Traffic Increase</div>
+                </div>
+                <div>
+                  <div className="sp-stat-num text-5xl md:text-6xl font-black text-white tracking-[-0.03em]" data-val="3.4" data-suffix="x">0x</div>
+                  <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/25 mt-2">Revenue Growth</div>
+                </div>
+              </div>
             </div>
-          </ScrollReveal>
+            <div className="grid sm:grid-cols-2 gap-px bg-white/[0.04]">
+              {service.benefits.map((benefit, i) => (
+                <div key={i} className="sp-benefit bg-black p-8 hover:bg-white/[0.025] transition-colors duration-500 group">
+                  <div className="mb-4 w-9 h-9 rounded-full border border-white/[0.08] flex items-center justify-center group-hover:border-white/20 transition-colors duration-300">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 8l3 3 5-6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2 uppercase tracking-tight">{benefit}</h3>
+                  <p className="text-white/25 text-xs leading-relaxed">Proven strategies delivering {benefit.toLowerCase()}.</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Process ── */}
+      <section id="process" className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+        <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
+          <div className="mb-16">
+            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Our Process</span>
+            <RevealText as="h2" className="block text-section-title text-white">HOW WE</RevealText>
+            <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>WORK</RevealText>
+          </div>
+          <div className="divide-y divide-white/[0.07] border-t border-white/[0.07]">
+            {service.process.map((step, i) => (
+              <div key={i} className="sp-step py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-12 group hover:bg-white/[0.01] transition-colors duration-300 px-2">
+                <span className="text-5xl md:text-7xl font-black text-white/[0.08] shrink-0 w-20 group-hover:text-white/[0.12] transition-colors duration-400">{i + 1}</span>
+                <div className="flex-1">
+                  <h3 className="text-xl md:text-2xl font-bold text-white uppercase tracking-tight mb-3 group-hover:text-white/80 transition-colors duration-300">{step.title}</h3>
+                  <p className="text-white/35 text-base leading-relaxed font-medium max-w-lg">{step.description}</p>
+                </div>
+                <div className="w-9 h-9 rounded-full border border-white/[0.06] flex items-center justify-center text-white/20 group-hover:border-white/20 group-hover:text-white/40 transition-all duration-300 shrink-0">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Related Work ── */}
+      <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Related</span>
+              <RevealText as="h2" className="block text-section-title text-white">CASE STUDIES</RevealText>
+            </div>
+            <button
+              onClick={() => { navigate('/'); setTimeout(() => scrollToSection('work'), 200); }}
+              className="hidden md:flex items-center gap-2 text-white text-xs font-bold uppercase tracking-[0.2em] hover:text-white/50 transition-colors duration-300 hover-underline"
+            >
+              View all
+            </button>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedProjects.map((project) => (
+              <div
+                key={project.id}
+                className="sp-rel-card group cursor-pointer"
+                onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
+              >
+                <div className="aspect-[4/5] overflow-hidden bg-white/[0.03] mb-4">
+                  <img
+                    src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/600/750`}
+                    alt={project.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-100"
+                    style={{ transformOrigin: 'center center' }}
+                  />
+                </div>
+                <h3 className="text-sm font-bold text-white uppercase tracking-tight group-hover:text-white/50 transition-colors duration-300">{project.title}</h3>
+                {project.result && (
+                  <span className="text-[10px] font-bold text-white/25 tracking-wider uppercase mt-1 block">{project.result}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+        <div className="sp-cta w-full max-w-[900px] mx-auto px-6 md:px-10 text-center">
+          <RevealText as="h2" className="block text-display text-white mb-2">READY TO</RevealText>
+          <RevealText as="h2" className="block text-display text-transparent mb-10" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>TRANSFORM?</RevealText>
+          <p className="text-white/35 text-lg mb-14 max-w-lg mx-auto font-medium leading-relaxed">
+            Partner with us to build a {service.title.toLowerCase()} strategy that scales and compounds.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => navigate('/', { state: { scrollTo: 'contact' } })}
+              data-ripple
+              className="px-10 py-5 bg-white text-black font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/85 active:scale-95 transition-all duration-200 inline-flex items-center justify-center gap-3"
+            >
+              Start Your Project
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <a
+              href="tel:8826406545"
+              className="px-10 py-5 border border-white/20 text-white font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/[0.06] transition-all duration-200 inline-flex items-center justify-center"
+            >
+              Schedule a Call
+            </a>
+          </div>
         </div>
       </section>
     </div>

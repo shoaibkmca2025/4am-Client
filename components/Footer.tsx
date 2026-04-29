@@ -1,183 +1,228 @@
-import React from 'react';
-import { Instagram, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
+import React, { useLayoutEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { scrollToSection } from '../utils/scroll';
+import RevealText from './RevealText';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+const FOOTER_NAV = [
+  { label: 'Work',     sectionId: 'work' },
+  { label: 'Services', sectionId: 'services' },
+  { label: 'About',    sectionId: 'about' },
+  { label: 'News',     sectionId: 'testimonials' },
+  { label: 'Contact',  sectionId: 'contact' },
+];
+
+const FOOTER_SERVICES = [
+  { label: 'Digital Marketing', href: '/services/digital-marketing' },
+  { label: 'Branding',          href: '/services/branding' },
+  { label: 'Social Media',      href: '/services/social-media-growth' },
+  { label: 'SEO',               href: '/services/seo' },
+  { label: 'Web Development',   href: '/services/web-development' },
+  { label: 'Content Creation',  href: '/services/content-creation' },
+];
+
+const FOOTER_SOCIALS = [
+  { label: 'Instagram', href: 'https://www.instagram.com/reel/DUBIUl5DfBU/?utm_source=ig_web_copy_link' },
+  { label: 'Email',     href: 'mailto:4amglobalmedia@gmail.com' },
+];
+
+const colVariant = {
+  hidden: { y: 24, opacity: 0 },
+  show:   { y: 0,  opacity: 1 },
+};
 
 const Footer: React.FC = () => {
+  const ctaBtnRef = useRef<HTMLButtonElement>(null);
+  const ctaSectionRef = useRef<HTMLDivElement>(null);
+
+  // CTA heading zooms in from slightly below on scroll-enter
+  const { scrollYProgress: ctaProgress } = useScroll({
+    target: ctaSectionRef,
+    offset: ['start end', 'center center'],
+  });
+  const ctaScale  = useTransform(ctaProgress, [0, 1], [0.88, 1]);
+  const ctaBlurPx = useTransform(ctaProgress, [0, 0.7], [8, 0]);
+  const ctaFilter = useMotionTemplate`blur(${ctaBlurPx}px)`;
+
+  useLayoutEffect(() => {
+    const btn = ctaBtnRef.current;
+    if (!btn) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    const onEnter = () => gsap.to(btn, { rotate: 45, scale: 1.1, duration: 0.4, ease: 'expo.out' });
+    const onLeave = () => gsap.to(btn, { rotate: 0,  scale: 1,   duration: 0.35, ease: 'expo.out' });
+
+    btn.addEventListener('mouseenter', onEnter);
+    btn.addEventListener('mouseleave', onLeave);
+    return () => {
+      btn.removeEventListener('mouseenter', onEnter);
+      btn.removeEventListener('mouseleave', onLeave);
+    };
+  }, []);
+
   return (
-    <footer className="relative z-50 border-t border-white/10 bg-black/20 backdrop-blur-md text-white transition-colors duration-500">
-      <div className="container mx-auto px-6 max-w-[1200px] py-10 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 mb-12">
-          <div className="md:col-span-4 space-y-6">
-            <a 
-              href="#home"
-              onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}
-              className="inline-flex items-center gap-3 group"
+    <footer className="relative z-50 bg-black text-white">
+
+      {/* ── Giant CTA ── */}
+      <div className="border-t border-white/[0.06]" ref={ctaSectionRef}>
+        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 py-14 md:py-20">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <motion.div
+              style={{ scale: ctaScale, filter: ctaFilter }}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 1, ease: E }}
             >
-              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                <img
-                  src="/assets/logo.jpeg"
-                  alt="4AM Global Media logo"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <span className="text-2xl font-display font-bold uppercase tracking-tight text-white">
-                4AM Global Media
+              <span className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/20 block mb-5">
+                Ready to start?
               </span>
-            </a>
-            <p className="text-sm md:text-base text-gray-400 max-w-sm leading-relaxed">
-              The growth engine that never sleeps. Powering founders, operators, and teams across the globe.
-            </p>
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)] animate-pulse" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-gray-300 font-bold">
-                Systems online
-              </span>
-            </div>
-          </div>
+              <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white">
+                LET'S CREATE
+              </RevealText>
+              <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.1)' }} delay={0.1}>
+                SOMETHING
+              </RevealText>
+              <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white" delay={0.2}>
+                GREAT
+              </RevealText>
+            </motion.div>
 
-          <div className="md:col-span-5 grid grid-cols-2 lg:grid-cols-3 gap-10">
-            <div className="space-y-6">
-              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-brand-primary/80">
-                Services
-              </h4>
-              <div className="space-y-3 text-sm">
-                <a
-                  href="#services"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="inline-flex items-center gap-1 text-white font-bold hover:text-brand-primary transition-colors"
-                >
-                  Full service menu
-                  <ArrowRight className="w-3 h-3" />
-                </a>
-                <a 
-                  href="#services"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  Product & web
-                </a>
-                <a 
-                  href="#services"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  Paid growth
-                </a>
-                <a 
-                  href="#services"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  SEO & content
-                </a>
-                <a 
-                  href="#services"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  Brand systems
-                </a>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-brand-primary/80">
-                Resources
-              </h4>
-              <div className="space-y-3 text-sm">
-                <a 
-                  href="#work"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  Case studies
-                </a>
-                <a 
-                  href="#services"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  Service overview
-                </a>
-                <span className="block text-brand-gray/60 cursor-not-allowed">
-                  ROI & performance reports
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-brand-primary/80">
-                Company
-              </h4>
-              <div className="space-y-3 text-sm">
-                <a 
-                  href="#work"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  Our Work
-                </a>
-                <a 
-                  href="#services"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('services'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  Pricing
-                </a>
-                <a 
-                  href="#contact"
-                  onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}
-                  className="block text-gray-400 hover:text-white transition-colors"
-                >
-                  Partner with us
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="md:col-span-3 space-y-6">
-            <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-brand-primary/80">
-              Contact
-            </h4>
-
-            <div className="flex gap-3">
-              <a
-                href="mailto:4amglobalmedia@gmail.com"
-                aria-label="Email us"
-                className="w-14 h-14 rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group"
-                title="Email"
+            <motion.div
+              initial={{ scale: 0, rotate: -90, opacity: 0 }}
+              whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, ease: E, delay: 0.3 }}
+            >
+              <button
+                ref={ctaBtnRef}
+                onClick={() => scrollToSection('contact')}
+                className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-white/[0.12] flex items-center justify-center text-white/50 hover:bg-white hover:text-black hover:border-white transition-colors duration-300 shrink-0"
+                aria-label="Contact us"
               >
-                <Mail className="w-6 h-6 text-brand-gray group-hover:text-brand-primary transition-colors" />
-              </a>
-              <a
-                href="https://www.instagram.com/reel/DUBIUl5DfBU/?utm_source=ig_web_copy_link"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-                className="w-14 h-14 rounded-2xl bg-brand-surface border border-white/60 shadow-clay hover:shadow-clay-hover hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group"
-                title="Instagram"
-              >
-                <Instagram className="w-6 h-6 text-brand-gray group-hover:text-brand-primary transition-colors" />
-              </a>
-            </div>
+                <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </motion.div>
           </div>
         </div>
+      </div>
 
-        <div className="pt-8 mt-4 border-t border-brand-gray/10 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-brand-gray/60">
-          <p className="font-mono uppercase tracking-[0.2em]">
-            &copy; {new Date().getFullYear()} 4AM Global Media. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3 h-3 text-emerald-600" />
-              <span className="font-medium text-brand-gray">Secure</span>
+      {/* Divider */}
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.4, ease: E }}
+        className="h-px bg-white/[0.06] origin-left"
+      />
+
+      {/* ── Nav row ── */}
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 py-5">
+        <motion.nav
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
+          className="flex flex-wrap items-center gap-5 md:gap-8"
+        >
+          {FOOTER_NAV.map((item) => (
+            <motion.button
+              key={item.label}
+              variants={{ hidden: { y: 12, opacity: 0 }, show: { y: 0, opacity: 1 } }} transition={{ duration: 0.55, ease: E }}
+              onClick={() => scrollToSection(item.sectionId)}
+              className="relative text-[11px] font-bold tracking-[0.2em] uppercase text-white/35 hover:text-white transition-colors duration-300 hover-underline"
+            >
+              {item.label}
+            </motion.button>
+          ))}
+        </motion.nav>
+      </div>
+
+      <div className="h-px bg-white/[0.06]" />
+
+      {/* ── Grid ── */}
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 py-10 md:py-12">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-14"
+        >
+          <motion.div variants={colVariant} transition={{ duration: 0.7, ease: E }} className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 rounded-lg overflow-hidden bg-white flex items-center justify-center">
+                <img src="/assets/logo.jpeg" alt="4AM Global Media" className="w-full h-full object-cover" />
+              </div>
+              <span className="text-xs font-black tracking-[0.2em] uppercase">4AM</span>
             </div>
-            <span className="w-1 h-1 rounded-full bg-brand-gray/30" />
-            <div className="flex items-center gap-1.5">
-              <Lock className="w-3 h-3 text-brand-gray/50" />
-              <span>Encrypted</span>
+            <p className="text-white/25 text-xs leading-relaxed font-medium max-w-xs">
+              The growth engine that never sleeps. A creative network made for today and tomorrow.
+            </p>
+          </motion.div>
+
+          <motion.div variants={colVariant} transition={{ duration: 0.7, ease: E }}>
+            <h4 className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/20 mb-4">Services</h4>
+            <ul className="space-y-2.5">
+              {FOOTER_SERVICES.map((link) => (
+                <li key={link.label}>
+                  <a href={link.href} className="text-xs text-white/30 hover:text-white transition-colors font-medium hover-underline">{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div variants={colVariant} transition={{ duration: 0.7, ease: E }}>
+            <h4 className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/20 mb-4">Company</h4>
+            <ul className="space-y-2.5">
+              {FOOTER_NAV.map((link) => (
+                <li key={link.label}>
+                  <button onClick={() => scrollToSection(link.sectionId)} className="text-xs text-white/30 hover:text-white transition-colors font-medium hover-underline">
+                    {link.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div variants={colVariant} transition={{ duration: 0.7, ease: E }}>
+            <h4 className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/20 mb-4">Connect</h4>
+            <ul className="space-y-2.5">
+              {FOOTER_SOCIALS.map((link) => (
+                <li key={link.label}>
+                  <a href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined} className="text-xs text-white/30 hover:text-white transition-colors font-medium hover-underline">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 pt-5 border-t border-white/[0.06] flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/20">Available</span>
             </div>
-          </div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      <div className="h-px bg-white/[0.04]" />
+
+      {/* ── Bottom bar ── */}
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
+        <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/15">
+          &copy; {new Date().getFullYear()} 4AM Global Media. All rights reserved.
+        </p>
+        <div className="flex items-center gap-5 text-[10px] font-bold tracking-[0.2em] uppercase text-white/15">
+          <span>Privacy</span>
+          <span>Terms</span>
+          <span>Cookies</span>
         </div>
       </div>
     </footer>

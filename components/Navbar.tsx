@@ -1,307 +1,228 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Zap, ChevronDown } from 'lucide-react';
-import { NAV_ITEMS } from '../constants';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { gsap } from 'gsap';
 import { scrollToSection, scrollToTop } from '../utils/scroll';
 
-const ConnectButton: React.FC<{ className?: string; onClick?: () => void }> = ({ className, onClick }) => {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary text-brand-dark shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-white/40 transition-all duration-300 ${className || 'w-auto'}`}
-    >
-      <div className="flex items-center justify-center">
-        <Zap className="w-3.5 h-3.5 mr-2 fill-black/10" />
-        <span className="font-bold text-[11px] tracking-wide uppercase">
-          <span className="hidden xl:inline">Get Started</span>
-          <span className="hidden md:inline xl:hidden">Let's Talk</span>
-          <span className="md:hidden">Book</span>
-        </span>
-      </div>
-    </button>
-  );
-};
+const NAV_LINKS = [
+  { label: 'WORK',     sectionId: 'work' },
+  { label: 'SERVICES', sectionId: 'services' },
+  { label: 'ABOUT',    sectionId: 'about' },
+  { label: 'NEWS',     sectionId: 'testimonials' },
+  { label: 'CONTACT',  sectionId: 'contact' },
+];
 
 const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen]     = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [activeSection, setActiveSection] = useState<string | null>('home');
-  const [expandedItem, setExpandedItem] = useState<string | null>(null);
-  const lastScrollY = React.useRef(0);
+
+  const headerRef    = useRef<HTMLElement>(null);
+  const logoRef      = useRef<HTMLDivElement>(null);
+  const desktopNav   = useRef<HTMLElement>(null);
+  const ctaRef       = useRef<HTMLButtonElement>(null);
+  const menuOverlay  = useRef<HTMLDivElement>(null);
+  const menuLinks    = useRef<HTMLButtonElement[]>([]);
+  const menuTl       = useRef<gsap.core.Timeline | null>(null);
+
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogoClick = () => {
-    if (location.pathname === '/') {
-      scrollToTop();
-    } else {
-      navigate('/');
-    }
-    setIsOpen(false);
-  };
+  // ── entrance on mount ──────────────────────────────────────────────
+  useLayoutEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
 
-  const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, item: (typeof NAV_ITEMS)[number]) => {
-    event.preventDefault();
+    const ctx = gsap.context(() => {
+      const navItems = desktopNav.current
+        ? gsap.utils.toArray<HTMLElement>('button', desktopNav.current)
+        : [];
 
-    if (item.sectionId) {
-      if (location.pathname === '/') {
-        scrollToSection(item.sectionId);
-      } else {
-        navigate('/', { state: { scrollTo: item.sectionId } });
+      gsap.set([logoRef.current, ...navItems, ctaRef.current], { y: -20, autoAlpha: 0 });
+
+      gsap.to(logoRef.current, { y: 0, autoAlpha: 1, duration: 0.9, ease: 'expo.out', delay: 0.1 });
+      gsap.to(navItems, { y: 0, autoAlpha: 1, duration: 0.8, ease: 'expo.out', stagger: 0.07, delay: 0.25 });
+      if (ctaRef.current) {
+        gsap.to(ctaRef.current, { y: 0, autoAlpha: 1, duration: 0.8, ease: 'expo.out', delay: 0.6 });
       }
-      setIsOpen(false);
-      return;
-    }
+    }, headerRef);
 
-    if (item.href === '/') {
-      if (location.pathname === '/') {
-        scrollToTop();
-      } else {
-        navigate('/');
-      }
-    } else if (location.pathname !== item.href) {
-      navigate(item.href);
-    }
+    return () => ctx.revert();
+  }, []);
 
-    setIsOpen(false);
-  };
-
-  const handleContactClick = () => {
-    if (location.pathname === '/') {
-      scrollToSection('contact');
-    } else {
-      navigate('/', { state: { scrollTo: 'contact' } });
-    }
-    setIsOpen(false);
-  };
-
+  // ── scroll detection ───────────────────────────────────────────────
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Auto-hide logic
-      if (currentScrollY < 10) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY.current && currentScrollY > 100 && !isOpen) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY.current) {
-        setIsVisible(true);
-      }
-      
-      lastScrollY.current = currentScrollY;
-      setScrolled(currentScrollY > 20);
-
-      if (location.pathname === '/' && currentScrollY < 120) {
-        setActiveSection('home');
-      }
-    };
-
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isOpen, location.pathname]);
+  }, []);
 
+  // ── mobile menu GSAP timeline ──────────────────────────────────────
   useEffect(() => {
-    if (location.pathname !== '/') {
-      setActiveSection(null);
-      return;
+    const overlay = menuOverlay.current;
+    const links   = menuLinks.current.filter(Boolean);
+    if (!overlay) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    menuTl.current = gsap.timeline({ paused: true, defaults: { ease: 'expo.inOut' } });
+
+    if (prefersReducedMotion) {
+      menuTl.current
+        .set(overlay, { autoAlpha: 1, pointerEvents: 'auto' })
+        .set(links, { autoAlpha: 1, y: 0 });
+    } else {
+      menuTl.current
+        .set(overlay, { autoAlpha: 1, pointerEvents: 'auto', clipPath: 'inset(0 0 100% 0)' })
+        .to(overlay, { clipPath: 'inset(0 0 0% 0)', duration: 0.7 })
+        .fromTo(links, { y: 60, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.07 }, '-=0.3');
     }
 
-    const sectionIds = ['home', 'services', 'about', 'work', 'contact'];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+    return () => { menuTl.current?.kill(); };
+  }, []);
 
-        if (visible[0]) {
-          setActiveSection(visible[0].target.id);
-        }
-      },
-      { threshold: 0.35 }
-    );
+  useEffect(() => {
+    if (!menuTl.current) return;
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      menuTl.current.play();
+    } else {
+      document.body.style.overflow = '';
+      menuTl.current.reverse();
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
 
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) {
-        observer.observe(el);
-      }
-    });
+  // ── close on route change ──────────────────────────────────────────
+  useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
-    return () => observer.disconnect();
-  }, [location.pathname]);
+  const handleLogoClick = () => {
+    if (location.pathname === '/') scrollToTop();
+    else navigate('/');
+    setIsOpen(false);
+  };
+
+  const handleNavClick = (sectionId: string) => {
+    if (location.pathname === '/') scrollToSection(sectionId);
+    else navigate('/', { state: { scrollTo: sectionId } });
+    setIsOpen(false);
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-[9999] transform-gpu transition-all duration-500 ease-in-out ${
-        scrolled ? 'py-2' : 'py-4'
-      } ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
+      ref={headerRef}
+      className={`fixed top-0 left-0 right-0 z-[9990] transition-all duration-500 ${
+        scrolled ? 'bg-black/90 backdrop-blur-md' : 'bg-transparent'
+      }`}
     >
-      <div className="max-w-[1200px] mx-auto px-6 w-full">
-        <div className={`flex w-full items-center justify-between gap-2 md:gap-4 lg:gap-6 rounded-full px-4 py-2.5 transition-all duration-500 ${
-          scrolled 
-            ? 'bg-white/80 backdrop-blur-xl shadow-lg border border-white/50' 
-            : 'bg-white/10 backdrop-blur-lg border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)]'
-        }`}>
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
+        <div className="flex items-center justify-between h-[70px] md:h-[80px]">
 
-        {/* 1. Left Section: Logo */}
-        <div className="flex items-center gap-3 shrink-0">
-          <Link
-            to="/"
-            onClick={handleLogoClick}
-            className="flex items-center gap-3 group shrink-0"
-          >
-            <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/90 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105 ring-1 ring-white/50">
-              <img
-                src="/assets/logo.jpeg"
-                alt="4AM Global Media logo"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="hidden lg:block">
-              <span className={`text-lg font-display font-bold uppercase tracking-wide block transition-colors duration-300 ${scrolled ? 'text-brand-dark' : 'text-white'}`}>
-                4AM Global Media
-              </span>
-            </div>
-          </Link>
-        </div>
-
-        {/* 2. Center Section: Navigation Links (Desktop) */}
-        <nav className="hidden md:flex flex-1 items-center justify-center gap-6 lg:gap-8">
-          {NAV_ITEMS.map((item) => {
-            const isHomeItem = item.label.toLowerCase() === 'home';
-            let active = false;
-
-            if (item.sectionId) {
-              active = location.pathname === '/' && activeSection === item.sectionId;
-            } else if (isHomeItem) {
-              active =
-                location.pathname === '/' &&
-                (!activeSection || activeSection === 'home');
-            } else {
-              active = location.pathname === item.href;
-            }
-
-            return (
-              <div key={item.label} className="relative group">
-                <Link
-                  to={item.href}
-                  onClick={(event) => handleNavClick(event, item)}
-                  className={`flex items-center gap-1 text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer px-3 py-1.5 rounded-full ${
-                    active
-                      ? 'text-brand-primary bg-white/20 shadow-inner'
-                      : scrolled 
-                        ? 'text-brand-gray hover:text-brand-primary hover:bg-brand-primary/5' 
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {item.label}
-                  {item.subItems && <ChevronDown className="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity" />}
-                </Link>
-
-                {/* Desktop Dropdown */}
-                {item.subItems && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                    <div className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-2xl shadow-xl p-2 w-64 flex flex-col gap-1 overflow-hidden ring-1 ring-black/5">
-                      {item.subItems.map((subItem) => (
-                        <Link
-                          key={subItem.label}
-                          to={subItem.href}
-                          onClick={(event) => handleNavClick(event, subItem)}
-                          className="text-xs font-bold text-brand-gray px-4 py-3 hover:bg-brand-primary/10 hover:text-brand-primary rounded-xl transition-all duration-200 text-left block tracking-wide uppercase"
-                        >
-                          {subItem.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+          {/* Logo */}
+          <div ref={logoRef}>
+            <Link to="/" onClick={handleLogoClick} className="flex items-center gap-3 shrink-0 group">
+              <div className="w-9 h-9 rounded-lg overflow-hidden bg-white flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <img src="/assets/logo.jpeg" alt="4AM Global Media" className="w-full h-full object-cover" />
               </div>
-            );
-          })}
-        </nav>
+              <span className="text-white text-sm font-black tracking-[0.15em] uppercase hidden md:block group-hover:opacity-70 transition-opacity duration-300">
+                4AM
+              </span>
+            </Link>
+          </div>
 
-        {/* 3. Right Section: CTA & Mobile Menu */}
-        <div className="flex items-center gap-3 md:gap-4 shrink-0">
-          <ConnectButton 
-            onClick={handleContactClick}
-            className="hidden sm:flex"
-          />
-          
-          <div className="md:hidden flex items-center gap-2">
-            {/* Mobile Menu Button */}
+          {/* Desktop nav */}
+          <nav ref={desktopNav} className="hidden lg:flex items-center gap-8 xl:gap-10">
+            {NAV_LINKS.map((link) => (
+              <NavButton key={link.label} label={link.label} onClick={() => handleNavClick(link.sectionId)} />
+            ))}
+          </nav>
+
+          {/* Right: CTA + hamburger */}
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`p-2.5 rounded-xl transition-all duration-300 shadow-sm border border-transparent ${scrolled ? 'text-brand-gray hover:text-brand-primary hover:bg-brand-bg' : 'text-white hover:bg-white/10 hover:border-white/20'}`}
-              aria-label="Toggle menu"
+              ref={ctaRef}
+              className="hidden md:flex items-center justify-center px-5 py-2 rounded-full bg-white text-black text-[11px] font-black tracking-[0.15em] uppercase hover:bg-white/80 active:scale-95 transition-all duration-200"
+              onClick={() => handleNavClick('contact')}
             >
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
+              Let's Talk
+            </button>
+
+            {/* Hamburger — animated bars */}
+            <button
+              onClick={() => setIsOpen((v) => !v)}
+              className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[5px] group z-50"
+              aria-label="Toggle menu"
+              aria-expanded={isOpen}
+            >
+              <span className={`block w-6 h-[1.5px] bg-white origin-center transition-all duration-400 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+              <span className={`block h-[1.5px] bg-white transition-all duration-300 ${isOpen ? 'w-0 opacity-0' : 'w-6'}`} />
+              <span className={`block w-6 h-[1.5px] bg-white origin-center transition-all duration-400 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
             </button>
           </div>
         </div>
       </div>
-      
-      {/* Mobile Menu Overlay */}
-      {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-4 px-4 pb-4">
-          <div className="bg-brand-surface border border-white/60 rounded-[32px] shadow-clay p-6 flex flex-col gap-4 max-h-[80vh] overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
-            {NAV_ITEMS.map((item) => (
-              <div key={item.label} className="w-full">
-                <div className="flex items-center justify-between w-full">
-                  <Link
-                    to={item.href}
-                    onClick={(event) => handleNavClick(event, item)}
-                    className="flex-1 text-sm font-bold uppercase tracking-[0.2em] text-brand-dark py-3 hover:text-brand-primary active:bg-brand-bg rounded-xl transition-colors text-center"
-                  >
-                    {item.label}
-                  </Link>
-                  {item.subItems && (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setExpandedItem(expandedItem === item.label ? null : item.label);
-                      }}
-                      className="p-3 text-brand-gray hover:text-brand-dark"
-                    >
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${
-                          expandedItem === item.label ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </button>
-                  )}
-                </div>
-                
-                {/* Mobile Submenu */}
-                {item.subItems && expandedItem === item.label && (
-                  <div className="bg-brand-bg/50 rounded-2xl p-2 mb-2 space-y-1 mt-2">
-                    {item.subItems.map((subItem) => (
-                      <Link
-                        key={subItem.label}
-                        to={subItem.href}
-                        onClick={(event) => handleNavClick(event, subItem)}
-                        className="block text-xs font-bold text-brand-gray py-3 px-4 hover:text-brand-primary hover:bg-white rounded-xl transition-all text-center uppercase tracking-wider shadow-sm hover:shadow-md"
-                      >
-                        {subItem.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            
-            <div className="pt-4 border-t border-brand-gray/10 flex flex-col gap-3">
-              <ConnectButton 
-                onClick={handleContactClick}
-                className="w-full justify-center py-4 text-sm"
-              />
-            </div>
-          </div>
+
+      {/* Mobile full-screen overlay — GSAP clip-path wipe */}
+      <div
+        ref={menuOverlay}
+        className="fixed inset-0 bg-black z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none"
+        style={{ clipPath: 'inset(0 0 100% 0)' }}
+      >
+        {/* Background giant text */}
+        <span
+          className="absolute text-[40vw] font-black text-white/[0.03] uppercase leading-none select-none pointer-events-none"
+          aria-hidden="true"
+        >
+          4AM
+        </span>
+
+        <nav className="flex flex-col items-center gap-6 relative z-10">
+          {NAV_LINKS.map((link, i) => (
+            <button
+              key={link.label}
+              ref={(el) => { if (el) menuLinks.current[i] = el; }}
+              onClick={() => handleNavClick(link.sectionId)}
+              className="text-[10vw] sm:text-6xl font-black tracking-[-0.02em] text-white uppercase hover:text-white/40 transition-colors duration-300 leading-none"
+            >
+              {link.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* Bottom bar */}
+        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between text-[10px] font-bold tracking-[0.25em] uppercase text-white/20">
+          <span>4AM Global Media</span>
+          <a href="mailto:4amglobalmedia@gmail.com" className="hover:text-white/60 transition-colors">
+            4amglobalmedia@gmail.com
+          </a>
         </div>
-      )}
       </div>
     </header>
+  );
+};
+
+/* Animated underline nav button */
+const NavButton: React.FC<{ label: string; onClick: () => void }> = ({ label, onClick }) => {
+  const ref = useRef<HTMLButtonElement>(null);
+  const lineRef = useRef<HTMLSpanElement>(null);
+
+  const onEnter = () => {
+    if (!lineRef.current) return;
+    gsap.fromTo(lineRef.current, { scaleX: 0, transformOrigin: 'left center' }, { scaleX: 1, duration: 0.35, ease: 'expo.out' });
+  };
+  const onLeave = () => {
+    if (!lineRef.current) return;
+    gsap.to(lineRef.current, { scaleX: 0, transformOrigin: 'right center', duration: 0.3, ease: 'expo.in' });
+  };
+
+  return (
+    <button
+      ref={ref}
+      onClick={onClick}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      className="relative text-[11px] font-bold tracking-[0.2em] text-white/60 hover:text-white transition-colors duration-300 uppercase py-1"
+    >
+      {label}
+      <span ref={lineRef} className="absolute bottom-0 left-0 w-full h-px bg-white scale-x-0" />
+    </button>
   );
 };
 

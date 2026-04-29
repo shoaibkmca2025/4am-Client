@@ -1,186 +1,215 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Star, Terminal, Zap, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
-import ScrollReveal from './ScrollReveal';
-import TiltCard from './TiltCard';
+import React, { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
+import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import RevealText from './RevealText';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
-    id: 2,
-    quote: 'The 4AM team brought clarity to our growth strategy and execution.',
+    id: 1,
+    quote: 'The 4AM team brought clarity to our growth strategy and execution. They operate like an extension of our internal team.',
     author: 'Sarah J.',
     role: 'Head of Marketing, SaaS Brand',
-    icon: Terminal,
+  },
+  {
+    id: 2,
+    quote: 'We saw a meaningful lift in qualified pipeline within the first quarter. Their data-driven approach changed everything.',
+    author: 'Michael R.',
+    role: 'Founder, DTC Brand',
   },
   {
     id: 3,
-    quote: 'We saw a meaningful lift in qualified pipeline within the first quarter.',
-    author: 'Michael R.',
-    role: 'Founder, DTC Brand',
-    icon: Zap,
-  },
-  {
-    id: 4,
-    quote: 'Data, creative, and execution all feel aligned in a way they never did before.',
+    quote: 'Data, creative, and execution all feel aligned in a way they never did before. Truly transformative partnership.',
     author: 'David K.',
     role: 'Director, B2B Services',
-    icon: Star,
   },
 ];
 
 const Testimonials: React.FC = () => {
-  const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [index, setIndex]     = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [autoSlideEnabled, setAutoSlideEnabled] = useState(true);
-  
-  const active = testimonials[index];
+  const sectionRef  = useRef<HTMLElement>(null);
+  const quoteRef    = useRef<HTMLElement>(null);
+  const authorRef   = useRef<HTMLElement>(null);
+  const isAnimating = useRef(false);
 
-  useEffect(() => {
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  // ── section entrance ────────────────────────────────────────────────
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setAutoSlideEnabled(!isMobile && !prefersReducedMotion);
+    if (prefersReducedMotion) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.testimonial-body',
+        { y: 50, autoAlpha: 0 },
+        {
+          y: 0, autoAlpha: 1, duration: 1.2, ease: 'expo.out',
+          scrollTrigger: { trigger: section, start: 'top 75%', once: true },
+        }
+      );
+    }, section);
+
+    return () => ctx.revert();
   }, []);
 
-  // Auto-slide logic
-  useEffect(() => {
-    if (isPaused || !autoSlideEnabled) return;
-    
-    const interval = setInterval(() => {
-      setDirection(1);
-      setIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
-    }, 6000); // 6 seconds
+  // ── quote transition ─────────────────────────────────────────────────
+  const animateTo = useCallback((nextIndex: number) => {
+    if (isAnimating.current) return;
+    const q = quoteRef.current;
+    const a = authorRef.current;
+    if (!q || !a) { setIndex(nextIndex); return; }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    return () => clearInterval(interval);
-  }, [isPaused, autoSlideEnabled]);
+    if (prefersReducedMotion) { setIndex(nextIndex); return; }
+
+    isAnimating.current = true;
+    const tl = gsap.timeline({
+      onComplete: () => { isAnimating.current = false; },
+    });
+    tl.to([q, a], { y: -30, autoAlpha: 0, duration: 0.4, ease: 'expo.in', stagger: 0.05 })
+      .call(() => setIndex(nextIndex))
+      .set([q, a], { y: 40 })
+      .to([q, a], { y: 0, autoAlpha: 1, duration: 0.7, ease: 'expo.out', stagger: 0.07 });
+  }, []);
+
+  // ── auto-advance ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (isPaused) return;
+    const id = setInterval(() => {
+      animateTo((index + 1) % testimonials.length);
+    }, 6000);
+    return () => clearInterval(id);
+  }, [isPaused, index, animateTo]);
 
   const handlePrev = useCallback(() => {
-    setDirection(-1);
-    setIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
-  }, []);
+    animateTo(index === 0 ? testimonials.length - 1 : index - 1);
+  }, [index, animateTo]);
 
   const handleNext = useCallback(() => {
-    setDirection(1);
-    setIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
-  }, []);
+    animateTo((index + 1) % testimonials.length);
+  }, [index, animateTo]);
+
+  const active = testimonials[index];
 
   return (
-    <section id="testimonials" className="relative py-24 overflow-hidden bg-transparent transition-colors duration-500">
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
-        <div className="absolute top-[10%] right-[5%] w-[400px] h-[400px] rounded-full bg-brand-secondary/10 blur-[80px]" />
-        <div className="absolute bottom-[10%] left-[5%] w-[300px] h-[300px] rounded-full bg-brand-primary/10 blur-[60px]" />
-      </div>
-      
-      <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
-        <ScrollReveal className="max-w-3xl mx-auto mb-12 text-center">
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-white/5 border border-white/10 shadow-lg text-gray-300 text-xs font-bold uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-brand-accent animate-pulse" />
-            Client Feedback
-          </div>
-          <h3 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight">
-            Teams trust 4AM to handle the signal, not the noise.
-          </h3>
-        </ScrollReveal>
+    <section id="testimonials" ref={sectionRef} className="relative py-16 md:py-24 bg-black border-t border-white/[0.06] overflow-hidden">
+      <div className="w-full max-w-[1400px] mx-auto px-6 md:px-10">
 
-        <ScrollReveal className="max-w-4xl mx-auto" delay={100}>
-          <div 
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
+        {/* Heading */}
+        <div className="mb-10 md:mb-14">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/25 block mb-5"
           >
-            {/* Navigation Controls */}
-          <div className="flex items-center justify-between gap-4 mb-8 px-4 sm:px-0">
+            Client Feedback
+          </motion.span>
+          <RevealText
+            as="h2"
+            className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white"
+          >
+            WHAT
+          </RevealText>
+          <RevealText
+            as="h2"
+            className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-transparent"
+            style={{ WebkitTextStroke: '2px rgba(255,255,255,0.12)' }}
+            delay={0.15}
+          >
+            THEY SAY
+          </RevealText>
+        </div>
+
+        {/* Testimonial body */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          className="testimonial-body relative"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {/* Giant decorative quote mark */}
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[150px] md:text-[220px] font-black text-white/[0.03] leading-none absolute -top-10 -left-4 select-none pointer-events-none"
+            aria-hidden="true"
+          >
+            &ldquo;
+          </motion.div>
+
+          {/* Quote text — animated ref */}
+          <div className="relative z-10 min-h-[180px] md:min-h-[220px] flex items-center">
+            <blockquote>
+              <p
+                ref={quoteRef as React.RefObject<HTMLParagraphElement>}
+                className="text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.15] tracking-[-0.02em]"
+              >
+                &ldquo;{active.quote}&rdquo;
+              </p>
+              <footer
+                ref={authorRef as React.RefObject<HTMLElement>}
+                className="mt-8 md:mt-12 flex items-center gap-4"
+              >
+                <div className="w-12 h-px bg-white/15" />
+                <div>
+                  <div className="text-xs font-bold text-white uppercase tracking-[0.2em]">
+                    {active.author}
+                  </div>
+                  <div className="text-[10px] text-white/30 font-bold tracking-[0.2em] uppercase mt-1">
+                    {active.role}
+                  </div>
+                </div>
+              </footer>
+            </blockquote>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center gap-6 mt-12 md:mt-16">
             <button
               onClick={handlePrev}
-              className="w-12 h-12 rounded-full bg-white/10 shadow-soft flex items-center justify-center text-white hover:bg-brand-primary hover:text-white hover:shadow-lg transition-all duration-300 group border border-white/10"
-              aria-label="Previous testimonial"
+              className="w-12 h-12 rounded-full border border-white/[0.08] flex items-center justify-center text-white/40 hover:bg-white hover:text-black hover:border-white active:scale-90 transition-all duration-300"
+              aria-label="Previous"
             >
-              <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M12 8H4M7 4L3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
-            
-            {/* Pagination Dots */}
-            <div className="flex items-center gap-3">
+
+            {/* Progress dots */}
+            <div className="flex items-center gap-2">
               {testimonials.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => {
-                    setDirection(i > index ? 1 : -1);
-                    setIndex(i);
-                  }}
-                  className={`h-2 rounded-full transition-all duration-300 ${i === index ? 'bg-brand-primary w-8 shadow-sm' : 'bg-white/20 hover:bg-white/40 w-2'}`}
-                  aria-label={`Go to slide ${i + 1}`}
+                  onClick={() => animateTo(i)}
+                  className={`h-1.5 rounded-full transition-all duration-500 ${
+                    i === index ? 'bg-white w-8' : 'bg-white/15 w-1.5 hover:bg-white/30'
+                  }`}
+                  aria-label={`Go to testimonial ${i + 1}`}
                 />
               ))}
             </div>
 
             <button
               onClick={handleNext}
-              className="w-12 h-12 rounded-full bg-white/10 shadow-soft flex items-center justify-center text-white hover:bg-brand-primary hover:text-white hover:shadow-lg transition-all duration-300 group border border-white/10"
-              aria-label="Next testimonial"
+              className="w-12 h-12 rounded-full border border-white/[0.08] flex items-center justify-center text-white/40 hover:bg-white hover:text-black hover:border-white active:scale-90 transition-all duration-300"
+              aria-label="Next"
             >
-              <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
           </div>
-
-          {/* 2️⃣ TESTIMONIAL CARD ANIMATION */}
-          <div className="relative h-auto min-h-[320px] sm:min-h-[300px] flex items-center justify-center">
-            <div
-              key={index}
-              className="absolute w-full"
-            >
-              <TiltCard className="w-full">
-                <div 
-                  className="relative p-8 sm:p-12 bg-white/5 border border-white/10 rounded-[32px] shadow-lg overflow-hidden group transition-all duration-300 hover:shadow-xl backdrop-blur-sm"
-                >
-                  {/* Decorative Quote Mark */}
-                <div className="absolute top-6 left-8 text-brand-primary/5">
-                  <Quote size={80} fill="currentColor" />
-                </div>
-
-                <div className="relative z-10 flex flex-col items-center gap-8">
-                  {/* Icon & Quote Symbol */}
-                  <div className="relative">
-                    <div 
-                      className="w-16 h-16 rounded-2xl bg-black/20 shadow-inner flex items-center justify-center text-brand-primary border border-white/5"
-                    >
-                      <active.icon size={28} strokeWidth={1.5} />
-                    </div>
-                    <div 
-                      className="absolute -top-2 -right-2 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center shadow-lg border border-white/10 backdrop-blur-md"
-                    >
-                      <Quote size={12} className="text-brand-primary fill-current" />
-                    </div>
-                  </div>
-
-                  {/* 3️⃣ TEXT ANIMATION: Staggered Fade In */}
-                  <div 
-                    className="max-w-2xl text-center"
-                  >
-                    <p className="text-xl sm:text-2xl font-medium text-white leading-relaxed">
-                      "{active.quote}"
-                    </p>
-                  </div>
-
-                  <div 
-                    className="space-y-2 text-center"
-                  >
-                    <h4 className="font-bold text-white text-base uppercase tracking-widest">
-                      {active.author}
-                    </h4>
-                    <div className="flex items-center justify-center gap-3">
-                      <div className="h-[1px] w-4 bg-brand-primary/30" />
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-                        {active.role}
-                      </p>
-                      <div className="h-[1px] w-4 bg-brand-primary/30" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              </TiltCard>
-            </div>
-          </div>
-        </div>
-        </ScrollReveal>
+        </motion.div>
       </div>
     </section>
   );

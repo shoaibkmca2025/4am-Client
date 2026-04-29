@@ -26,16 +26,16 @@ class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-brand-bg text-brand-dark p-8 font-sans">
-          <div className="max-w-md w-full bg-brand-surface rounded-[32px] shadow-clay p-8 border border-white/40">
-            <h1 className="text-2xl font-bold text-red-500 mb-4">Something went wrong</h1>
-            <p className="text-brand-muted mb-6">The application encountered an error. Please check the console for more details.</p>
-            <pre className="bg-brand-bg p-4 rounded-xl text-xs overflow-auto max-h-40 font-mono text-red-600 border border-brand-border/50 shadow-inner-clay">
+        <div className="min-h-screen flex items-center justify-center bg-black text-white p-8 font-sans">
+          <div className="max-w-md w-full bg-white/[0.03] rounded-2xl border border-white/[0.08] p-8">
+            <h1 className="text-2xl font-bold text-red-400 mb-4">Something went wrong</h1>
+            <p className="text-white/40 mb-6 text-sm leading-relaxed">The application encountered an error. Please check the console for more details.</p>
+            <pre className="bg-white/[0.04] p-4 rounded-xl text-xs overflow-auto max-h-40 font-mono text-red-400 border border-white/[0.06]">
               {this.state.error?.message}
             </pre>
             <button
               onClick={() => window.location.reload()}
-              className="mt-8 w-full bg-gradient-to-r from-brand-primary to-brand-secondary text-white py-4 rounded-xl font-medium shadow-clay hover:shadow-clay-hover hover:-translate-y-0.5 transition-all duration-300"
+              className="mt-8 w-full bg-white text-black py-4 rounded-full font-bold text-sm tracking-wide hover:bg-white/90 transition-colors duration-200"
             >
               Reload Page
             </button>

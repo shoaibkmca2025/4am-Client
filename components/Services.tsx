@@ -1,98 +1,172 @@
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import ScrollReveal from './ScrollReveal';
-import SpotlightSection from './SpotlightSection';
-import TiltCard from './TiltCard';
-import { SERVICES } from '../constants';
-import { Service } from '../types';
-import { optimizeImageUrl } from '../utils/image';
+import React, { useRef, useLayoutEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { gsap } from 'gsap';
+import { scrollToSection } from '../utils/scroll';
+import RevealText from './RevealText';
 
-const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, index }) => {
-  return (
-    <ScrollReveal delay={index * 80}>
-      <TiltCard className="h-full">
-        <Link 
-          to={`/services/${service.slug}`}
-          className="block group relative h-[240px] md:h-[280px] w-full overflow-hidden rounded-[24px] bg-white/5 border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 scroll-mt-24 cursor-pointer backdrop-blur-sm"
-        >
-          {/* Background Image */}
-        <div className="absolute inset-0">
-          <img 
-            src={optimizeImageUrl(service.image, { width: 760, height: 560, quality: 70, format: 'webp' })} 
-            alt={service.title} 
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 opacity-90 group-hover:opacity-100"
-            loading="lazy"
-            decoding="async"
-            fetchPriority="low"
-            width={760}
-            height={560}
-            onError={(e) => {
-              e.currentTarget.src = optimizeImageUrl(
-                'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80',
-                { width: 760, height: 560, quality: 68, format: 'webp' }
-              );
-            }}
-          />
-        </div>
+const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-        {/* Soft Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+const SERVICES_DATA = [
+  { number: '01', title: 'Digital Marketing',   description: 'Paid and organic campaigns that convert attention into predictable pipeline.', slug: 'digital-marketing' },
+  { number: '02', title: 'Branding & Identity', description: 'Visual systems that position you as the obvious choice in any room.',           slug: 'branding' },
+  { number: '03', title: 'Social Media Growth', description: 'Always-on content for engagement, authority, and community.',                   slug: 'social-media-growth' },
+  { number: '04', title: 'SEO & Content',       description: 'Search strategies that compound and bring high-intent traffic.',               slug: 'seo' },
+  { number: '05', title: 'Web Development',     description: 'Conversion-focused sites built for speed and clarity.',                        slug: 'web-development' },
+  { number: '06', title: 'Content Creation',    description: 'Video, copy, and assets that keep your brand impactful everywhere.',           slug: 'content-creation' },
+];
 
-        {/* Content Container */}
-        <div className="absolute inset-0 p-6 flex flex-col justify-end">
-          <div className="flex items-end justify-between gap-3">
-            
-            {/* Text Content */}
-            <div className="flex-1 transform transition-transform duration-300 group-hover:-translate-y-2">
-              <h3 className="text-xl font-bold text-white mb-2 drop-shadow-md tracking-tight">
-                {service.title}
-              </h3>
-              <p className="text-brand-surface/90 text-sm leading-relaxed font-medium line-clamp-2 text-pretty">
-                {service.description}
-              </p>
-            </div>
-
-            {/* CTA Button */}
-            <div className="shrink-0 transform transition-all duration-300 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
-              <div className="h-8 w-8 rounded-full bg-brand-surface shadow-soft flex items-center justify-center text-brand-primary hover:bg-brand-primary hover:text-white transition-all duration-300">
-                <ArrowRight className="w-4 h-4" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Link>
-      </TiltCard>
-    </ScrollReveal>
-  );
+const rowVariant = {
+  hidden: { opacity: 0, x: -30, filter: 'blur(4px)' },
+  show:   { opacity: 1, x: 0,   filter: 'blur(0px)' },
 };
 
 const Services: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Scroll-linked background text — drifts from right to left as you scroll down
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const bgX    = useTransform(scrollYProgress, [0, 1], ['8%', '-12%']);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    const items = section.querySelectorAll<HTMLElement>('.service-item');
+    const cleanups: Array<() => void> = [];
+
+    items.forEach((item) => {
+      const title = item.querySelector<HTMLElement>('.service-title');
+      const arrow = item.querySelector<HTMLElement>('.service-arrow');
+      const num   = item.querySelector<HTMLElement>('.service-num');
+      const line  = item.querySelector<HTMLElement>('.service-item-line');
+      const desc  = item.querySelector<HTMLElement>('.service-desc');
+
+      const onEnter = () => {
+        if (title) gsap.to(title, { x: 18, duration: 0.5, ease: 'expo.out' });
+        if (arrow) gsap.to(arrow, { rotate: 45, scale: 1.1, duration: 0.4, ease: 'expo.out' });
+        if (num)   gsap.to(num,   { opacity: 0.8, duration: 0.25 });
+        if (desc)  gsap.to(desc,  { opacity: 0.7, duration: 0.3 });
+        if (line)  gsap.to(line,  { scaleX: 1, duration: 0.65, ease: 'expo.out', transformOrigin: 'left center' });
+      };
+      const onLeave = () => {
+        if (title) gsap.to(title, { x: 0,  duration: 0.4,  ease: 'expo.out' });
+        if (arrow) gsap.to(arrow, { rotate: 0, scale: 1, duration: 0.35, ease: 'expo.out' });
+        if (num)   gsap.to(num,   { opacity: 0.2, duration: 0.25 });
+        if (desc)  gsap.to(desc,  { opacity: 0.3, duration: 0.3 });
+        if (line)  gsap.to(line,  { scaleX: 0, duration: 0.4, ease: 'expo.in', transformOrigin: 'right center' });
+      };
+
+      item.addEventListener('mouseenter', onEnter);
+      item.addEventListener('mouseleave', onLeave);
+      cleanups.push(() => {
+        item.removeEventListener('mouseenter', onEnter);
+        item.removeEventListener('mouseleave', onLeave);
+      });
+    });
+
+    return () => cleanups.forEach((fn) => fn());
+  }, []);
+
   return (
-    <SpotlightSection id="services" className="py-20 md:py-24 relative overflow-hidden bg-transparent">
-      <div className="container mx-auto px-6 max-w-[1200px] relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <ScrollReveal>
-            <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-white/5 border border-white/10 shadow-lg text-gray-300 text-xs font-bold uppercase tracking-widest">
-              <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
-              Our Capabilities
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">
-              Comprehensive Digital Solutions
-            </h2>
-            <p className="text-gray-400 text-lg leading-relaxed font-medium">
-              Designed to scale your business with precision and authority.
-            </p>
-          </ScrollReveal>
+    <section id="services" ref={sectionRef} className="relative py-16 md:py-24 bg-black overflow-hidden">
+
+      {/* Scroll-parallax ghost word — drifts left as you scroll */}
+      <motion.div
+        className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex items-center pointer-events-none select-none"
+        style={{ x: bgX, opacity: bgOpacity }}
+        aria-hidden="true"
+      >
+        <span
+          className="text-[16vw] font-black uppercase leading-none tracking-[-0.05em] whitespace-nowrap text-transparent"
+          style={{ WebkitTextStroke: '1px rgba(255,255,255,0.025)' }}
+        >
+          SERVICES
+        </span>
+      </motion.div>
+
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10">
+
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 md:mb-14">
+          <div>
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: E }}
+              className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/30 block mb-5"
+            >
+              Our Services
+            </motion.span>
+            <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white">
+              WHAT WE
+            </RevealText>
+            <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.18)' }} delay={0.12}>
+              DO
+            </RevealText>
+          </div>
+          <motion.p
+            initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: E, delay: 0.2 }}
+            className="text-white/35 text-sm md:text-base leading-relaxed font-medium md:max-w-sm md:text-right md:pb-2"
+          >
+            Comprehensive digital solutions designed to scale your business with precision and measurable impact.
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {SERVICES.map((service, index) => (
-            <ServiceCard key={service.title} service={service} index={index} />
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07 } } }}
+          className="border-t border-white/[0.07]"
+        >
+          {SERVICES_DATA.map((service) => (
+            <motion.div key={service.slug} variants={rowVariant} transition={{ duration: 0.75, ease: E }}>
+              <a
+                href={`/services/${service.slug}`}
+                className="service-item group relative flex items-center gap-6 md:gap-10 py-6 md:py-8 border-b border-white/[0.07] block"
+                onClick={(e) => { e.preventDefault(); window.location.href = `/services/${service.slug}`; }}
+              >
+                <span className="service-item-line absolute left-0 right-0 bottom-0 h-px bg-white/25 origin-left scale-x-0 pointer-events-none" />
+                <span className="service-num text-xs md:text-sm font-bold tracking-[0.2em] text-white/20 w-10 md:w-14 shrink-0 opacity-20">{service.number}</span>
+                <h3 className="service-title text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-[-0.02em] text-white flex-1">{service.title}</h3>
+                <p className="service-desc hidden lg:block text-white/30 text-sm max-w-xs leading-relaxed font-medium text-right opacity-30">{service.description}</p>
+                <div className="service-arrow w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:bg-white group-hover:border-white transition-colors duration-300 text-white/40 group-hover:text-black">
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </a>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: E, delay: 0.2 }}
+          className="mt-12 md:mt-16 flex items-center justify-center"
+        >
+          <button
+            onClick={() => scrollToSection('contact')}
+            data-ripple
+            className="inline-flex items-center gap-4 px-10 py-4 rounded-full border border-white/15 text-white text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-black hover:border-white transition-all duration-300 group"
+          >
+            Start a project
+            <svg className="group-hover:translate-x-1 transition-transform duration-300" width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </motion.div>
+
       </div>
-    </SpotlightSection>
+    </section>
   );
 };
 
