@@ -1,6 +1,7 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PROJECTS } from '../constants';
+import { scrollToSection } from '../utils/scroll';
 import RevealText from './RevealText';
 
 const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -115,7 +116,7 @@ const Projects: React.FC = () => {
                   src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/800/1000`}
                   alt={project.title}
                   loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 grayscale group-hover:grayscale-0"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.08] grayscale group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/5 transition-colors duration-500" />
                 <div className="absolute top-4 left-4">
@@ -140,9 +141,13 @@ const Projects: React.FC = () => {
           </motion.div>
         ))}
 
-        <motion.div variants={cardVariant} transition={{ duration: 0.9, ease: E }} className="w-[60vw] max-w-[280px] shrink-0 flex items-center justify-center">
+        <motion.div
+          variants={cardVariant} transition={{ duration: 0.9, ease: E }}
+          className="w-[60vw] max-w-[280px] shrink-0 flex items-center justify-center cursor-pointer"
+          onClick={() => scrollToSection('work')}
+        >
           <div className="flex flex-col items-center text-center gap-4 p-6">
-            <div className="w-16 h-16 rounded-full border border-white/[0.1] flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 cursor-pointer text-white/40">
+            <div className="w-16 h-16 rounded-full border border-white/[0.1] flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 text-white/40">
               <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/30">View All</span>

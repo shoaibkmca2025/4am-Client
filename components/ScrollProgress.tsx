@@ -25,6 +25,7 @@ const ScrollProgress: React.FC = () => {
     };
 
     window.addEventListener('scroll', update, { passive: true });
+    update();
     return () => window.removeEventListener('scroll', update);
   }, []);
 

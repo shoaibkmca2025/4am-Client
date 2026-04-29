@@ -21,6 +21,28 @@ const AIChatbot: React.FC = () => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const chatRef = useRef<any>(null);
+
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) return;
+    const ai = new GoogleGenAI({ apiKey });
+    chatRef.current = ai.chats.create({
+      model: 'gemini-2.0-flash',
+      config: {
+        systemInstruction: `You are the 4AM Global AI Assistant. Professional and concise.
+          4AM Global Media specializes in:
+          1. Digital Marketing & Paid Ads
+          2. Branding & Visual Identity
+          3. Social Media Growth
+          4. SEO & Content Strategy
+          5. Web Development
+          6. Content Creation
+          Help users with inquiries about services, pricing, or process. Keep responses brief and professional.`,
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -38,25 +60,8 @@ const AIChatbot: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      if (!apiKey) throw new Error("API Key not found");
-      const ai = new GoogleGenAI({ apiKey });
-      const chat = ai.chats.create({
-        model: 'gemini-2.0-flash',
-        config: {
-          systemInstruction: `You are the 4AM Global AI Assistant. Professional and concise.
-          4AM Global Media specializes in:
-          1. Digital Marketing & Paid Ads
-          2. Branding & Visual Identity
-          3. Social Media Growth
-          4. SEO & Content Strategy
-          5. Web Development
-          6. Content Creation
-          Help users with inquiries about services, pricing, or process. Keep responses brief and professional.`,
-        }
-      });
-
-      const response = await chat.sendMessage({ message: input });
+      if (!chatRef.current) throw new Error("Chat not initialized");
+      const response = await chatRef.current.sendMessage({ message: userMessage.text });
       setMessages(prev => [...prev, {
         role: 'model',
         text: response.text || "Something went wrong. Please try again.",

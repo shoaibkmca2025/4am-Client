@@ -95,7 +95,6 @@ const Navbar: React.FC = () => {
 
   const handleLogoClick = () => {
     if (location.pathname === '/') scrollToTop();
-    else navigate('/');
     setIsOpen(false);
   };
 
@@ -151,9 +150,9 @@ const Navbar: React.FC = () => {
               aria-label="Toggle menu"
               aria-expanded={isOpen}
             >
-              <span className={`block w-6 h-[1.5px] bg-white origin-center transition-all duration-400 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+              <span className={`block w-6 h-[1.5px] bg-white origin-center transition-all duration-300 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
               <span className={`block h-[1.5px] bg-white transition-all duration-300 ${isOpen ? 'w-0 opacity-0' : 'w-6'}`} />
-              <span className={`block w-6 h-[1.5px] bg-white origin-center transition-all duration-400 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
+              <span className={`block w-6 h-[1.5px] bg-white origin-center transition-all duration-300 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
             </button>
           </div>
         </div>

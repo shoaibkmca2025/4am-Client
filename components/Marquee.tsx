@@ -42,8 +42,9 @@ const Marquee: React.FC<MarqueeProps> = ({
         repeat: -1,
         modifiers: {
           x: gsap.utils.unitize((raw: number) => {
-            const val = parseFloat(String(raw));
-            return ((val % half) + half) % half * (direction === 'left' ? -1 : 1);
+            return direction === 'left'
+              ? -((-raw % half + half) % half)
+              : ((raw + half) % half) - half;
           }),
         },
       });

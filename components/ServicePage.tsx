@@ -42,6 +42,8 @@ const ServicePage: React.FC = () => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) return;
 
+    const relCardCleanups: (() => void)[] = [];
+
     const ctx = gsap.context(() => {
       // Hero image parallax
       if (heroImgRef.current) {
@@ -115,6 +117,10 @@ const ServicePage: React.FC = () => {
           const onLeave = () => gsap.to(img, { scale: 1,    duration: 0.7, ease: 'expo.out' });
           el.addEventListener('mouseenter', onEnter);
           el.addEventListener('mouseleave', onLeave);
+          relCardCleanups.push(() => {
+            el.removeEventListener('mouseenter', onEnter);
+            el.removeEventListener('mouseleave', onLeave);
+          });
         }
       });
 
@@ -146,7 +152,7 @@ const ServicePage: React.FC = () => {
       );
     }, page);
 
-    return () => ctx.revert();
+    return () => { ctx.revert(); relCardCleanups.forEach((fn) => fn()); };
   }, [service]);
 
   if (!service) return <Navigate to="/" replace />;
@@ -302,7 +308,7 @@ const ServicePage: React.FC = () => {
               <RevealText as="h2" className="block text-section-title text-white">CASE STUDIES</RevealText>
             </div>
             <button
-              onClick={() => { navigate('/'); setTimeout(() => scrollToSection('work'), 200); }}
+              onClick={() => navigate('/', { state: { scrollTo: 'work' } })}
               className="hidden md:flex items-center gap-2 text-white text-xs font-bold uppercase tracking-[0.2em] hover:text-white/50 transition-colors duration-300 hover-underline"
             >
               View all

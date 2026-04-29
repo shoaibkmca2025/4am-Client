@@ -222,11 +222,11 @@ html {
 /* ─── Global button press feedback ───────────────────────────────── */
 button, a[role="button"], [data-btn] {
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease;
 }
 button:active:not(:disabled),
 a[role="button"]:active {
   transform: scale(0.96);
-  transition: transform 0.1s ease;
 }
 
 /* ─── Ripple effect on click (applied via JS data-ripple) ────────── */

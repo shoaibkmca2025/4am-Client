@@ -29,7 +29,7 @@ class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen flex items-center justify-center bg-black text-white p-8 font-sans">
           <div className="max-w-md w-full bg-white/[0.03] rounded-2xl border border-white/[0.08] p-8">
             <h1 className="text-2xl font-bold text-red-400 mb-4">Something went wrong</h1>
-            <p className="text-white/40 mb-6 text-sm leading-relaxed">The application encountered an error. Please check the console for more details.</p>
+            <p className="text-white/60 mb-6 text-sm leading-relaxed">The application encountered an error. Please check the console for more details.</p>
             <pre className="bg-white/[0.04] p-4 rounded-xl text-xs overflow-auto max-h-40 font-mono text-red-400 border border-white/[0.06]">
               {this.state.error?.message}
             </pre>

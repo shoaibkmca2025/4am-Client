@@ -1,4 +1,5 @@
 import React, { useRef, useLayoutEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { gsap } from 'gsap';
 import { scrollToSection } from '../utils/scroll';
@@ -127,10 +128,9 @@ const Services: React.FC = () => {
         >
           {SERVICES_DATA.map((service) => (
             <motion.div key={service.slug} variants={rowVariant} transition={{ duration: 0.75, ease: E }}>
-              <a
-                href={`/services/${service.slug}`}
+              <Link
+                to={`/services/${service.slug}`}
                 className="service-item group relative flex items-center gap-6 md:gap-10 py-6 md:py-8 border-b border-white/[0.07] block"
-                onClick={(e) => { e.preventDefault(); window.location.href = `/services/${service.slug}`; }}
               >
                 <span className="service-item-line absolute left-0 right-0 bottom-0 h-px bg-white/25 origin-left scale-x-0 pointer-events-none" />
                 <span className="service-num text-xs md:text-sm font-bold tracking-[0.2em] text-white/20 w-10 md:w-14 shrink-0 opacity-20">{service.number}</span>
@@ -141,7 +141,7 @@ const Services: React.FC = () => {
                     <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-              </a>
+              </Link>
             </motion.div>
           ))}
         </motion.div>

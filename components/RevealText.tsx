@@ -13,7 +13,6 @@ interface RevealTextProps {
   stagger?: number;
   delay?: number;
   duration?: number;
-  trigger?: string;
   start?: string;
 }
 

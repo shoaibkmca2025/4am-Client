@@ -48,6 +48,8 @@ const ProcessSection: React.FC = () => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) return;
 
+    const cleanups: (() => void)[] = [];
+
     const ctx = gsap.context(() => {
       // Each step number drifts up at a slightly different rate for parallax depth
       const stepNums = section.querySelectorAll<HTMLElement>('.step-ghost-num');
@@ -66,7 +68,6 @@ const ProcessSection: React.FC = () => {
 
       // Hover on step cards
       const cards = section.querySelectorAll<HTMLElement>('.step-card');
-      const cleanups: (() => void)[] = [];
       cards.forEach((card) => {
         const arrow = card.querySelector<HTMLElement>('.step-arrow');
         const onEnter = () => {
@@ -82,11 +83,9 @@ const ProcessSection: React.FC = () => {
           card.removeEventListener('mouseleave', onLeave);
         });
       });
-
-      return () => cleanups.forEach((fn) => fn());
     }, section);
 
-    return () => ctx.revert();
+    return () => { ctx.revert(); cleanups.forEach((fn) => fn()); };
   }, []);
 
   return (
@@ -166,7 +165,7 @@ const ProcessSection: React.FC = () => {
               <div className="w-8 h-px bg-white/15 mb-5 group-hover:w-14 transition-all duration-500" />
 
               {/* Title */}
-              <h3 className="text-lg md:text-xl font-black uppercase tracking-[-0.01em] text-white mb-3 group-hover:text-white/70 transition-colors duration-400">
+              <h3 className="text-lg md:text-xl font-black uppercase tracking-[-0.01em] text-white mb-3 group-hover:text-white/70 transition-colors duration-300">
                 {step.title}
               </h3>
 
@@ -176,7 +175,7 @@ const ProcessSection: React.FC = () => {
               </p>
 
               {/* Arrow icon */}
-              <div className="step-arrow mt-6 w-8 h-8 rounded-full border border-white/[0.07] flex items-center justify-center text-white/25 group-hover:border-white/20 group-hover:text-white/60 transition-colors duration-400">
+              <div className="step-arrow mt-6 w-8 h-8 rounded-full border border-white/[0.07] flex items-center justify-center text-white/25 group-hover:border-white/20 group-hover:text-white/60 transition-colors duration-300">
                 <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
                   <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>

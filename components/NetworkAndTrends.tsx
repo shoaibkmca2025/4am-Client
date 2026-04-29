@@ -1,5 +1,5 @@
 import React, { useRef, useLayoutEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, MotionConfig } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import RevealText from './RevealText';
@@ -81,6 +81,7 @@ const NetworkAndTrends: React.FC = () => {
   }, []);
 
   return (
+  <MotionConfig reducedMotion="user">
     <section ref={sectionRef} className="relative bg-black overflow-hidden">
 
       {/* ── Global Network ── */}
@@ -262,6 +263,7 @@ const NetworkAndTrends: React.FC = () => {
         </div>
       </div>
     </section>
+  </MotionConfig>
   );
 };
 

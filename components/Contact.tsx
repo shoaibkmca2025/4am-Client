@@ -190,12 +190,14 @@ const Contact: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   <div className="field-wrap">
                     <input type="text" value={form.fullName} onChange={(e) => updateField('fullName', e.currentTarget.value)}
-                      className={inputClasses(!!errors.fullName)} placeholder="Full Name *" />
+                      className={inputClasses(!!errors.fullName)} placeholder="Full Name *"
+                      aria-label="Full Name" aria-required="true" />
                     {errors.fullName && <p className="text-red-400 text-[10px] mt-1">{errors.fullName}</p>}
                   </div>
                   <div className="field-wrap">
                     <input type="email" value={form.workEmail} onChange={(e) => updateField('workEmail', e.currentTarget.value)}
-                      className={inputClasses(!!errors.workEmail)} placeholder="Work Email *" />
+                      className={inputClasses(!!errors.workEmail)} placeholder="Work Email *"
+                      aria-label="Work Email" aria-required="true" />
                     {errors.workEmail && <p className="text-red-400 text-[10px] mt-1">{errors.workEmail}</p>}
                   </div>
                 </div>
@@ -203,19 +205,22 @@ const Contact: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   <div className="field-wrap">
                     <input type="tel" value={form.phone} onChange={(e) => updateField('phone', e.currentTarget.value)}
-                      className={inputClasses(!!errors.phone)} placeholder="Phone" />
+                      className={inputClasses(!!errors.phone)} placeholder="Phone"
+                      aria-label="Phone" />
                     {errors.phone && <p className="text-red-400 text-[10px] mt-1">{errors.phone}</p>}
                   </div>
                   <div className="field-wrap">
                     <input type="text" value={form.company} onChange={(e) => updateField('company', e.currentTarget.value)}
-                      className={inputClasses(false)} placeholder="Company" />
+                      className={inputClasses(false)} placeholder="Company"
+                      aria-label="Company" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   <div className="field-wrap">
                     <select value={form.interestedIn} onChange={(e) => updateField('interestedIn', e.currentTarget.value)}
-                      className={selectClasses(!!errors.interestedIn)}>
+                      className={selectClasses(!!errors.interestedIn)}
+                      aria-label="Interested In" aria-required="true">
                       <option value="" className="bg-black">Interested In *</option>
                       <option value="web-development" className="bg-black">Web Development</option>
                       <option value="social-media" className="bg-black">Social Media</option>
@@ -229,7 +234,8 @@ const Contact: React.FC = () => {
                   </div>
                   <div className="field-wrap">
                     <select value={form.budget} onChange={(e) => updateField('budget', e.currentTarget.value)}
-                      className={selectClasses(!!errors.budget)}>
+                      className={selectClasses(!!errors.budget)}
+                      aria-label="Budget Range" aria-required="true">
                       <option value="" className="bg-black">Budget Range *</option>
                       <option value="under-500" className="bg-black">Under $500</option>
                       <option value="500-1500" className="bg-black">$500 – $1,500</option>
@@ -244,7 +250,8 @@ const Contact: React.FC = () => {
                 <div className="field-wrap">
                   <textarea rows={4} value={form.message} onChange={(e) => updateField('message', e.currentTarget.value)}
                     className={`${inputClasses(!!errors.message)} resize-none`}
-                    placeholder="Tell us about your project... *" />
+                    placeholder="Tell us about your project... *"
+                    aria-label="Message" aria-required="true" />
                   {errors.message && <p className="text-red-400 text-[10px] mt-1">{errors.message}</p>}
                 </div>
 

@@ -220,9 +220,9 @@ const Footer: React.FC = () => {
           &copy; {new Date().getFullYear()} 4AM Global Media. All rights reserved.
         </p>
         <div className="flex items-center gap-5 text-[10px] font-bold tracking-[0.2em] uppercase text-white/15">
-          <span>Privacy</span>
-          <span>Terms</span>
-          <span>Cookies</span>
+          <button className="hover:text-white/40 transition-colors duration-200">Privacy</button>
+          <button className="hover:text-white/40 transition-colors duration-200">Terms</button>
+          <button className="hover:text-white/40 transition-colors duration-200">Cookies</button>
         </div>
       </div>
     </footer>

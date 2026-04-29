@@ -35,6 +35,7 @@ const ScrollToTopBtn: React.FC = () => {
       else btn.classList.add('hidden-btn');
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   return (

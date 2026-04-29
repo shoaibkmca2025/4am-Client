@@ -1,10 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, MotionConfig } from 'framer-motion';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import RevealText from './RevealText';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
@@ -35,25 +32,6 @@ const Testimonials: React.FC = () => {
   const authorRef   = useRef<HTMLElement>(null);
   const isAnimating = useRef(false);
 
-  // ── section entrance ────────────────────────────────────────────────
-  useLayoutEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.testimonial-body',
-        { y: 50, autoAlpha: 0 },
-        {
-          y: 0, autoAlpha: 1, duration: 1.2, ease: 'expo.out',
-          scrollTrigger: { trigger: section, start: 'top 75%', once: true },
-        }
-      );
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
 
   // ── quote transition ─────────────────────────────────────────────────
   const animateTo = useCallback((nextIndex: number) => {
@@ -95,6 +73,7 @@ const Testimonials: React.FC = () => {
   const active = testimonials[index];
 
   return (
+  <MotionConfig reducedMotion="user">
     <section id="testimonials" ref={sectionRef} className="relative py-16 md:py-24 bg-black border-t border-white/[0.06] overflow-hidden">
       <div className="w-full max-w-[1400px] mx-auto px-6 md:px-10">
 
@@ -212,6 +191,7 @@ const Testimonials: React.FC = () => {
         </motion.div>
       </div>
     </section>
+  </MotionConfig>
   );
 };
 

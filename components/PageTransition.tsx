@@ -17,6 +17,7 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
       .to(overlay, { yPercent: 0, duration: 0.55, ease: 'expo.inOut' })
       .to(overlay, { yPercent: -100, duration: 0.55, ease: 'expo.inOut', delay: 0.1 })
       .set(overlay, { autoAlpha: 0 });
+    return () => { tl.kill(); gsap.killTweensOf(overlay); };
   }, [location.pathname]);
 
   return (
