@@ -357,6 +357,27 @@ a[role="button"]:active {
   transform: translateY(12px);
 }
 
+/* ─── Hero character clip container ─────────────────────────────── */
+.hero-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+/* ─── Custom cursor (pointer: fine devices only) ─────────────────── */
+@media (pointer: fine) {
+  body,
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  [data-magnetic] {
+    cursor: none !important;
+  }
+}
+
 /* ─── Reduced motion overrides ───────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

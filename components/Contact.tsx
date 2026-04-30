@@ -1,6 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import RevealText from './RevealText';
+
+const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+const fieldVariant = {
+  hidden: { y: 22, opacity: 0, filter: 'blur(4px)' },
+  show:   { y: 0,  opacity: 1, filter: 'blur(0px)' },
+};
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
 interface FormState {
@@ -153,13 +160,13 @@ const Contact: React.FC = () => {
             </motion.div>
           </motion.div>
 
-          {/* Form — slides in from right */}
+          {/* Form — stagger field reveal */}
           <motion.div
             className="lg:col-span-3"
-            initial={{ x: 50, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
+            initial="hidden"
+            whileInView="show"
             viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } } }}
           >
             {status === 'success' ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -187,7 +194,8 @@ const Contact: React.FC = () => {
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   <div className="field-wrap">
                     <input type="text" value={form.fullName} onChange={(e) => updateField('fullName', e.currentTarget.value)}
                       className={inputClasses(!!errors.fullName)} placeholder="Full Name *"
@@ -200,9 +208,10 @@ const Contact: React.FC = () => {
                       aria-label="Work Email" aria-required="true" />
                     {errors.workEmail && <p className="text-red-400 text-[10px] mt-1">{errors.workEmail}</p>}
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   <div className="field-wrap">
                     <input type="tel" value={form.phone} onChange={(e) => updateField('phone', e.currentTarget.value)}
                       className={inputClasses(!!errors.phone)} placeholder="Phone"
@@ -214,9 +223,10 @@ const Contact: React.FC = () => {
                       className={inputClasses(false)} placeholder="Company"
                       aria-label="Company" />
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   <div className="field-wrap">
                     <select value={form.interestedIn} onChange={(e) => updateField('interestedIn', e.currentTarget.value)}
                       className={selectClasses(!!errors.interestedIn)}
@@ -245,17 +255,19 @@ const Contact: React.FC = () => {
                     </select>
                     {errors.budget && <p className="text-red-400 text-[10px] mt-1">{errors.budget}</p>}
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="field-wrap">
+                <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
+                  className="field-wrap">
                   <textarea rows={4} value={form.message} onChange={(e) => updateField('message', e.currentTarget.value)}
                     className={`${inputClasses(!!errors.message)} resize-none`}
                     placeholder="Tell us about your project... *"
                     aria-label="Message" aria-required="true" />
                   {errors.message && <p className="text-red-400 text-[10px] mt-1">{errors.message}</p>}
-                </div>
+                </motion.div>
 
-                <div className="pt-8">
+                <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
+                  className="pt-8">
                   <button
                     type="submit"
                     data-ripple
@@ -276,7 +288,7 @@ const Contact: React.FC = () => {
                       </>
                     )}
                   </button>
-                </div>
+                </motion.div>
               </form>
             )}
           </motion.div>

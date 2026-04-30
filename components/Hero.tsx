@@ -5,57 +5,77 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const HeroWord: React.FC<{ text: string; className: string; style?: React.CSSProperties }> = ({
+  text,
+  className,
+  style,
+}) => (
+  <span className={`hero-word ${className}`} style={style}>
+    {[...text].map((char, i) => (
+      <span
+        key={i}
+        className="hero-char"
+        style={{ display: 'inline-block', whiteSpace: char === ' ' ? 'pre' : undefined }}
+      >
+        {char === ' ' ? ' ' : char}
+      </span>
+    ))}
+  </span>
+);
 
 const Hero: React.FC = () => {
   const rootRef       = useRef<HTMLElement>(null);
   const subtitleRef   = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
 
-  // Scroll-out: entire hero fades + slides up as user scrolls away
   const { scrollYProgress } = useScroll({
     target: rootRef,
     offset: ['start start', 'end start'],
   });
   const heroOpacity = useTransform(scrollYProgress, [0.35, 0.9], [1, 0]);
   const heroY       = useTransform(scrollYProgress, [0, 1], ['0%', '-12%']);
-  // bg letter scales up as you scroll past for a depth effect
   const bgScale     = useTransform(scrollYProgress, [0, 1], [1, 1.18]);
   const bgOpacity   = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const ctx = gsap.context(() => {
-      const titleWords = gsap.utils.toArray<HTMLElement>('.hero-word', root);
-      const subtitle   = subtitleRef.current;
-      const badge      = root.querySelector('.hero-badge');
-      const bottomBar  = root.querySelector('.hero-bottom');
-      const bgLetter   = root.querySelector('.hero-bg-letter');
+      const chars    = gsap.utils.toArray<HTMLElement>('.hero-char', root);
+      const subtitle = subtitleRef.current;
+      const badge    = root.querySelector('.hero-badge');
+      const bottomBar = root.querySelector('.hero-bottom');
+      const bgLetter = root.querySelector('.hero-bg-letter');
 
-      if (prefersReducedMotion) {
-        gsap.set([titleWords, subtitle, badge, bottomBar, bgLetter], { autoAlpha: 1, y: 0 });
+      if (reduced) {
+        gsap.set([chars, subtitle, badge, bottomBar, bgLetter], { autoAlpha: 1, y: 0 });
         return;
       }
 
-      gsap.set(titleWords, { y: 140, autoAlpha: 0 });
-      if (subtitle)  gsap.set(subtitle,  { y: 30, autoAlpha: 0 });
-      if (badge)     gsap.set(badge,     { y: 20, autoAlpha: 0 });
-      if (bottomBar) gsap.set(bottomBar, { y: 20, autoAlpha: 0 });
+      gsap.set(chars, { y: '110%', autoAlpha: 0 });
+      if (subtitle)  gsap.set(subtitle,  { y: 28, autoAlpha: 0 });
+      if (badge)     gsap.set(badge,     { y: 16, autoAlpha: 0 });
+      if (bottomBar) gsap.set(bottomBar, { y: 16, autoAlpha: 0 });
       if (bgLetter)  gsap.set(bgLetter,  { autoAlpha: 0 });
 
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
       if (bgLetter) tl.to(bgLetter, { autoAlpha: 1, duration: 1.8 }, 0);
 
-      tl.to(titleWords, { y: 0, autoAlpha: 1, duration: 1.6, stagger: 0.1 }, 0.2);
-      if (badge)     tl.to(badge,     { y: 0, autoAlpha: 1, duration: 1.2 }, 0.6);
-      if (subtitle)  tl.to(subtitle,  { y: 0, autoAlpha: 1, duration: 1.2 }, 0.8);
-      if (bottomBar) tl.to(bottomBar, { y: 0, autoAlpha: 1, duration: 1   }, 1);
+      // Character stagger across all words
+      tl.to(chars, {
+        y: '0%',
+        autoAlpha: 1,
+        duration: 1.1,
+        stagger: { each: 0.022, from: 'start' },
+      }, 0.1);
 
-      // Scroll hint fade
+      if (badge)     tl.to(badge,     { y: 0, autoAlpha: 1, duration: 1.1 }, 0.4);
+      if (subtitle)  tl.to(subtitle,  { y: 0, autoAlpha: 1, duration: 1.1 }, 0.65);
+      if (bottomBar) tl.to(bottomBar, { y: 0, autoAlpha: 1, duration: 1   }, 0.85);
+
       if (scrollHintRef.current) {
         gsap.to(scrollHintRef.current, {
           autoAlpha: 0,
@@ -75,7 +95,7 @@ const Hero: React.FC = () => {
       style={{ opacity: heroOpacity, y: heroY }}
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black pt-[70px] md:pt-[80px]"
     >
-      {/* Giant "4AM" background letter — scales on scroll for depth */}
+      {/* Giant "4AM" background letter */}
       <motion.div
         className="hero-bg-letter absolute inset-0 flex items-center justify-center pointer-events-none select-none"
         style={{ scale: bgScale, opacity: bgOpacity }}
@@ -95,35 +115,34 @@ const Hero: React.FC = () => {
         <div className="absolute w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full border border-white/[0.02]" />
       </div>
 
-      {/* Main hero content */}
       <div className="hero-title-container relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10 text-center">
-        {/* Top badge */}
+        {/* Badge */}
         <div className="hero-badge mb-6 md:mb-10">
           <span className="inline-block text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/40">
             A Creative Network Made For Today & Tomorrow
           </span>
         </div>
 
-        {/* Main title */}
-        <div className="overflow-hidden">
-          <h1 className="flex flex-col items-center gap-1 md:gap-2">
-            <span className="hero-word block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-white">
-              WE BUILD
-            </span>
-            <span
-              className="hero-word block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-transparent"
-              style={{ WebkitTextStroke: '2px rgba(255,255,255,0.25)' }}
-            >
-              GROWTH
-            </span>
-            <span className="hero-word block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-white">
-              THROUGH
-            </span>
-            <span className="hero-word block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase italic text-white/50">
-              DIGITAL
-            </span>
-          </h1>
-        </div>
+        {/* Main title — characters split for per-char stagger */}
+        <h1 className="flex flex-col items-center gap-1 md:gap-2 overflow-hidden">
+          <HeroWord
+            text="WE BUILD"
+            className="block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-white"
+          />
+          <HeroWord
+            text="GROWTH"
+            className="block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-transparent"
+            style={{ WebkitTextStroke: '2px rgba(255,255,255,0.25)' }}
+          />
+          <HeroWord
+            text="THROUGH"
+            className="block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-white"
+          />
+          <HeroWord
+            text="DIGITAL"
+            className="block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase italic text-white/50"
+          />
+        </h1>
 
         {/* Subtitle */}
         <div ref={subtitleRef} className="mt-10 md:mt-16 max-w-2xl mx-auto">

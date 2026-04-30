@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -6,7 +7,19 @@ gsap.registerPlugin(ScrollTrigger);
 
 const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
-    gsap.ticker.lagSmoothing(500, 33);
+    const lenis = new Lenis({
+      lerp: 0.1,
+      smoothWheel: true,
+      syncTouch: false,
+    });
+
+    // Bridge Lenis scroll position → GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+
+    const tick = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
+
     ScrollTrigger.config({
       limitCallbacks: true,
       ignoreMobileResize: true,
@@ -22,11 +35,15 @@ const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       const el = document.querySelector(id);
       if (!el) return;
       e.preventDefault();
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      lenis.scrollTo(el as HTMLElement, { offset: -80 });
     };
     document.addEventListener('click', handleAnchor);
 
-    return () => document.removeEventListener('click', handleAnchor);
+    return () => {
+      document.removeEventListener('click', handleAnchor);
+      gsap.ticker.remove(tick);
+      lenis.destroy();
+    };
   }, []);
 
   return <>{children}</>;

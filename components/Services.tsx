@@ -17,8 +17,8 @@ const SERVICES_DATA = [
 ];
 
 const rowVariant = {
-  hidden: { opacity: 0, x: -30, filter: 'blur(4px)' },
-  show:   { opacity: 1, x: 0,   filter: 'blur(0px)' },
+  hidden: { clipPath: 'inset(0 100% 0 0)' },
+  show:   { clipPath: 'inset(0 0% 0 0)'   },
 };
 
 const Services: React.FC = () => {
