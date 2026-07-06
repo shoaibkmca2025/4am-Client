@@ -44,7 +44,13 @@ Respect these gates when adding new heavy effects. `vite.config.ts` manual-chunk
 `components/AuthContext.tsx` wraps the app (inside `AuthProvider`). `types.ts` has `User` and `Opportunity` shapes that look like placeholders for a dashboard/careers feature that isn't wired up yet — treat as aspirational unless asked to build it.
 
 ### Styling
-Tailwind with a custom `brand` palette in `tailwind.config.js` (`brand.primary` warm orange `#FF8A3D`, `brand.secondary` gold `#FFC56A`, `brand.accent` deep green, plus `dark`, `gray`, `bg`, `surface`). Custom fonts registered as `font-sans` (Inter), `font-display` (DM Sans), `font-mono` (JetBrains Mono). `index.css` also defines hand-rolled utilities for the Dentsu-inspired redesign: `text-massive`, `text-display`, `text-section-title`, `btn-line`, `btn-pill`, `ring-3d`, `horizontal-scroll`, `animate-reveal-up`. Use these before reaching for ad-hoc CSS.
+Tailwind with a custom `brand` palette in `tailwind.config.js` (`brand.primary` electric orange `#FF6A3D`, `brand.secondary` gold `#FFC56A`, `brand.accent` violet `#8B5CF6`, `brand.cyan` `#22D3EE`, `brand.lime` `#A3E635`, plus `dark`, `gray`, `bg`, `surface`).
+
+**Scroll color grading**: `LandingPage.tsx` wraps each section in a `[data-grade]`/`[data-orbs]` div; a ScrollTrigger per zone tweens the page background tint and cross-fades three fixed radial-gradient "glow orbs" (orange/violet/cyan). Sections therefore use `bg-transparent`, NOT `bg-black` — re-adding an opaque background on a section breaks the grading.
+
+**Gradient text gotcha**: `background-clip: text` does not paint through child spans that carry transforms (GSAP-animated words/chars). Gradient headlines must put the gradient class on the animated span itself — `wordClassName="text-gradient-brand"` on `RevealText`, or the `.hero-grad .hero-char` per-character rule in `index.css`. Putting `text-gradient-*` on the parent of animated spans renders invisible text.
+
+**Signature scroll sections**: `CodeShowcase.tsx` (pinned, scrub-typed code editor + terminal — software dev story) and `GrowthChart.tsx` (pinned, scrub-drawn SVG growth curve + KPI counters — marketing story). Both skip pinning and render final state on mobile/reduced-motion. Custom fonts registered as `font-sans` (Inter), `font-display` (DM Sans), `font-mono` (JetBrains Mono). `index.css` also defines hand-rolled utilities for the Dentsu-inspired redesign: `text-massive`, `text-display`, `text-section-title`, `btn-line`, `btn-pill`, `ring-3d`, `horizontal-scroll`, `animate-reveal-up`. Use these before reaching for ad-hoc CSS.
 
 ### Deployment
 `vercel.json` is a pure SPA rewrite — every path falls through to `/index.html`. Build output is `dist/` (also in `.gitignore` but `dist/` is currently checked in — don't commit rebuilt artifacts as part of unrelated changes).

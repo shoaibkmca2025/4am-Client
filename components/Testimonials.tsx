@@ -92,9 +92,9 @@ const Testimonials: React.FC = () => {
       <section
         id="testimonials"
         ref={sectionRef}
-        className="relative py-16 md:py-24 bg-black border-t border-white/[0.06] overflow-hidden"
+        className="relative py-16 md:py-24 bg-transparent border-t border-white/[0.06] overflow-hidden"
       >
-        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-10">
+        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
 
           {/* Heading */}
           <div className="mb-10 md:mb-14">
@@ -139,7 +139,7 @@ const Testimonials: React.FC = () => {
               whileInView={{ scale: 1, opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[150px] md:text-[220px] font-black text-white/[0.03] leading-none absolute -top-10 -left-4 select-none pointer-events-none"
+              className="text-[150px] md:text-[220px] font-black text-brand-accent/[0.06] leading-none absolute -top-10 -left-4 select-none pointer-events-none"
               aria-hidden="true"
             >
               &ldquo;
@@ -193,7 +193,7 @@ const Testimonials: React.FC = () => {
                     key={i}
                     onClick={() => animateTo(i)}
                     className={`h-1.5 rounded-full transition-all duration-500 ${
-                      i === index ? 'bg-white w-8' : 'bg-white/15 w-1.5 hover:bg-white/30'
+                      i === index ? 'bg-brand-primary w-8' : 'bg-white/15 w-1.5 hover:bg-white/30'
                     }`}
                     aria-label={`Go to testimonial ${i + 1}`}
                   />

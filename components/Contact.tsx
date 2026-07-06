@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { motion, MotionConfig } from 'framer-motion';
+import { motion } from 'framer-motion';
 import RevealText from './RevealText';
 
 const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const fieldVariant = {
-  hidden: { y: 22, opacity: 0, filter: 'blur(4px)' },
-  show:   { y: 0,  opacity: 1, filter: 'blur(0px)' },
+  hidden: { y: 22, opacity: 0 },
+  show:   { y: 0,  opacity: 1 },
 };
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
@@ -20,8 +20,8 @@ interface FormState {
   message: string;
 }
 
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
-const NAME_REGEX = /^[a-zA-Z\s'.'-]{2,}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const NAME_REGEX = /^[a-zA-Z\s'.-]{2,}$/;
 const PHONE_DIGITS_REGEX = /\d/g;
 
 const validate = (form: FormState): FormErrors => {
@@ -80,8 +80,8 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="relative py-16 md:py-24 bg-black border-t border-white/[0.06]">
-      <div className="w-full max-w-[1400px] mx-auto px-6 md:px-10">
+    <section id="contact" ref={sectionRef} className="relative py-16 md:py-24 bg-transparent border-t border-white/[0.06]">
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
         {/* Header */}
         <div className="contact-heading mb-10 md:mb-14">
           <motion.span
@@ -108,8 +108,8 @@ const Contact: React.FC = () => {
             TOGETHER
           </RevealText>
           <motion.p
-            initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
             className="mt-6 text-white/30 text-sm md:text-base leading-relaxed font-medium max-w-lg"
@@ -272,7 +272,7 @@ const Contact: React.FC = () => {
                     type="submit"
                     data-ripple
                     disabled={status === 'submitting'}
-                    className="inline-flex items-center justify-center px-10 py-4 bg-white text-black font-bold text-[11px] tracking-[0.2em] uppercase hover:bg-white/90 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed gap-3 rounded-full"
+                    className="inline-flex items-center justify-center px-10 py-4 bg-gradient-to-r from-brand-primary to-brand-secondary text-black font-bold text-[11px] tracking-[0.2em] uppercase hover:opacity-90 hover:shadow-[0_0_30px_rgba(255,106,61,0.35)] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed gap-3 rounded-full"
                   >
                     {status === 'submitting' ? (
                       <span className="flex items-center gap-2">

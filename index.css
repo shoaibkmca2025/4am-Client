@@ -32,7 +32,7 @@ input, button, textarea, select {
 }
 
 ::selection {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 106, 61, 0.35);
   color: #FFFFFF;
 }
 
@@ -46,7 +46,7 @@ a:hover {
   opacity: 0.8;
 }
 :focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline: 2px solid rgba(255, 106, 61, 0.7);
   outline-offset: 2px;
 }
 h1, h2, h3, h4, h5, h6 {
@@ -262,7 +262,7 @@ a[role="button"]:active {
   left: 0;
   width: 0;
   height: 1px;
-  background: rgba(255,255,255,0.7);
+  background: linear-gradient(90deg, #FF6A3D, #FFC56A);
   transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .field-wrap:focus-within::after {
@@ -376,6 +376,41 @@ a[role="button"]:active {
   [data-magnetic] {
     cursor: none !important;
   }
+}
+
+/* ─── Brand gradient text ─────────────────────────────────────────── */
+.text-gradient-brand {
+  background: linear-gradient(100deg, #FF6A3D 0%, #FFC56A 55%, #FF6A3D 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.text-gradient-tech {
+  background: linear-gradient(100deg, #8B5CF6 0%, #22D3EE 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Per-character gradient for GSAP-animated hero words. background-clip:
+   text does not paint through transformed child spans, so the gradient
+   must live on each character itself (vertical so chars match up). */
+.hero-grad .hero-char {
+  background: linear-gradient(180deg, #FFC56A 0%, #FF6A3D 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ─── Ambient glow orbs (scroll color-grading layer) ─────────────── */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
 /* ─── Reduced motion overrides ───────────────────────────────────── */

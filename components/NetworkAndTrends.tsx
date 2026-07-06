@@ -1,5 +1,5 @@
 import React, { useRef, useLayoutEffect } from 'react';
-import { motion, useScroll, useTransform, MotionConfig } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import RevealText from './RevealText';
@@ -25,10 +25,6 @@ const trendVariant = {
 const NetworkAndTrends: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const ringRef    = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
-  const globalBgX  = useTransform(scrollYProgress, [0, 1], ['-6%', '6%']);
-  const trendsBgX  = useTransform(scrollYProgress, [0, 1], ['6%', '-6%']);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -82,21 +78,20 @@ const NetworkAndTrends: React.FC = () => {
 
   return (
   <MotionConfig reducedMotion="user">
-    <section ref={sectionRef} className="relative bg-black overflow-hidden">
+    <section ref={sectionRef} className="relative bg-transparent overflow-hidden">
 
       {/* ── Global Network ── */}
       <div className="relative py-16 md:py-24 border-t border-white/[0.06] overflow-hidden">
-        {/* Scroll-parallax ghost word */}
-        <motion.div
+        {/* Static ghost word — quiet background texture */}
+        <div
           className="absolute inset-0 flex items-center justify-start pl-[3%] pointer-events-none select-none"
-          style={{ x: globalBgX }}
           aria-hidden="true"
         >
           <span className="text-[14vw] font-black uppercase leading-none tracking-[-0.05em] text-transparent whitespace-nowrap"
             style={{ WebkitTextStroke: '1px rgba(255,255,255,0.022)' }}>
             NETWORK
           </span>
-        </motion.div>
+        </div>
         <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
@@ -116,10 +111,10 @@ const NetworkAndTrends: React.FC = () => {
               >
                 Global Network
               </motion.span>
-              <RevealText as="h2" className="block text-[8vw] md:text-[5vw] lg:text-[4vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white">
+              <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white">
                 POWERED BY
               </RevealText>
-              <RevealText as="h2" className="block text-[8vw] md:text-[5vw] lg:text-[4vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-transparent mb-6" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.12)' }} delay={0.12}>
+              <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-transparent mb-6" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.12)' }} delay={0.12}>
                 A GLOBAL TEAM
               </RevealText>
               <p className="text-white/30 text-sm md:text-base leading-relaxed font-medium max-w-md mb-8">
@@ -176,7 +171,7 @@ const NetworkAndTrends: React.FC = () => {
                       className="absolute flex flex-col items-center"
                       style={{ left: `${50 + r * Math.cos(rad)}%`, top: `${50 + r * Math.sin(rad)}%`, transform: 'translate(-50%,-50%)' }}
                     >
-                      <div className="w-2 h-2 rounded-full bg-white/50 shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
+                      <div className="w-2 h-2 rounded-full bg-brand-cyan/80 shadow-[0_0_10px_rgba(34,211,238,0.6)]" />
                       <span className="mt-1.5 text-[7px] font-bold tracking-[0.15em] uppercase text-white/25 whitespace-nowrap">{loc}</span>
                     </motion.div>
                   );
@@ -184,7 +179,7 @@ const NetworkAndTrends: React.FC = () => {
 
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="text-3xl md:text-4xl font-black text-white/80 tracking-[-0.03em]">4AM</div>
+                    <div className="text-3xl md:text-4xl font-black text-gradient-brand tracking-[-0.03em]">4AM</div>
                     <div className="text-[9px] font-bold tracking-[0.35em] uppercase text-white/20 mt-1">GLOBAL</div>
                   </div>
                 </div>
@@ -197,17 +192,16 @@ const NetworkAndTrends: React.FC = () => {
 
       {/* ── Trends ── */}
       <div className="relative py-16 md:py-24 border-t border-white/[0.06] overflow-hidden">
-        {/* Scroll-parallax ghost word — drifts opposite direction */}
-        <motion.div
+        {/* Static ghost word — quiet background texture */}
+        <div
           className="absolute inset-0 flex items-center justify-end pr-[3%] pointer-events-none select-none"
-          style={{ x: trendsBgX }}
           aria-hidden="true"
         >
           <span className="text-[14vw] font-black uppercase leading-none tracking-[-0.05em] text-transparent whitespace-nowrap"
             style={{ WebkitTextStroke: '1px rgba(255,255,255,0.022)' }}>
             INSIGHTS
           </span>
-        </motion.div>
+        </div>
         <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 md:mb-14">
             <div>
@@ -228,8 +222,8 @@ const NetworkAndTrends: React.FC = () => {
               </RevealText>
             </div>
             <motion.p
-              initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: E, delay: 0.2 }}
               className="text-white/30 text-sm md:text-base max-w-sm leading-relaxed font-medium md:text-right md:pb-2"

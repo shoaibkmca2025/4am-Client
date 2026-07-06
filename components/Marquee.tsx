@@ -28,7 +28,7 @@ const Marquee: React.FC<MarqueeProps> = ({
     if (reduced) return;
 
     // Wait one frame so scrollWidth is measured after fonts/layout settle
-    let raf = requestAnimationFrame(() => {
+    const raf = requestAnimationFrame(() => {
       const half = track.scrollWidth / 2;
       if (half <= 0) return;
 
@@ -85,7 +85,7 @@ const Marquee: React.FC<MarqueeProps> = ({
   const content = items.map((item, i) => (
     <span key={i} className="inline-flex items-center shrink-0">
       <span className="whitespace-nowrap">{item}</span>
-      <span className="mx-8 md:mx-14 opacity-20">{separator}</span>
+      <span className="mx-8 md:mx-14 text-brand-primary opacity-50">{separator}</span>
     </span>
   ));
 

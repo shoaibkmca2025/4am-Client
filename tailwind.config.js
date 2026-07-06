@@ -14,10 +14,12 @@ module.exports = {
       },
       colors: {
         brand: {
-          primary: '#FFFFFF',
-          secondary: '#FFFFFF',
-          accent: '#FFFFFF',
-          dark: '#000000',
+          primary: '#FF6A3D',   // electric orange — energy / marketing
+          secondary: '#FFC56A', // warm gold
+          accent: '#8B5CF6',    // violet — technology / engineering
+          cyan: '#22D3EE',      // cyan — data / analytics
+          lime: '#A3E635',      // lime — growth / success states
+          dark: '#050505',
           gray: '#666666',
           bg: '#000000',
           surface: '#111111',

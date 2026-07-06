@@ -21,8 +21,7 @@ const AIChatbot: React.FC = () => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const chatRef = useRef<any>(null);
+  const chatRef = useRef<ReturnType<typeof import("@google/genai").GoogleGenAI.prototype.chats.create> | null>(null);
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;

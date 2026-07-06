@@ -42,6 +42,10 @@ const RevealText: React.FC<RevealTextProps> = ({
     }
 
     const ctx = gsap.context(() => {
+      // Wipe any stale transform cache left by React StrictMode's dev
+      // double-mount — without this the second mount inherits a phantom
+      // pixel offset and words stay clipped out of view.
+      gsap.set(inners, { clearProps: 'transform,opacity,visibility' });
       gsap.set(inners, { yPercent: 110, autoAlpha: 0 });
       gsap.to(inners, {
         yPercent: 0,

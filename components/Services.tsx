@@ -72,7 +72,7 @@ const Services: React.FC = () => {
   }, []);
 
   return (
-    <section id="services" ref={sectionRef} className="relative py-16 md:py-24 bg-black overflow-hidden">
+    <section id="services" ref={sectionRef} className="relative py-16 md:py-24 bg-transparent overflow-hidden">
 
       {/* Scroll-parallax ghost word — drifts left as you scroll */}
       <motion.div
@@ -104,13 +104,13 @@ const Services: React.FC = () => {
             <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white">
               WHAT WE
             </RevealText>
-            <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.18)' }} delay={0.12}>
+            <RevealText as="h2" className="block text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9]" wordClassName="text-gradient-brand" delay={0.12}>
               DO
             </RevealText>
           </div>
           <motion.p
-            initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: E, delay: 0.2 }}
             className="text-white/35 text-sm md:text-base leading-relaxed font-medium md:max-w-sm md:text-right md:pb-2"
@@ -132,11 +132,11 @@ const Services: React.FC = () => {
                 to={`/services/${service.slug}`}
                 className="service-item group relative flex items-center gap-6 md:gap-10 py-6 md:py-8 border-b border-white/[0.07] block"
               >
-                <span className="service-item-line absolute left-0 right-0 bottom-0 h-px bg-white/25 origin-left scale-x-0 pointer-events-none" />
+                <span className="service-item-line absolute left-0 right-0 bottom-0 h-px bg-gradient-to-r from-brand-primary via-brand-secondary to-transparent origin-left scale-x-0 pointer-events-none" />
                 <span className="service-num text-xs md:text-sm font-bold tracking-[0.2em] text-white/20 w-10 md:w-14 shrink-0 opacity-20">{service.number}</span>
                 <h3 className="service-title text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-[-0.02em] text-white flex-1">{service.title}</h3>
                 <p className="service-desc hidden lg:block text-white/30 text-sm max-w-xs leading-relaxed font-medium text-right opacity-30">{service.description}</p>
-                <div className="service-arrow w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:bg-white group-hover:border-white transition-colors duration-300 text-white/40 group-hover:text-black">
+                <div className="service-arrow w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:bg-brand-primary group-hover:border-brand-primary transition-colors duration-300 text-white/40 group-hover:text-black">
                   <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                     <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>

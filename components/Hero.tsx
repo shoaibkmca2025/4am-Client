@@ -93,7 +93,7 @@ const Hero: React.FC = () => {
       id="home"
       ref={rootRef}
       style={{ opacity: heroOpacity, y: heroY }}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black pt-[70px] md:pt-[80px]"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-transparent pt-[70px] md:pt-[80px]"
     >
       {/* Giant "4AM" background letter */}
       <motion.div
@@ -131,8 +131,7 @@ const Hero: React.FC = () => {
           />
           <HeroWord
             text="GROWTH"
-            className="block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-transparent"
-            style={{ WebkitTextStroke: '2px rgba(255,255,255,0.25)' }}
+            className="hero-grad block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase"
           />
           <HeroWord
             text="THROUGH"
@@ -170,7 +169,7 @@ const Hero: React.FC = () => {
         aria-hidden="true"
       >
         <div className="w-[1px] h-16 bg-white/20 scroll-line" />
-        <div className="w-1 h-1 rounded-full bg-white/60" />
+        <div className="w-1 h-1 rounded-full bg-brand-primary" />
       </div>
     </motion.section>
   );

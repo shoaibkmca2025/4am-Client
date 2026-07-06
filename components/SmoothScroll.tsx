@@ -8,7 +8,11 @@ gsap.registerPlugin(ScrollTrigger);
 const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.1,
+      // Tighter, weighted easing for a premium "agency" feel (vs. the default floaty lerp).
+      duration: 1.1,
+      easing: (t: number) => 1 - Math.pow(1 - t, 4), // easeOutQuart
+      lerp: 0.085,
+      wheelMultiplier: 1,
       smoothWheel: true,
       syncTouch: false,
     });
@@ -21,10 +25,11 @@ const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     gsap.ticker.lagSmoothing(0);
 
     ScrollTrigger.config({
-      limitCallbacks: true,
       ignoreMobileResize: true,
-      autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
     });
+
+    // Refresh after Lenis takes over so pin spacers are recalculated correctly
+    const rafId = requestAnimationFrame(() => ScrollTrigger.refresh());
 
     const handleAnchor = (e: Event) => {
       const target = e.target as HTMLElement;
@@ -40,6 +45,7 @@ const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     document.addEventListener('click', handleAnchor);
 
     return () => {
+      cancelAnimationFrame(rafId);
       document.removeEventListener('click', handleAnchor);
       gsap.ticker.remove(tick);
       lenis.destroy();

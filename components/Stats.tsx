@@ -1,5 +1,5 @@
 import React, { useRef, useLayoutEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import RevealText from './RevealText';
@@ -19,11 +19,6 @@ const StatsSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const numRefs    = useRef<(HTMLDivElement | null)[]>([]);
   const barRefs    = useRef<(HTMLDivElement | null)[]>([]);
-
-  // Horizontal parallax — "IMPACT" drifts left as you scroll through
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
-  const bgX     = useTransform(scrollYProgress, [0, 1], ['-8%', '8%']);
-  const titleY  = useTransform(scrollYProgress, [0, 1], ['4%', '-4%']);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -66,12 +61,11 @@ const StatsSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="relative py-20 md:py-32 bg-black border-t border-b border-white/[0.06] overflow-hidden">
+    <section id="about" ref={sectionRef} className="relative py-16 md:py-24 bg-transparent border-t border-b border-white/[0.06] overflow-hidden">
 
-      {/* Scroll-linked ghost word — drifts horizontally as you scroll */}
-      <motion.div
+      {/* Static ghost word — quiet background texture, no scroll drift */}
+      <div
         className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-        style={{ x: bgX }}
         aria-hidden="true"
       >
         <span
@@ -80,28 +74,27 @@ const StatsSection: React.FC = () => {
         >
           IMPACT
         </span>
-      </motion.div>
+      </div>
 
       <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10">
 
-        {/* Heading with subtle Y parallax */}
-        <motion.div style={{ y: titleY }} className="mb-14 md:mb-24">
-          <RevealText as="h2" className="text-[8vw] md:text-[7vw] lg:text-[5.5vw] font-black uppercase tracking-[-0.03em] leading-[0.88] text-white">
+        <div className="mb-10 md:mb-16">
+          <RevealText as="h2" className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.88] text-white">
             TRANSFORMATIVE
           </RevealText>
-          <RevealText as="h2" className="text-[8vw] md:text-[7vw] lg:text-[5.5vw] font-black uppercase tracking-[-0.03em] leading-[0.88] text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.15}>
+          <RevealText as="h2" className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.88]" wordClassName="text-gradient-brand" delay={0.15}>
             IMPACT
           </RevealText>
           <motion.p
-            initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.85, ease: E, delay: 0.25 }}
-            className="mt-7 text-white/35 text-base md:text-lg leading-relaxed font-medium max-w-xl"
+            className="mt-6 text-white/35 text-sm md:text-base leading-relaxed font-medium max-w-lg"
           >
             We are a creative network that delivers meaningful, measurable outcomes for brands across the globe. Our work speaks through numbers.
           </motion.p>
-        </motion.div>
+        </div>
 
         {/* Stats grid — Dentsu-style large numbers */}
         <motion.div
@@ -124,7 +117,7 @@ const StatsSection: React.FC = () => {
               {/* Number */}
               <div
                 ref={(el) => { numRefs.current[i] = el; }}
-                className="relative text-[10vw] sm:text-[7vw] md:text-[5vw] lg:text-[4vw] xl:text-[3.5vw] font-black text-white tracking-[-0.04em] tabular-nums leading-none group-hover:text-white/70 transition-colors duration-500"
+                className="relative text-[11vw] md:text-[5.5vw] lg:text-[4vw] font-black text-white tracking-[-0.04em] tabular-nums leading-none group-hover:text-white/70 transition-colors duration-500"
               >
                 0{stat.suffix}
               </div>
@@ -133,7 +126,7 @@ const StatsSection: React.FC = () => {
               <div className="mt-5 h-px bg-white/[0.07] overflow-hidden max-w-[90px]">
                 <div
                   ref={(el) => { barRefs.current[i] = el; }}
-                  className="h-full bg-white/60 origin-left"
+                  className="h-full bg-gradient-to-r from-brand-primary to-brand-secondary origin-left"
                   style={{ transform: 'scaleX(0)' }}
                 />
               </div>
