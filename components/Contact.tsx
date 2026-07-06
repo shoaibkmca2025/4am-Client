@@ -42,10 +42,29 @@ const validate = (form: FormState): FormErrors => {
 };
 
 const inputClasses = (hasError: boolean) =>
-  `w-full bg-transparent border-b ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} px-0 py-4 text-white text-sm placeholder:text-white/15 focus:outline-none focus:border-white/30 transition-all duration-300 font-medium`;
+  `peer w-full bg-transparent border-b ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} px-0 pt-6 pb-3 text-white text-sm placeholder-transparent focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium`;
 
 const selectClasses = (hasError: boolean) =>
-  `w-full bg-transparent border-b ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} px-0 py-4 text-white text-sm focus:outline-none focus:border-white/30 transition-all duration-300 font-medium appearance-none`;
+  `w-full bg-transparent border-b ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} px-0 pt-2 pb-3 pr-6 text-white text-sm focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium appearance-none cursor-pointer`;
+
+// Floating label: rests inside the empty field, floats up (and turns gold)
+// on focus or once the field has a value — never disappears while typing.
+const floatLabelClasses =
+  'absolute left-0 top-0 text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 transition-all duration-300 pointer-events-none ' +
+  'peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:font-medium peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-white/25 ' +
+  'peer-focus:top-0 peer-focus:text-[9px] peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.2em] peer-focus:text-brand-secondary';
+
+const staticLabelClasses =
+  'block text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 mb-1';
+
+const SelectChevron: React.FC = () => (
+  <svg
+    className="absolute right-0 bottom-4 pointer-events-none text-white/30"
+    width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"
+  >
+    <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -196,42 +215,47 @@ const Contact: React.FC = () => {
 
                 <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
                   className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                  <div className="field-wrap">
-                    <input type="text" value={form.fullName} onChange={(e) => updateField('fullName', e.currentTarget.value)}
-                      className={inputClasses(!!errors.fullName)} placeholder="Full Name *"
-                      aria-label="Full Name" aria-required="true" />
+                  <div className="field-wrap relative">
+                    <input id="cf-name" type="text" value={form.fullName} onChange={(e) => updateField('fullName', e.currentTarget.value)}
+                      className={inputClasses(!!errors.fullName)} placeholder=" "
+                      autoComplete="name" aria-required="true" />
+                    <label htmlFor="cf-name" className={floatLabelClasses}>Full Name *</label>
                     {errors.fullName && <p className="text-red-400 text-[10px] mt-1">{errors.fullName}</p>}
                   </div>
-                  <div className="field-wrap">
-                    <input type="email" value={form.workEmail} onChange={(e) => updateField('workEmail', e.currentTarget.value)}
-                      className={inputClasses(!!errors.workEmail)} placeholder="Work Email *"
-                      aria-label="Work Email" aria-required="true" />
+                  <div className="field-wrap relative">
+                    <input id="cf-email" type="email" value={form.workEmail} onChange={(e) => updateField('workEmail', e.currentTarget.value)}
+                      className={inputClasses(!!errors.workEmail)} placeholder=" "
+                      autoComplete="email" aria-required="true" />
+                    <label htmlFor="cf-email" className={floatLabelClasses}>Work Email *</label>
                     {errors.workEmail && <p className="text-red-400 text-[10px] mt-1">{errors.workEmail}</p>}
                   </div>
                 </motion.div>
 
                 <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
                   className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                  <div className="field-wrap">
-                    <input type="tel" value={form.phone} onChange={(e) => updateField('phone', e.currentTarget.value)}
-                      className={inputClasses(!!errors.phone)} placeholder="Phone"
-                      aria-label="Phone" />
+                  <div className="field-wrap relative">
+                    <input id="cf-phone" type="tel" value={form.phone} onChange={(e) => updateField('phone', e.currentTarget.value)}
+                      className={inputClasses(!!errors.phone)} placeholder=" "
+                      autoComplete="tel" />
+                    <label htmlFor="cf-phone" className={floatLabelClasses}>Phone</label>
                     {errors.phone && <p className="text-red-400 text-[10px] mt-1">{errors.phone}</p>}
                   </div>
-                  <div className="field-wrap">
-                    <input type="text" value={form.company} onChange={(e) => updateField('company', e.currentTarget.value)}
-                      className={inputClasses(false)} placeholder="Company"
-                      aria-label="Company" />
+                  <div className="field-wrap relative">
+                    <input id="cf-company" type="text" value={form.company} onChange={(e) => updateField('company', e.currentTarget.value)}
+                      className={inputClasses(false)} placeholder=" "
+                      autoComplete="organization" />
+                    <label htmlFor="cf-company" className={floatLabelClasses}>Company</label>
                   </div>
                 </motion.div>
 
                 <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
                   className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                  <div className="field-wrap">
-                    <select value={form.interestedIn} onChange={(e) => updateField('interestedIn', e.currentTarget.value)}
+                  <div className="field-wrap relative pt-2">
+                    <label htmlFor="cf-interest" className={staticLabelClasses}>Interested In *</label>
+                    <select id="cf-interest" value={form.interestedIn} onChange={(e) => updateField('interestedIn', e.currentTarget.value)}
                       className={selectClasses(!!errors.interestedIn)}
-                      aria-label="Interested In" aria-required="true">
-                      <option value="" className="bg-black">Interested In *</option>
+                      aria-required="true">
+                      <option value="" className="bg-black">Select a service…</option>
                       <option value="web-development" className="bg-black">Web Development</option>
                       <option value="social-media" className="bg-black">Social Media</option>
                       <option value="seo" className="bg-black">SEO</option>
@@ -240,29 +264,33 @@ const Contact: React.FC = () => {
                       <option value="content-creation" className="bg-black">Content Creation</option>
                       <option value="other" className="bg-black">Other</option>
                     </select>
+                    <SelectChevron />
                     {errors.interestedIn && <p className="text-red-400 text-[10px] mt-1">{errors.interestedIn}</p>}
                   </div>
-                  <div className="field-wrap">
-                    <select value={form.budget} onChange={(e) => updateField('budget', e.currentTarget.value)}
+                  <div className="field-wrap relative pt-2">
+                    <label htmlFor="cf-budget" className={staticLabelClasses}>Budget Range *</label>
+                    <select id="cf-budget" value={form.budget} onChange={(e) => updateField('budget', e.currentTarget.value)}
                       className={selectClasses(!!errors.budget)}
-                      aria-label="Budget Range" aria-required="true">
-                      <option value="" className="bg-black">Budget Range *</option>
+                      aria-required="true">
+                      <option value="" className="bg-black">Select a budget…</option>
                       <option value="under-500" className="bg-black">Under $500</option>
                       <option value="500-1500" className="bg-black">$500 – $1,500</option>
                       <option value="1500-5000" className="bg-black">$1,500 – $5,000</option>
                       <option value="5000-15000" className="bg-black">$5,000 – $15,000</option>
                       <option value="15000-plus" className="bg-black">$15,000+</option>
                     </select>
+                    <SelectChevron />
                     {errors.budget && <p className="text-red-400 text-[10px] mt-1">{errors.budget}</p>}
                   </div>
                 </motion.div>
 
                 <motion.div variants={fieldVariant} transition={{ duration: 0.65, ease: E }}
-                  className="field-wrap">
-                  <textarea rows={4} value={form.message} onChange={(e) => updateField('message', e.currentTarget.value)}
+                  className="field-wrap relative">
+                  <textarea id="cf-message" rows={4} value={form.message} onChange={(e) => updateField('message', e.currentTarget.value)}
                     className={`${inputClasses(!!errors.message)} resize-none`}
-                    placeholder="Tell us about your project... *"
-                    aria-label="Message" aria-required="true" />
+                    placeholder=" "
+                    aria-required="true" />
+                  <label htmlFor="cf-message" className={floatLabelClasses}>Tell us about your project *</label>
                   {errors.message && <p className="text-red-400 text-[10px] mt-1">{errors.message}</p>}
                 </motion.div>
 

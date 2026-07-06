@@ -46,7 +46,9 @@ Respect these gates when adding new heavy effects. `vite.config.ts` manual-chunk
 ### Styling
 Tailwind with a custom `brand` palette in `tailwind.config.js` (`brand.primary` electric orange `#FF6A3D`, `brand.secondary` gold `#FFC56A`, `brand.accent` violet `#8B5CF6`, `brand.cyan` `#22D3EE`, `brand.lime` `#A3E635`, plus `dark`, `gray`, `bg`, `surface`).
 
-**Scroll color grading**: `LandingPage.tsx` wraps each section in a `[data-grade]`/`[data-orbs]` div; a ScrollTrigger per zone tweens the page background tint and cross-fades three fixed radial-gradient "glow orbs" (orange/violet/cyan). Sections therefore use `bg-transparent`, NOT `bg-black` — re-adding an opaque background on a section breaks the grading.
+**Scroll color grading**: `LandingPage.tsx` wraps each section in a `[data-grade]`/`[data-orbs]`/`[data-accent]` div; a ScrollTrigger per zone tweens the page background tint, cross-fades three fixed radial-gradient "glow orbs" (orange/violet/cyan), and dispatches the zone's accent via the `4am:accent` CustomEvent. Sections therefore use `bg-transparent`, NOT `bg-black` — re-adding an opaque background on a section breaks the grading.
+
+**Canvas background**: `ScrollCanvasBackground.tsx` is a fixed Canvas 2D layer behind the landing sections — particle constellation with proximity lines, drifting dot-grid parallaxed by scroll, data pulses, and scroll-velocity streaking. It re-tints itself by listening for `4am:accent`. It idle-defers startup and opts out on mobile/reduced-motion/save-data/weak CPUs, so never assume it exists.
 
 **Gradient text gotcha**: `background-clip: text` does not paint through child spans that carry transforms (GSAP-animated words/chars). Gradient headlines must put the gradient class on the animated span itself — `wordClassName="text-gradient-brand"` on `RevealText`, or the `.hero-grad .hero-char` per-character rule in `index.css`. Putting `text-gradient-*` on the parent of animated spans renders invisible text.
 

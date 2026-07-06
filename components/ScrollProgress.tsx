@@ -30,19 +30,19 @@ const ScrollProgress: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[9999] h-[1px] pointer-events-none">
+    <div className="fixed top-0 left-0 right-0 z-[9999] h-[2px] pointer-events-none">
       {/* Track */}
       <div className="absolute inset-0 bg-white/[0.04]" />
       {/* Fill bar */}
       <div
         ref={barRef}
-        className="absolute inset-0 bg-white/70 origin-left"
+        className="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary origin-left"
         style={{ transform: 'scaleX(0)' }}
       />
       {/* Leading glow dot */}
       <div
         ref={glowRef}
-        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white shadow-[0_0_6px_2px_rgba(255,255,255,0.6)]"
+        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-brand-secondary shadow-[0_0_8px_2px_rgba(255,138,92,0.7)]"
         style={{ left: '0%' }}
       />
     </div>

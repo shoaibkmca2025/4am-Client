@@ -7,6 +7,7 @@ import ScrollToTop from './components/ScrollToTop';
 import SmoothScroll from './components/SmoothScroll';
 import MagneticCursor from './components/MagneticCursor';
 import Preloader from './components/Preloader';
+import ScrollProgress from './components/ScrollProgress';
 
 const LandingPage = lazy(() => import('./components/LandingPage'));
 const ServicePage  = lazy(() => import('./components/ServicePage'));
@@ -67,7 +68,7 @@ const ScrollToTopBtn: React.FC = () => {
           ref={ringRef}
           cx="28" cy="28" r={radius}
           fill="none"
-          stroke="rgba(255,255,255,0.55)"
+          stroke="#FF6A3D"
           strokeWidth="1.5"
           strokeDasharray={circ}
           strokeDashoffset={circ}
@@ -132,6 +133,7 @@ function App() {
         <MagneticCursor />
         <ScrollToTop />
         <SmoothScroll>
+          <ScrollProgress />
           <Navbar />
           <LayoutWrapper>
             <Suspense

@@ -14,6 +14,8 @@ import ScrollFillSection from './ScrollFillSection';
 import CodeShowcase from './CodeShowcase';
 import GrowthChart from './GrowthChart';
 import Marquee from './Marquee';
+import ScrollCanvasBackground, { ACCENT_EVENT } from './ScrollCanvasBackground';
+import SectionNav from './SectionNav';
 import { scrollToSection } from '../utils/scroll';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -74,12 +76,15 @@ const LandingPage: React.FC = () => {
           if (k && k in targets) targets[k] = parseFloat(val) || 0;
         });
 
+        const accent = zone.dataset.accent;
         const apply = () => {
           gsap.to(root, { backgroundColor: bg, duration: 1.1, ease: 'power2.out', overwrite: 'auto' });
           (Object.keys(targets) as OrbKey[]).forEach((k) => {
             const orb = orbRefs.current[k];
             if (orb) gsap.to(orb, { opacity: targets[k], duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
           });
+          // Re-tint the canvas background to this zone's accent
+          if (accent) window.dispatchEvent(new CustomEvent(ACCENT_EVENT, { detail: accent }));
         };
 
         ScrollTrigger.create({
@@ -112,6 +117,12 @@ const LandingPage: React.FC = () => {
   return (
     <div ref={mainRef} className="relative z-[2] bg-black">
 
+      {/* ── Scroll-reactive canvas background (particle network + grid) ── */}
+      <ScrollCanvasBackground />
+
+      {/* ── Right-edge section dot navigation (desktop) ── */}
+      <SectionNav />
+
       {/* ── Fixed ambient color-grade orbs (behind all sections) ── */}
       <div className="pointer-events-none" aria-hidden="true">
         <div
@@ -131,12 +142,12 @@ const LandingPage: React.FC = () => {
         />
       </div>
 
-      <div data-grade="#050505" data-orbs="orange:0.10,violet:0.05">
+      <div data-grade="#050505" data-orbs="orange:0.10,violet:0.05" data-accent="#FF6A3D">
         <Hero />
       </div>
 
       {/* ── Pinned outline→fill statement (Dentsu-style scrollytelling) ── */}
-      <div data-grade="#0A0604" data-orbs="orange:0.16">
+      <div data-grade="#0A0604" data-orbs="orange:0.16" data-accent="#FF6A3D">
         <ScrollFillSection />
       </div>
 
@@ -147,16 +158,16 @@ const LandingPage: React.FC = () => {
         className="border-y border-white/[0.06] py-4 md:py-6 text-[9vw] md:text-[5vw] font-black uppercase tracking-[-0.02em] text-white/80"
       />
 
-      <div data-grade="#050505" data-orbs="orange:0.08,cyan:0.06">
+      <div data-grade="#050505" data-orbs="orange:0.08,cyan:0.06" data-accent="#FF8A5C">
         <StatsSection />
       </div>
 
       {/* ── Scroll-scrubbed code editor — software development story ── */}
-      <div data-grade="#06060E" data-orbs="violet:0.18,cyan:0.10">
+      <div data-grade="#06060E" data-orbs="violet:0.18,cyan:0.10" data-accent="#8B5CF6">
         <CodeShowcase />
       </div>
 
-      <div data-grade="#04080A" data-orbs="cyan:0.14,violet:0.08">
+      <div data-grade="#04080A" data-orbs="cyan:0.14,violet:0.08" data-accent="#22D3EE">
         <ProcessSection />
       </div>
 
@@ -169,16 +180,16 @@ const LandingPage: React.FC = () => {
         className="border-y border-white/[0.06] py-4 md:py-6 text-[4vw] md:text-[2vw] font-black uppercase tracking-[0.08em] text-white/25"
       />
 
-      <div data-grade="#0A0505" data-orbs="orange:0.14,violet:0.06">
+      <div data-grade="#0A0505" data-orbs="orange:0.14,violet:0.06" data-accent="#FF6A3D">
         <Services />
       </div>
 
-      <div data-grade="#050505" data-orbs="orange:0.08">
+      <div data-grade="#050505" data-orbs="orange:0.08" data-accent="#FF6A3D">
         <Projects />
       </div>
 
       {/* ── Scroll-drawn growth curve — digital marketing story ── */}
-      <div data-grade="#0A0703" data-orbs="orange:0.18,cyan:0.06">
+      <div data-grade="#0A0703" data-orbs="orange:0.18,cyan:0.06" data-accent="#FFC56A">
         <GrowthChart />
       </div>
 
@@ -198,15 +209,15 @@ const LandingPage: React.FC = () => {
         />
       </div>
 
-      <div data-grade="#04070A" data-orbs="cyan:0.12,violet:0.10">
+      <div data-grade="#04070A" data-orbs="cyan:0.12,violet:0.10" data-accent="#22D3EE">
         <NetworkAndTrends />
       </div>
 
-      <div data-grade="#070409" data-orbs="violet:0.14,orange:0.06">
+      <div data-grade="#070409" data-orbs="violet:0.14,orange:0.06" data-accent="#8B5CF6">
         <Testimonials />
       </div>
 
-      <div data-grade="#0A0502" data-orbs="orange:0.16">
+      <div data-grade="#0A0502" data-orbs="orange:0.16" data-accent="#FF6A3D">
         <Contact />
       </div>
     </div>

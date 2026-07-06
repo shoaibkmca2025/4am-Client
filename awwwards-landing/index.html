@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>4AM Global Media — A Creative Network Made for Today &amp; Tomorrow</title>
+<meta name="description" content="4AM Global Media provides digital marketing and software development services — including web and mobile app solutions — to help businesses grow online." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM
+   bg anchored at pure black (brand), surfaces #0e0e0c,
+   text #f2efe9, accent #c8f04a
+══════════════════════════════════════════════════════════════════ */
+:root {
+  --bg: #000000;
+  --surface: #0e0e0c;
+  --text: #f2efe9;
+  --accent: #c8f04a;
+  --line: rgba(242, 239, 233, 0.15);
+  --font-display: 'Archivo', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: auto; } /* Lenis owns smoothing */
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { display: block; max-width: 100%; }
+
+::selection { background: var(--accent); color: #000; }
+
+a { color: inherit; text-decoration: none; }
+
+/* Underline reveal on links: scaleX 0→1 from left, exits right */
+.u-link { position: relative; display: inline-block; }
+.u-link::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -3px;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.u-link:hover::after { transform: scaleX(1); transform-origin: left center; }
+
+/* Layout helpers */
+.container { width: min(100% - 3rem, 1500px); margin-inline: auto; }
+.divider { height: 1px; background: var(--line); }
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.section-label::before { content: ''; width: 2.5rem; height: 1px; background: var(--accent); }
+
+/* Split-text structure (built by JS) */
+.line { display: block; overflow: hidden; }
+.line-inner { display: block; }
+.word { display: inline-block; }
+
+/* ── Preloader ── */
+#preloader {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+}
+#preloader .pre-name {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.6rem, 5vw, 3.4rem);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  overflow: hidden;
+  display: flex;
+}
+#preloader .pre-char { display: inline-block; white-space: pre; }
+#preloader .pre-tick {
+  position: absolute; bottom: 2.2rem; right: 2.4rem;
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--accent);
+}
+
+/* ── Custom cursor ── */
+#cursor-dot, #cursor-ring {
+  position: fixed; top: 0; left: 0; z-index: 990;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+}
+#cursor-dot { width: 6px; height: 6px; background: var(--accent); }
+#cursor-ring {
+  width: 44px; height: 44px;
+  border: 1px solid rgba(200, 240, 74, 0.55);
+  display: flex; align-items: center; justify-content: center;
+}
+#cursor-ring .cursor-label {
+  font-family: var(--font-display);
+  font-size: 8px; font-weight: 800; letter-spacing: 0.22em;
+  color: #000; opacity: 0;
+  transition: opacity 0.25s ease;
+}
+#cursor-ring.is-view { background: var(--accent); border-color: var(--accent); }
+#cursor-ring.is-view .cursor-label { opacity: 1; }
+@media (max-width: 768px), (pointer: coarse) {
+  #cursor-dot, #cursor-ring { display: none; }
+}
+
+/* ── Nav ── */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  padding: 1.4rem 0;
+  background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0));
+}
+#nav .container { display: flex; align-items: center; justify-content: space-between; }
+#nav .nav-logo {
+  font-family: var(--font-display);
+  font-weight: 900; font-size: 1rem;
+  letter-spacing: -0.02em; text-transform: uppercase;
+}
+#nav .nav-logo em { color: var(--accent); font-style: normal; }
+#nav .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+#nav .nav-links a {
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(242, 239, 233, 0.7);
+}
+#nav .nav-links a:hover { color: var(--text); }
+@media (max-width: 768px) { #nav .nav-links { display: none; } }
+
+/* ── Hero ── */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 9rem 0 4rem;
+  position: relative;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3.5rem, 12vw, 11rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.hero-title .inline-img {
+  display: inline-block;
+  height: 0.85em; width: 1.7em;
+  object-fit: cover;
+  border-radius: 12px;
+  vertical-align: middle;
+  margin: 0 0.06em;
+  transform-origin: left center;
+}
+.hero-sub {
+  max-width: 46ch;
+  margin-top: 3rem;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  color: rgba(242, 239, 233, 0.65);
+}
+.hero-foot {
+  position: absolute; bottom: 2rem; left: 0; right: 0;
+  display: flex; justify-content: space-between;
+  font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(242, 239, 233, 0.4);
+}
+
+/* ── Marquee ── */
+.marquee {
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 1.4rem 0;
+}
+.marquee-track { display: flex; width: max-content; will-change: transform; }
+.marquee-chunk {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.1rem, 2.6vw, 2rem);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding-right: 0.6em;
+  color: rgba(242, 239, 233, 0.8);
+}
+.marquee-chunk em { color: var(--accent); font-style: normal; }
+
+/* ── About ── */
+#about { min-height: 100vh; display: flex; align-items: center; }
+.about-copy {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3vw, 2.6rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  max-width: 26ch;
+  margin-top: 2.6rem;
+}
+
+/* ── Gallery (services) ── */
+#gallery { position: relative; overflow: hidden; }
+.gallery-head { padding: 5rem 0 3rem; }
+.gallery-track {
+  display: flex;
+  gap: clamp(1.2rem, 2.5vw, 2.5rem);
+  padding: 0 max(1.5rem, calc((100vw - 1500px) / 2)) 6rem;
+  width: max-content;
+  will-change: transform;
+}
+.g-card {
+  width: clamp(300px, 34vw, 520px);
+  flex-shrink: 0;
+}
+.g-media {
+  overflow: hidden;
+  border-radius: 12px;
+  aspect-ratio: 4 / 5;
+  background: var(--surface);
+}
+.g-media img {
+  width: 116%; height: 100%;
+  margin-left: -8%;
+  object-fit: cover;
+  will-change: transform;
+}
+.g-meta { display: flex; align-items: baseline; gap: 1rem; margin-top: 1.4rem; }
+.g-index {
+  font-family: var(--font-display);
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--accent); letter-spacing: 0.2em;
+}
+.g-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.g-desc {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  color: rgba(242, 239, 233, 0.55);
+  max-width: 40ch;
+}
+@media (max-width: 768px) {
+  .gallery-track { flex-direction: column; width: auto; padding: 0 1.5rem 4rem; }
+  .g-card { width: 100%; }
+  .g-media { aspect-ratio: 4 / 3; }
+}
+
+/* ── Full-bleed ── */
+#fullbleed {
+  position: relative;
+  height: 120vh;
+  overflow: hidden;
+}
+#fullbleed .fb-media { position: absolute; inset: 0; overflow: hidden; }
+#fullbleed .fb-media img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(0.5);
+  will-change: transform;
+}
+#fullbleed .fb-word {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(4rem, 16vw, 15rem);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* ── Process stack ── */
+#process { position: relative; }
+.process-head { padding: 6rem 0 3rem; }
+.p-card {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  border-radius: 12px 12px 0 0;
+  transform-origin: center top;
+  will-change: transform, filter;
+}
+.p-card .container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(2rem, 6vw, 7rem);
+  align-items: start;
+}
+.p-num {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(200, 240, 74, 0.6);
+}
+.p-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.2rem, 5.5vw, 4.6rem);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  line-height: 0.95;
+}
+.p-desc {
+  margin-top: 1.6rem;
+  max-width: 52ch;
+  font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+  color: rgba(242, 239, 233, 0.6);
+}
+@media (max-width: 768px) {
+  .p-card .container { grid-template-columns: 1fr; gap: 1.5rem; }
+}
+
+/* ── Testimonial ── */
+#testimonial {
+  min-height: 90vh;
+  display: flex; align-items: center;
+  background: var(--bg);
+  position: relative;
+  z-index: 2; /* sits above the last stacked card cleanly */
+}
+.t-quote {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3vw, 2.6rem);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  max-width: 30ch;
+  margin-top: 2.6rem;
+}
+.t-quote .word:first-child::before { content: '“'; color: var(--accent); }
+
+/* ── Footer ── */
+#footer {
+  position: relative;
+  padding-top: 8rem;
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+}
+.f-cta-head {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.6rem, 8vw, 7.5rem);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  line-height: 0.92;
+}
+.f-cta-row {
+  display: flex; flex-wrap: wrap;
+  align-items: center; justify-content: space-between;
+  gap: 2.5rem;
+  margin-top: 3.2rem;
+}
+.f-magnet {
+  display: inline-flex; align-items: center; gap: 0.9rem;
+  padding: 1.15rem 2.4rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 0.35s ease, color 0.35s ease;
+  will-change: transform;
+}
+.f-magnet:hover { background: var(--accent); color: #000; }
+.footer-brand {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 14vw;
+  line-height: 0.85;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  margin-top: 7rem;
+  color: var(--text);
+  will-change: transform;
+}
+.footer-marquee { margin-top: 5rem; border-bottom: none; }
+.footer-marquee .marquee-chunk { color: var(--accent); }
+.f-bottom {
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  padding: 1.6rem 0 2rem;
+  font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: rgba(242, 239, 233, 0.35);
+}
+
+/* Reduced motion: everything readable, no smoothing/scrub (JS also bails) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<!-- If JS is disabled, never trap the reader behind the preloader -->
+<noscript><style>#preloader { display: none !important; }</style></noscript>
+</head>
+<body>
+
+<!-- ══════════ PRELOADER ══════════ -->
+<div id="preloader" aria-hidden="true">
+  <div class="pre-name" id="preName">4AM GLOBAL MEDIA</div>
+  <div class="pre-tick">EST. 2024</div>
+</div>
+
+<!-- ══════════ CUSTOM CURSOR ══════════ -->
+<div id="cursor-dot" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"><span class="cursor-label">VIEW</span></div>
+
+<!-- ══════════ NAV ══════════ -->
+<header id="nav">
+  <div class="container">
+    <a href="#hero" class="nav-logo" data-scroll>4AM <em>Global Media</em></a>
+    <ul class="nav-links">
+      <li><a href="#gallery" class="u-link" data-scroll>Services</a></li>
+      <li><a href="#process" class="u-link" data-scroll>Process</a></li>
+      <li><a href="#footer" class="u-link" data-scroll>Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+
+  <!-- ══════════ 3.2 HERO — kinetic typography with inline images ══════════ -->
+  <section id="hero">
+    <div class="container hero-inner" id="heroInner">
+      <h1 class="hero-title" id="heroTitle" aria-label="A CREATIVE NETWORK MADE FOR TODAY & TOMORROW">
+        <span class="line" aria-hidden="true"><span class="line-inner"><span class="word">A</span> <img class="inline-img" src="https://picsum.photos/seed/4am-hero-a/480/280" alt="" loading="eager" /> <span class="word">CREATIVE</span></span></span>
+        <span class="line" aria-hidden="true"><span class="line-inner"><span class="word">NETWORK</span> <span class="word">MADE</span> <span class="word">FOR</span></span></span>
+        <span class="line" aria-hidden="true"><span class="line-inner"><span class="word">TODAY</span> <span class="word">&amp;</span> <img class="inline-img" src="https://picsum.photos/seed/4am-hero-b/480/280" alt="" loading="eager" /> <span class="word">TOMORROW</span></span></span>
+      </h1>
+      <p class="hero-sub" id="heroSub">4AM Global Media provides digital marketing and software development services — including web and mobile app solutions — to help businesses grow online.</p>
+    </div>
+    <div class="hero-foot container">
+      <span>4AM Global Media</span>
+      <span>Scroll ↓</span>
+    </div>
+  </section>
+
+  <!-- ══════════ 3.3 MARQUEE ══════════ -->
+  <div class="marquee" id="marqueeMain" aria-hidden="true">
+    <div class="marquee-track">
+      <!-- chunks duplicated by JS for a seamless loop -->
+      <span class="marquee-chunk">Accepting New Projects — <em>4AM Global Media</em> — Let's Build Something — Available Worldwide — Est. 2024 —&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- ══════════ 3.4 ABOUT — line mask reveal ══════════ -->
+  <section id="about">
+    <div class="container">
+      <p class="section-label">Who we are</p>
+      <p class="about-copy" data-split>Comprehensive digital solutions designed to scale your business with precision and measurable impact.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 3.5 HORIZONTAL GALLERY (PINNED) — 6 services ══════════ -->
+  <section id="gallery">
+    <div class="gallery-head container">
+      <p class="section-label">Services</p>
+    </div>
+    <div class="gallery-track" id="galleryTrack">
+
+      <article class="g-card">
+        <div class="g-media"><img src="https://picsum.photos/seed/4am-svc-performance/900/1100" alt="Performance Marketing" loading="lazy" /></div>
+        <div class="g-meta"><span class="g-index">01</span><h3 class="g-title">Performance Marketing</h3></div>
+        <p class="g-desc">Paid and organic campaigns that convert attention into predictable pipeline.</p>
+      </article>
+
+      <article class="g-card">
+        <div class="g-media"><img src="https://picsum.photos/seed/4am-svc-branding/900/1100" alt="Branding &amp; Design" loading="lazy" /></div>
+        <div class="g-meta"><span class="g-index">02</span><h3 class="g-title">Branding &amp; Design</h3></div>
+        <p class="g-desc">Visual systems that position you as the obvious choice in any room.</p>
+      </article>
+
+      <article class="g-card">
+        <div class="g-media"><img src="https://picsum.photos/seed/4am-svc-social/900/1100" alt="Social Media" loading="lazy" /></div>
+        <div class="g-meta"><span class="g-index">03</span><h3 class="g-title">Social Media</h3></div>
+        <p class="g-desc">Always-on content for engagement, authority, and community.</p>
+      </article>
+
+      <article class="g-card">
+        <div class="g-media"><img src="https://picsum.photos/seed/4am-svc-seo/900/1100" alt="SEO" loading="lazy" /></div>
+        <div class="g-meta"><span class="g-index">04</span><h3 class="g-title">SEO</h3></div>
+        <p class="g-desc">Search strategies that compound and bring high-intent traffic.</p>
+      </article>
+
+      <article class="g-card">
+        <div class="g-media"><img src="https://picsum.photos/seed/4am-svc-webdev/900/1100" alt="Web Development" loading="lazy" /></div>
+        <div class="g-meta"><span class="g-index">05</span><h3 class="g-title">Web Development</h3></div>
+        <p class="g-desc">Conversion-focused sites built for speed and clarity.</p>
+      </article>
+
+      <article class="g-card">
+        <div class="g-media"><img src="https://picsum.photos/seed/4am-svc-content/900/1100" alt="Content Production" loading="lazy" /></div>
+        <div class="g-meta"><span class="g-index">06</span><h3 class="g-title">Content Production</h3></div>
+        <p class="g-desc">Video, copy, and assets that keep your brand impactful everywhere.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 3.6 FULL-BLEED — scale + clip-path overlay ══════════ -->
+  <section id="fullbleed">
+    <div class="fb-media">
+      <img id="fbImg" src="https://picsum.photos/seed/4am-est-cinema/1920/1200" alt="" loading="lazy" />
+    </div>
+    <div class="fb-word" id="fbWord">EST. 2024</div>
+  </section>
+
+  <!-- ══════════ 3.7 PROCESS — stacked pinned cards ══════════ -->
+  <section id="process">
+    <div class="process-head container">
+      <p class="section-label">Process</p>
+    </div>
+    <div class="stack" id="stack">
+
+      <div class="p-card">
+        <div class="container">
+          <div class="p-num">01</div>
+          <div>
+            <h3 class="p-title">Research</h3>
+            <p class="p-desc">Deep brand and market research to pinpoint your audience, competitive landscape, and the biggest growth levers available.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-card">
+        <div class="container">
+          <div class="p-num">02</div>
+          <div>
+            <h3 class="p-title">Roadmap</h3>
+            <p class="p-desc">A clear, measurable roadmap — channels, budget, and creative direction all aligned precisely to your business objectives.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-card">
+        <div class="container">
+          <div class="p-num">03</div>
+          <div>
+            <h3 class="p-title">Execution</h3>
+            <p class="p-desc">Design, engineering, and campaigns shipped at pace. No delays, no compromises, no micromanagement required.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-card">
+        <div class="container">
+          <div class="p-num">04</div>
+          <div>
+            <h3 class="p-title">Optimization</h3>
+            <p class="p-desc">Continuous optimization and compounding results across every channel as your brand builds unstoppable momentum.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ TESTIMONIAL — line-mask reveal ══════════ -->
+  <section id="testimonial">
+    <div class="container">
+      <p class="section-label">Client words</p>
+      <blockquote class="t-quote" data-split>The 4AM team brought clarity to our growth strategy and execution. They operate like an extension of our internal team.</blockquote>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════ 3.8 FOOTER — giant reveal + magnetic CTA ══════════ -->
+<footer id="footer">
+  <div class="container">
+    <h2 class="f-cta-head" id="fCtaHead" aria-label="SHARE YOUR VISION">
+      <span class="line" aria-hidden="true"><span class="line-inner"><span class="word">SHARE</span> <span class="word">YOUR</span> <span class="word">VISION</span></span></span>
+    </h2>
+    <div class="f-cta-row">
+      <a class="f-magnet" id="fMagnet" href="mailto:4amglobalmedia@gmail.com">4amglobalmedia@gmail.com <span aria-hidden="true">→</span></a>
+      <p style="max-width:34ch; font-size:0.85rem; color:rgba(242,239,233,0.5);">Available worldwide. We reply within 24 hours.</p>
+    </div>
+  </div>
+
+  <div class="footer-brand" id="footerBrand">4AM GLOBAL MEDIA</div>
+
+  <div class="marquee footer-marquee" id="marqueeFooter" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-chunk">LET'S BUILD SOMETHING → <em>LET'S BUILD SOMETHING →</em>&nbsp;</span>
+    </div>
+  </div>
+
+  <div class="f-bottom container">
+    <span>© 4AM Global Media — Est. 2024</span>
+    <span>A Creative Network Made for Today &amp; Tomorrow</span>
+  </div>
+</footer>
+
+<!-- ══════════ LIBRARIES ══════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+
+<!-- Safety net: if a CDN fails, never leave the preloader covering content -->
+<script>
+window.addEventListener('load', function () {
+  if (!window.gsap) {
+    var p = document.getElementById('preloader');
+    if (p) p.style.display = 'none';
+  }
+});
+</script>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   4AM GLOBAL MEDIA — scroll experience
+   Structure: small init functions, all called from init() on
+   DOMContentLoaded. Only transform / opacity / clip-path / filter
+   are animated. All pinned measurements are functions with
+   invalidateOnRefresh so resize never breaks layout.
+════════════════════════════════════════════════════════════════════ */
+
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE_POINTER = window.matchMedia('(pointer: fine)').matches;
+
+let lenis = null;
+
+/* ── Smooth scroll (skipped entirely for reduced motion) ─────────── */
+function initSmoothScroll() {
+  if (REDUCED) return;
+  lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
+
+/* ── Anchor links (nav) ──────────────────────────────────────────── */
+function initAnchors() {
+  document.querySelectorAll('[data-scroll]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      if (lenis) lenis.scrollTo(target, { offset: 0 });
+      else target.scrollIntoView();
+    });
+  });
+}
+
+/* ── Manual text splitter: words → measured lines ─────────────────
+   Keeps original copy in aria-label; split spans are aria-hidden.  */
+function splitLines(el) {
+  const text = el.textContent.trim().replace(/\s+/g, ' ');
+  el.setAttribute('aria-label', text);
+
+  // Pass 1: words only, so we can measure line breaks
+  el.innerHTML = text.split(' ')
+    .map((w) => `<span class="word">${w}</span>`)
+    .join(' ');
+
+  const words = Array.from(el.querySelectorAll('.word'));
+  const lines = [];
+  let current = [];
+  let lastTop = null;
+  words.forEach((w) => {
+    const top = w.offsetTop;
+    if (lastTop === null || Math.abs(top - lastTop) < 3) {
+      current.push(w);
+    } else {
+      lines.push(current);
+      current = [w];
+    }
+    lastTop = top;
+  });
+  if (current.length) lines.push(current);
+
+  // Pass 2: wrap measured lines in overflow-hidden masks
+  el.innerHTML = '';
+  lines.forEach((lineWords) => {
+    const line = document.createElement('span');
+    line.className = 'line';
+    line.setAttribute('aria-hidden', 'true');
+    const inner = document.createElement('span');
+    inner.className = 'line-inner';
+    inner.innerHTML = lineWords.map((w) => w.outerHTML).join(' ');
+    line.appendChild(inner);
+    el.appendChild(line);
+  });
+  return Array.from(el.querySelectorAll('.line-inner'));
+}
+
+/* ── Preloader: chars count in, panel wipes up, then hero intro ──── */
+function initPreloader(onComplete) {
+  const pre = document.getElementById('preloader');
+  const name = document.getElementById('preName');
+
+  if (REDUCED) {
+    pre.style.display = 'none';
+    onComplete();
+    return;
+  }
+
+  // Split brand name into chars
+  const raw = name.textContent;
+  name.setAttribute('aria-label', raw);
+  name.innerHTML = raw.split('').map((c) =>
+    `<span class="pre-char" aria-hidden="true">${c === ' ' ? '&nbsp;' : c}</span>`
+  ).join('');
+
+  const chars = name.querySelectorAll('.pre-char');
+  gsap.set(chars, { yPercent: 110 });
+  gsap.set(pre, { clipPath: 'inset(0 0 0% 0)' });
+
+  const tl = gsap.timeline({
+    onComplete: () => { pre.style.display = 'none'; onComplete(); },
+  });
+  tl.to(chars, { yPercent: 0, duration: 0.8, ease: 'power4.out', stagger: 0.035 })
+    .to(chars, { yPercent: -110, duration: 0.6, ease: 'power4.in', stagger: 0.02 }, '+=0.45')
+    .to(pre, { clipPath: 'inset(0 0 100% 0)', duration: 0.9, ease: 'power4.inOut' }, '-=0.15');
+}
+
+/* ── Hero: masked word intro + inline image scaleX + scroll parallax */
+function initHero() {
+  const words = document.querySelectorAll('#heroTitle .word');
+  const imgs = document.querySelectorAll('#heroTitle .inline-img');
+  const sub = document.getElementById('heroSub');
+
+  if (REDUCED) return () => {};
+
+  gsap.set(words, { yPercent: 110 });
+  gsap.set(imgs, { scaleX: 0, transformOrigin: 'left center' });
+  gsap.set(sub, { opacity: 0, y: 24 });
+
+  // Scroll parallax: headline drifts up slower than the page + slight fade
+  gsap.to('#heroInner', {
+    yPercent: -20,
+    opacity: 0.4,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true,
+    },
+  });
+
+  // Returned intro plays only after the preloader finishes
+  return () => {
+    const tl = gsap.timeline();
+    tl.to(words, { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.06 })
+      .to(imgs, { scaleX: 1, duration: 1, ease: 'power4.out', stagger: 0.12 }, 0.35)
+      .to(sub, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, 0.7);
+  };
+}
+
+/* ── Marquees: infinite xPercent loop, reversing with scroll dir ─── */
+function initMarquee(rootId) {
+  const root = document.getElementById(rootId);
+  const track = root.querySelector('.marquee-track');
+  const chunk = track.querySelector('.marquee-chunk');
+
+  // Duplicate until we safely cover 2× viewport, then double for the loop
+  while (track.scrollWidth < window.innerWidth * 2) {
+    track.appendChild(chunk.cloneNode(true));
+  }
+  const copies = track.children.length;
+  for (let i = 0; i < copies; i++) track.appendChild(track.children[i].cloneNode(true));
+
+  if (REDUCED) return;
+
+  const tween = gsap.to(track, {
+    xPercent: -50,
+    duration: 22,
+    ease: 'none',
+    repeat: -1,
+  });
+
+  // Reverse direction when the user scrolls the other way
+  ScrollTrigger.create({
+    start: 0,
+    end: 'max',
+    onUpdate(self) {
+      gsap.to(tween, { timeScale: self.direction, duration: 0.4, overwrite: true });
+    },
+  });
+}
+
+/* ── About + testimonial: line-mask reveals ───────────────────────── */
+function initLineReveals() {
+  document.querySelectorAll('[data-split]').forEach((el) => {
+    const inners = splitLines(el);
+    if (REDUCED) return;
+    gsap.set(inners, { yPercent: 100, opacity: 0 });
+    gsap.to(inners, {
+      yPercent: 0,
+      opacity: 1,
+      duration: 1.1,
+      ease: 'expo.out',
+      stagger: 0.08,
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 75%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+  });
+
+  // Footer CTA headline uses the same masked pattern (pre-marked lines)
+  if (!REDUCED) {
+    const ctaWords = document.querySelectorAll('#fCtaHead .word');
+    gsap.set(ctaWords, { yPercent: 110 });
+    gsap.to(ctaWords, {
+      yPercent: 0,
+      duration: 1.1,
+      ease: 'power4.out',
+      stagger: 0.07,
+      scrollTrigger: {
+        trigger: '#fCtaHead',
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+  }
+}
+
+/* ── Gallery: pinned horizontal scroll + image counter-parallax ──── */
+function initGallery(mm) {
+  const gallery = document.getElementById('gallery');
+  const track = document.getElementById('galleryTrack');
+
+  if (REDUCED) return;
+
+  mm.add('(min-width: 769px)', () => {
+    const dist = () => track.scrollWidth - window.innerWidth;
+
+    const scrollTween = gsap.to(track, {
+      x: () => -dist(),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: gallery,
+        pin: true,
+        scrub: 1,
+        start: 'top top',
+        end: () => '+=' + dist(),
+        invalidateOnRefresh: true,
+      },
+    });
+
+    // Counter-parallax: images drift inside their frames as cards pass
+    track.querySelectorAll('.g-media img').forEach((img) => {
+      gsap.fromTo(img, { xPercent: -8 }, {
+        xPercent: 8,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: img.closest('.g-card'),
+          containerAnimation: scrollTween,
+          start: 'left right',
+          end: 'right left',
+          scrub: true,
+        },
+      });
+    });
+  });
+
+  mm.add('(max-width: 768px)', () => {
+    // Vertical stack: simple masked card reveals instead of the pin
+    gsap.utils.toArray('.g-card').forEach((card) => {
+      gsap.fromTo(card, { y: 60, opacity: 0 }, {
+        y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: card, start: 'top 85%', toggleActions: 'play none none reverse' },
+      });
+    });
+  });
+}
+
+/* ── Full-bleed: img scale scrub + clip-path word reveal ──────────── */
+function initFullbleed() {
+  if (REDUCED) return;
+
+  gsap.fromTo('#fbImg', { scale: 1.35 }, {
+    scale: 1,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#fullbleed',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: true,
+    },
+  });
+
+  gsap.fromTo('#fbWord', { clipPath: 'inset(100% 0 0 0)' }, {
+    clipPath: 'inset(0% 0 0 0)',
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#fullbleed',
+      start: 'top 80%',
+      end: 'center center',
+      scrub: true,
+    },
+  });
+}
+
+/* ── Process: pinned stacking cards ───────────────────────────────── */
+function initStack() {
+  if (REDUCED) return;
+  const cards = gsap.utils.toArray('#stack .p-card');
+
+  cards.forEach((card, i) => {
+    ScrollTrigger.create({
+      trigger: card,
+      start: 'top top',
+      endTrigger: '#stack',
+      end: 'bottom bottom',
+      pin: true,
+      pinSpacing: false,
+      invalidateOnRefresh: true,
+    });
+
+    // Previous card recedes as the next one arrives
+    const next = cards[i + 1];
+    if (next) {
+      gsap.to(card, {
+        scale: 0.92,
+        filter: 'brightness(0.6)',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: next,
+          start: 'top bottom',
+          end: 'top top',
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      });
+    }
+  });
+}
+
+/* ── Footer: giant brand scrub reveal + magnetic email CTA ────────── */
+function initFooter(mm) {
+  if (!REDUCED) {
+    gsap.fromTo('#footerBrand', { yPercent: 30, scale: 0.9 }, {
+      yPercent: 0,
+      scale: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#footer',
+        start: 'top bottom',
+        end: 'top 15%',
+        scrub: 1,
+      },
+    });
+  }
+
+  // Magnetic hover — desktop fine-pointer only
+  mm.add('(min-width: 769px) and (pointer: fine)', () => {
+    const btn = document.getElementById('fMagnet');
+    const strength = 0.35;
+    const move = (e) => {
+      const r = btn.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width / 2)) * strength;
+      const dy = (e.clientY - (r.top + r.height / 2)) * strength;
+      gsap.to(btn, { x: dx, y: dy, duration: 0.3, ease: 'power2.out' });
+    };
+    const leave = () => gsap.to(btn, { x: 0, y: 0, duration: 0.9, ease: 'elastic.out(1, 0.4)' });
+    btn.addEventListener('mousemove', move);
+    btn.addEventListener('mouseleave', leave);
+    return () => {
+      btn.removeEventListener('mousemove', move);
+      btn.removeEventListener('mouseleave', leave);
+    };
+  });
+}
+
+/* ── Nav: hide on scroll down, reveal on scroll up ────────────────── */
+function initNav() {
+  if (REDUCED) return;
+  const nav = document.getElementById('nav');
+  ScrollTrigger.create({
+    start: 0,
+    end: 'max',
+    onUpdate(self) {
+      if (self.direction === 1 && self.scroll() > 140) {
+        gsap.to(nav, { yPercent: -120, duration: 0.45, ease: 'power3.out', overwrite: true });
+      } else {
+        gsap.to(nav, { yPercent: 0, duration: 0.45, ease: 'power3.out', overwrite: true });
+      }
+    },
+  });
+}
+
+/* ── Custom cursor: dot + lerped ring, "VIEW" over gallery cards ─── */
+function initCursor(mm) {
+  if (REDUCED || !FINE_POINTER) return;
+
+  mm.add('(min-width: 769px)', () => {
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    const pos = { x: innerWidth / 2, y: innerHeight / 2 };
+    const ringPos = { x: pos.x, y: pos.y };
+    let visible = false;
+
+    const onMove = (e) => {
+      pos.x = e.clientX; pos.y = e.clientY;
+      if (!visible) {
+        visible = true;
+        gsap.to([dot, ring], { opacity: 1, duration: 0.3 });
+      }
+      gsap.set(dot, { x: pos.x - 3, y: pos.y - 3 });
+    };
+    window.addEventListener('mousemove', onMove);
+
+    // Trailing circle — lerped follow on the GSAP ticker
+    const follow = () => {
+      ringPos.x += (pos.x - ringPos.x) * 0.14;
+      ringPos.y += (pos.y - ringPos.y) * 0.14;
+      gsap.set(ring, { x: ringPos.x - 22, y: ringPos.y - 22 });
+    };
+    gsap.ticker.add(follow);
+
+    // Scale over interactive elements; show VIEW over gallery cards
+    const enter = (scale, view) => () => {
+      gsap.to(ring, { scale, duration: 0.35, ease: 'power3.out' });
+      ring.classList.toggle('is-view', view);
+    };
+    const reset = () => {
+      gsap.to(ring, { scale: 1, duration: 0.35, ease: 'power3.out' });
+      ring.classList.remove('is-view');
+    };
+    const bindings = [];
+    document.querySelectorAll('a, button').forEach((el) => {
+      const on = enter(1.6, false);
+      el.addEventListener('mouseenter', on);
+      el.addEventListener('mouseleave', reset);
+      bindings.push([el, on]);
+    });
+    document.querySelectorAll('.g-card').forEach((el) => {
+      const on = enter(2.4, true);
+      el.addEventListener('mouseenter', on);
+      el.addEventListener('mouseleave', reset);
+      bindings.push([el, on]);
+    });
+
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      gsap.ticker.remove(follow);
+      bindings.forEach(([el, on]) => {
+        el.removeEventListener('mouseenter', on);
+        el.removeEventListener('mouseleave', reset);
+      });
+      gsap.set([dot, ring], { opacity: 0 });
+    };
+  });
+}
+
+/* ── Boot ─────────────────────────────────────────────────────────── */
+function init() {
+  gsap.registerPlugin(ScrollTrigger);
+  const mm = gsap.matchMedia();
+
+  initSmoothScroll();
+  initAnchors();
+  initNav();
+  initCursor(mm);
+
+  const playHeroIntro = initHero();
+  initPreloader(playHeroIntro);
+
+  initMarquee('marqueeMain');
+  initMarquee('marqueeFooter');
+
+  // Split after fonts are ready so measured line breaks are correct
+  const buildSplits = () => {
+    initLineReveals();
+    ScrollTrigger.refresh();
+  };
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(buildSplits);
+  } else {
+    buildSplits();
+  }
+
+  initGallery(mm);
+  initFullbleed();
+  initStack();
+  initFooter(mm);
+
+  // Pin distances depend on image sizes — refresh once everything loads
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

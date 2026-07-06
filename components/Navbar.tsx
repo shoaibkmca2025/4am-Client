@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { scrollToSection, scrollToTop } from '../utils/scroll';
+import { useActiveSection } from '../utils/useActiveSection';
 
 const NAV_LINKS = [
   { label: 'WORK',     sectionId: 'work' },
@@ -10,6 +11,8 @@ const NAV_LINKS = [
   { label: 'NEWS',     sectionId: 'testimonials' },
   { label: 'CONTACT',  sectionId: 'contact' },
 ];
+
+const NAV_IDS = NAV_LINKS.map((l) => l.sectionId);
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen]     = useState(false);
@@ -25,6 +28,8 @@ const Navbar: React.FC = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const onHome = location.pathname === '/';
+  const activeSection = useActiveSection(onHome ? NAV_IDS : []);
 
   // ── entrance on mount ──────────────────────────────────────────────
   useLayoutEffect(() => {
@@ -129,7 +134,12 @@ const Navbar: React.FC = () => {
           {/* Desktop nav */}
           <nav ref={desktopNav} className="hidden lg:flex items-center gap-8 xl:gap-10">
             {NAV_LINKS.map((link) => (
-              <NavButton key={link.label} label={link.label} onClick={() => handleNavClick(link.sectionId)} />
+              <NavButton
+                key={link.label}
+                label={link.label}
+                active={onHome && activeSection === link.sectionId}
+                onClick={() => handleNavClick(link.sectionId)}
+              />
             ))}
           </nav>
 
@@ -137,7 +147,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4">
             <button
               ref={ctaRef}
-              className="hidden md:flex items-center justify-center px-5 py-2 rounded-full bg-white text-black text-[11px] font-black tracking-[0.15em] uppercase hover:bg-white/80 active:scale-95 transition-all duration-200"
+              className="hidden md:flex items-center justify-center px-5 py-2 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary text-black text-[11px] font-black tracking-[0.15em] uppercase hover:shadow-[0_0_20px_rgba(255,106,61,0.45)] hover:brightness-110 active:scale-95 transition-all duration-200"
               onClick={() => handleNavClick('contact')}
             >
               Let's Talk
@@ -178,8 +188,11 @@ const Navbar: React.FC = () => {
               key={link.label}
               ref={(el) => { if (el) menuLinks.current[i] = el; }}
               onClick={() => handleNavClick(link.sectionId)}
-              className="text-[10vw] sm:text-6xl font-black tracking-[-0.02em] text-white uppercase hover:text-white/40 transition-colors duration-300 leading-none"
+              className="group flex items-baseline gap-4 text-[10vw] sm:text-6xl font-black tracking-[-0.02em] text-white uppercase hover:text-brand-primary transition-colors duration-300 leading-none"
             >
+              <span className="text-xs sm:text-sm font-bold tracking-[0.2em] text-brand-primary/50 group-hover:text-brand-primary transition-colors duration-300">
+                0{i + 1}
+              </span>
               {link.label}
             </button>
           ))}
@@ -197,17 +210,29 @@ const Navbar: React.FC = () => {
   );
 };
 
-/* Animated underline nav button */
-const NavButton: React.FC<{ label: string; onClick: () => void }> = ({ label, onClick }) => {
+/* Animated underline nav button — persistent underline + color when active */
+const NavButton: React.FC<{ label: string; active?: boolean; onClick: () => void }> = ({ label, active = false, onClick }) => {
   const ref = useRef<HTMLButtonElement>(null);
   const lineRef = useRef<HTMLSpanElement>(null);
 
-  const onEnter = () => {
+  // Active state owns the underline; hover only animates it when inactive
+  useEffect(() => {
     if (!lineRef.current) return;
+    gsap.to(lineRef.current, {
+      scaleX: active ? 1 : 0,
+      transformOrigin: 'left center',
+      duration: 0.4,
+      ease: 'expo.out',
+      overwrite: 'auto',
+    });
+  }, [active]);
+
+  const onEnter = () => {
+    if (!lineRef.current || active) return;
     gsap.fromTo(lineRef.current, { scaleX: 0, transformOrigin: 'left center' }, { scaleX: 1, duration: 0.35, ease: 'expo.out' });
   };
   const onLeave = () => {
-    if (!lineRef.current) return;
+    if (!lineRef.current || active) return;
     gsap.to(lineRef.current, { scaleX: 0, transformOrigin: 'right center', duration: 0.3, ease: 'expo.in' });
   };
 
@@ -217,10 +242,16 @@ const NavButton: React.FC<{ label: string; onClick: () => void }> = ({ label, on
       onClick={onClick}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      className="relative text-[11px] font-bold tracking-[0.2em] text-white/60 hover:text-white transition-colors duration-300 uppercase py-1"
+      aria-current={active ? 'true' : undefined}
+      className={`relative text-[11px] font-bold tracking-[0.2em] transition-colors duration-300 uppercase py-1 ${
+        active ? 'text-brand-secondary' : 'text-white/60 hover:text-white'
+      }`}
     >
       {label}
-      <span ref={lineRef} className="absolute bottom-0 left-0 w-full h-px bg-white scale-x-0" />
+      <span
+        ref={lineRef}
+        className={`absolute bottom-0 left-0 w-full h-px scale-x-0 ${active ? 'bg-brand-primary' : 'bg-white'}`}
+      />
     </button>
   );
 };
