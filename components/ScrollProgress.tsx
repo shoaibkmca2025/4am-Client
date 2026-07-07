@@ -20,8 +20,8 @@ const ScrollProgress: React.FC = () => {
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
       const progress   = scrollable > 0 ? window.scrollY / scrollable : 0;
       quickTo(progress);
-      // Move the glow dot to the leading edge
-      if (glow) glow.style.left = `${progress * 100}%`;
+      // Move the glow dot with a transform — animating `left` forces layout
+      if (glow) glow.style.transform = `translate(${progress * 100}vw, -50%) translateX(-50%)`;
     };
 
     window.addEventListener('scroll', update, { passive: true });
@@ -39,11 +39,11 @@ const ScrollProgress: React.FC = () => {
         className="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary origin-left"
         style={{ transform: 'scaleX(0)' }}
       />
-      {/* Leading glow dot */}
+      {/* Leading glow dot — positioned purely via transform */}
       <div
         ref={glowRef}
-        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-brand-secondary shadow-[0_0_8px_2px_rgba(255,138,92,0.7)]"
-        style={{ left: '0%' }}
+        className="absolute top-1/2 left-0 w-1.5 h-1.5 rounded-full bg-brand-secondary shadow-[0_0_8px_2px_rgba(255,138,92,0.7)]"
+        style={{ transform: 'translate(0vw, -50%) translateX(-50%)' }}
       />
     </div>
   );

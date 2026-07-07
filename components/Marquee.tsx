@@ -54,8 +54,14 @@ const Marquee: React.FC<MarqueeProps> = ({
 
       let lastY   = window.scrollY;
       let pending: number | null = null;
+      let lastRun = 0;
 
       const onScroll = () => {
+        // Cheap time-gate: multiple marquees each listen to scroll; there's
+        // no need to retime the tween more than ~12×/second.
+        const now = performance.now();
+        if (now - lastRun < 80) return;
+        lastRun = now;
         const curr = window.scrollY;
         const delta = Math.abs(curr - lastY);
         lastY = curr;

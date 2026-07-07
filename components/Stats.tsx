@@ -45,6 +45,13 @@ const StatsSection: React.FC = () => {
           onUpdate: () => {
             el.textContent = `${isDecimal ? proxy.val.toFixed(1) : Math.round(proxy.val)}${stat.suffix}`;
           },
+          onComplete: () => {
+            // Satisfying little pop when the number lands
+            gsap.fromTo(el, { scale: 1 }, {
+              scale: 1.06, duration: 0.16, yoyo: true, repeat: 1,
+              ease: 'power2.out', transformOrigin: 'left bottom',
+            });
+          },
           scrollTrigger: { trigger: el, start: 'top 88%', once: true },
         });
 
@@ -79,10 +86,19 @@ const StatsSection: React.FC = () => {
       <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10">
 
         <div className="mb-10 md:mb-16">
-          <RevealText as="h2" className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.88] text-white">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: E }}
+            className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-brand-primary/80 block mb-5"
+          >
+            01 · Impact
+          </motion.span>
+          <RevealText as="h2" className="text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95] text-white">
             TRANSFORMATIVE
           </RevealText>
-          <RevealText as="h2" className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.88]" wordClassName="text-gradient-brand" delay={0.15}>
+          <RevealText as="h2" className="text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95]" wordClassName="text-gradient-brand" delay={0.15}>
             IMPACT
           </RevealText>
           <motion.p
@@ -90,7 +106,7 @@ const StatsSection: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.85, ease: E, delay: 0.25 }}
-            className="mt-6 text-white/35 text-sm md:text-base leading-relaxed font-medium max-w-lg"
+            className="mt-6 text-white/60 text-base leading-relaxed font-medium max-w-lg"
           >
             We are a creative network that delivers meaningful, measurable outcomes for brands across the globe. Our work speaks through numbers.
           </motion.p>
@@ -132,7 +148,7 @@ const StatsSection: React.FC = () => {
               </div>
 
               {/* Label */}
-              <div className="mt-3 text-[10px] md:text-[11px] font-bold tracking-[0.28em] uppercase text-white/25">
+              <div className="mt-3 text-[10px] md:text-[11px] font-bold tracking-[0.28em] uppercase text-white/50">
                 {stat.label}
               </div>
             </motion.div>

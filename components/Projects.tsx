@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,117 +8,67 @@ import RevealText from './RevealText';
 gsap.registerPlugin(ScrollTrigger);
 
 const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const FEATURED = PROJECTS.slice(0, 8);
+const FEATURED = PROJECTS.slice(0, 6);
+
+const cardVariant = {
+  hidden: { y: 40, opacity: 0 },
+  show:   { y: 0,  opacity: 1 },
+};
 
 const Projects: React.FC = () => {
-  const sectionRef  = useRef<HTMLElement>(null);
-  const trackRef    = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
-    const track   = trackRef.current;
     if (!section) return;
-
-    const reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-
-    const cleanups: (() => void)[] = [];
-
-    // 3D tilt on all project cards
-    if (!reduced) {
-      section.querySelectorAll<HTMLElement>('.project-card').forEach((card) => {
-        const inner = card.querySelector<HTMLElement>('.card-inner');
-        if (!inner) return;
-        const onMove = (e: MouseEvent) => {
-          const r = card.getBoundingClientRect();
-          const x = (e.clientX - r.left) / r.width  - 0.5;
-          const y = (e.clientY - r.top)  / r.height - 0.5;
-          inner.style.transform = `perspective(900px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg) scale(1.02)`;
-        };
-        const onLeave = () => {
-          inner.style.transition = 'transform 0.55s cubic-bezier(0.16,1,0.3,1)';
-          inner.style.transform  = '';
-          setTimeout(() => { inner.style.transition = ''; }, 600);
-        };
-        card.addEventListener('mousemove', onMove);
-        card.addEventListener('mouseleave', onLeave);
-        cleanups.push(() => {
-          card.removeEventListener('mousemove', onMove);
-          card.removeEventListener('mouseleave', onLeave);
-        });
-      });
-    }
-
-    // Mobile: no pin, use native overflow scroll
-    if (isMobile || !track) {
-      return () => cleanups.forEach((fn) => fn());
-    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const ctx = gsap.context(() => {
-      // Total horizontal distance = full track width minus one viewport
-      const scrollDist = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      // Cinematic zoom-out reveal on each project image
+      gsap.utils.toArray<HTMLElement>('.project-card img', section).forEach((img) => {
+        gsap.fromTo(img, { scale: 1.18 }, {
+          scale: 1, duration: 1.3, ease: 'power3.out',
+          scrollTrigger: { trigger: img, start: 'top 88%', once: true },
+        });
+      });
 
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        // Half-viewport of breathing room at end before unpin
-        end: () => `+=${scrollDist() + window.innerHeight * 0.3}`,
-        pin: true,
-        anticipatePin: 1,
-        scrub: 0.8,
-        invalidateOnRefresh: true,
-        onUpdate(self) {
-          // Drive track left as user scrolls down
-          gsap.set(track, { x: -self.progress * scrollDist(), force3D: true });
-
-          // Progress bar
-          if (progressRef.current) {
-            progressRef.current.style.transform = `scaleX(${self.progress})`;
-          }
-        },
+      // Subtle depth: middle column drifts on desktop 3-col layout
+      const mm = gsap.matchMedia();
+      mm.add('(min-width: 1280px)', () => {
+        gsap.utils.toArray<HTMLElement>('.project-card', section).forEach((card, i) => {
+          if (i % 3 !== 1) return;
+          gsap.fromTo(card, { y: 28 }, {
+            y: -28, ease: 'none',
+            scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: 0.8 },
+          });
+        });
       });
     }, section);
 
-    return () => {
-      ctx.revert();
-      cleanups.forEach((fn) => fn());
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      id="work"
-      // md:h-screen fills the viewport when pinned; no overflow-hidden on section
-      className="relative bg-transparent md:h-screen md:flex md:flex-col"
-    >
-      {/* ── Header ── */}
-      <div className="md:shrink-0 relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-6 md:pb-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-4 md:mb-6">
+    <section id="work" ref={sectionRef} className="relative py-16 md:py-24 bg-transparent overflow-hidden">
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10">
+
+        {/* ── Header ── */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 md:mb-14">
           <div>
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, ease: E }}
-              className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/30 block mb-5"
+              className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-brand-primary/80 block mb-5"
             >
-              Latest Projects
+              06 · Latest Projects
             </motion.span>
-            <RevealText
-              as="h2"
-              className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white"
-            >
-              OUR
+            <RevealText as="h2" className="text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95] text-white">
+              WORK THAT
             </RevealText>
-            <RevealText
-              as="h2"
-              className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9]"
-              wordClassName="text-gradient-brand"
-              delay={0.15}
-            >
-              WORK
+            <RevealText as="h2" className="text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95]" wordClassName="text-gradient-brand" delay={0.12}>
+              DELIVERS
             </RevealText>
           </div>
           <motion.p
@@ -126,122 +76,67 @@ const Projects: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: E, delay: 0.2 }}
-            className="text-white/30 text-sm leading-relaxed font-medium md:max-w-xs md:text-right md:pb-1"
+            className="text-white/60 text-base leading-relaxed font-medium md:max-w-xs md:text-right md:pb-2"
           >
-            Scroll to explore our latest case studies and delivered results.
+            Real clients, real results — every project ships with a number we're proud of.
           </motion.p>
         </div>
 
-        {/* Progress bar — desktop only */}
-        <div className="hidden md:flex items-center gap-4">
-          <div className="h-px flex-1 bg-white/[0.06] overflow-hidden">
-            <div
-              ref={progressRef}
-              className="h-full bg-gradient-to-r from-brand-primary to-brand-secondary origin-left"
-              style={{ transform: 'scaleX(0)' }}
-            />
-          </div>
-          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/15 shrink-0">
-            Scroll →
-          </span>
-        </div>
-      </div>
-
-      {/* ── Mobile: native horizontal scroll with snap ── */}
-      <div className="block md:hidden pb-8">
-        <div className="flex gap-5 overflow-x-auto no-scrollbar pl-6 pr-6 snap-x snap-mandatory scroll-pl-6">
-          {FEATURED.map((project) => (
-            <div
-              key={project.id}
-              className="project-card w-[75vw] max-w-[320px] shrink-0 cursor-pointer snap-start"
-              onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
-            >
-              <div className="card-inner group">
-                <div className="relative aspect-[4/5] overflow-hidden bg-white/[0.04] mb-3">
-                  <img
-                    src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/800/1000`}
-                    alt={project.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
-                  <div className="absolute top-3 left-3">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-2.5 py-1">
-                      {project.industry ?? project.category}
-                    </span>
-                  </div>
-                </div>
-                <h3 className="text-sm font-bold text-white uppercase tracking-[0.05em]">
-                  {project.title}
-                </h3>
-                <p className="text-white/25 text-xs mt-1 leading-relaxed">{project.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/*
-        Desktop: overflow-hidden is on this inner wrapper, NOT on the section,
-        so GSAP pin works cleanly while the 400vw+ track is clipped.
-      */}
-      <div className="hidden md:block flex-1 overflow-hidden">
-        <div
-          ref={trackRef}
-          className="flex h-full items-center gap-6 lg:gap-8 will-change-transform pb-6"
-          style={{ width: 'max-content', paddingLeft: '5vw', paddingRight: '12vw' }}
+        {/* ── Project grid ── */}
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
+          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6"
         >
           {FEATURED.map((project) => (
-            <div
+            <motion.div
               key={project.id}
-              className="project-card shrink-0 cursor-pointer"
-              style={{ width: 'clamp(260px, 20vw, 360px)' }}
-              onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
+              variants={cardVariant}
+              transition={{ duration: 0.8, ease: E }}
             >
-              <div className="card-inner group" style={{ transformStyle: 'preserve-3d' }}>
-                <div
-                  className="relative overflow-hidden bg-white/[0.04] mb-4"
-                  style={{ aspectRatio: '3/4' }}
-                >
+              <button
+                type="button"
+                onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
+                className="project-card group block w-full text-left cursor-pointer"
+                aria-label={`Open case study: ${project.title}`}
+              >
+                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-white/[0.04] mb-4">
                   <img
-                    src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/800/1000`}
+                    src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/900/675`}
                     alt={project.title}
                     loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.07]"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
-                  <div className="absolute top-4 left-4">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-3 py-1.5">
-                      {project.industry ?? project.category}
-                    </span>
-                  </div>
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-black">
-                      <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                        <path
-                          d="M4 12L12 4M12 4H6M12 4v6"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                <h3 className="text-sm font-bold text-white uppercase tracking-[0.05em] group-hover:text-white/60 transition-colors duration-300">
-                  {project.title}
-                </h3>
-                <p className="text-white/25 text-xs mt-1.5 leading-relaxed">{project.description}</p>
-                {project.result && (
-                  <span className="inline-block mt-2 text-[10px] font-bold tracking-[0.2em] uppercase text-brand-secondary/90">
-                    {project.result}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <span className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-3 py-1.5 rounded-full">
+                    {project.industry ?? project.category}
                   </span>
-                )}
-              </div>
-            </div>
+                  <span className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-white flex items-center justify-center text-black opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
+                </div>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-base font-bold text-white uppercase tracking-[0.04em] group-hover:text-brand-secondary transition-colors duration-300">
+                      {project.title}
+                    </h3>
+                    <p className="text-white/55 text-xs mt-1.5 leading-relaxed max-w-[36ch]">{project.description}</p>
+                  </div>
+                  {project.result && (
+                    <span className="shrink-0 text-[10px] font-bold tracking-[0.15em] uppercase text-brand-secondary/90 border border-brand-secondary/25 rounded-full px-3 py-1.5 whitespace-nowrap">
+                      {project.result}
+                    </span>
+                  )}
+                </div>
+              </button>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
+
       </div>
     </section>
   );

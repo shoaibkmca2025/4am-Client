@@ -9,6 +9,7 @@ export function useActiveSection(ids: string[]): string {
   useEffect(() => {
     if (ids.length === 0) return;
     let raf = 0;
+    let lastRun = 0;
 
     const measure = () => {
       const threshold = window.innerHeight * 0.4;
@@ -28,7 +29,13 @@ export function useActiveSection(ids: string[]): string {
       setActive(current);
     };
 
+    // Throttle to ~6 checks/second: eight getBoundingClientRect calls per
+    // scroll frame force layout reads mid-scroll; an active-section
+    // indicator doesn't need frame-perfect precision.
     const onScroll = () => {
+      const now = performance.now();
+      if (now - lastRun < 160) return;
+      lastRun = now;
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(measure);
     };

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import RevealText from './RevealText';
+import DrawRule from './DrawRule';
 
 const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -52,12 +53,12 @@ const selectClasses = (hasError: boolean) =>
 // Floating label: rests inside the empty field, floats up (and turns gold)
 // on focus or once the field has a value — never disappears while typing.
 const floatLabelClasses =
-  'absolute left-0 top-0 text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 transition-all duration-300 pointer-events-none ' +
-  'peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:font-medium peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-white/25 ' +
+  'absolute left-0 top-0 text-[9px] font-bold tracking-[0.2em] uppercase text-white/50 transition-all duration-300 pointer-events-none ' +
+  'peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:font-medium peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-white/40 ' +
   'peer-focus:top-0 peer-focus:text-[9px] peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.2em] peer-focus:text-brand-secondary';
 
 const staticLabelClasses =
-  'block text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 mb-1';
+  'block text-[9px] font-bold tracking-[0.2em] uppercase text-white/50 mb-1';
 
 const SelectChevron: React.FC = () => (
   <svg
@@ -102,6 +103,7 @@ const Contact: React.FC = () => {
 
   return (
     <section id="contact" ref={sectionRef} className="relative py-16 md:py-24 bg-transparent border-t border-white/[0.06]">
+      <DrawRule />
       <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
         {/* Header */}
         <div className="contact-heading mb-10 md:mb-14">
@@ -110,20 +112,20 @@ const Contact: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/25 block mb-5"
+            className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-brand-primary/80 block mb-5"
           >
-            Get in Touch
+            08 · Get in Touch
           </motion.span>
           <RevealText
             as="h2"
-            className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white"
+            className="text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95] text-white"
           >
             LET'S WORK
           </RevealText>
           <RevealText
             as="h2"
-            className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-transparent"
-            style={{ WebkitTextStroke: '2px rgba(255,255,255,0.12)' }}
+            className="text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95]"
+            wordClassName="text-gradient-brand"
             delay={0.15}
           >
             TOGETHER
@@ -133,10 +135,24 @@ const Contact: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-            className="mt-6 text-white/30 text-sm md:text-base leading-relaxed font-medium max-w-lg"
+            className="mt-6 text-white/60 text-base leading-relaxed font-medium max-w-lg"
           >
             Share your vision. We will reply with a clear next step within 24 hours.
           </motion.p>
+
+          {/* Response-time badge pops in */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.7, y: 12 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 280, damping: 18, delay: 0.4 }}
+            className="inline-flex items-center gap-2.5 mt-5 rounded-full border border-brand-lime/30 bg-brand-lime/10 px-4 py-2"
+          >
+            <span className="w-2 h-2 rounded-full bg-brand-lime animate-pulse" />
+            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-brand-lime/90">
+              Online now — replies in under 24h
+            </span>
+          </motion.div>
         </div>
 
         <motion.div
@@ -163,7 +179,7 @@ const Contact: React.FC = () => {
                 variants={{ hidden: { x: -30, opacity: 0 }, show: { x: 0, opacity: 1 } }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/20 mb-2">{label}</div>
+                <div className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/45 mb-2">{label}</div>
                 {content}
               </motion.div>
             ))}

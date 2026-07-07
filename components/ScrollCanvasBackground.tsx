@@ -270,7 +270,7 @@ const ScrollCanvasBackground: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none"
-      style={{ opacity: 0.55 }}
+      style={{ opacity: 0.38 }}
       aria-hidden="true"
     />
   );

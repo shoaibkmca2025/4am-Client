@@ -8,11 +8,11 @@ import { useActiveSection } from '../utils/useActiveSection';
 const SECTIONS = [
   { id: 'home',         label: 'Intro' },
   { id: 'about',        label: 'Impact' },
-  { id: 'engineering',  label: 'Engineering' },
   { id: 'services',     label: 'Services' },
-  { id: 'work',         label: 'Work' },
+  { id: 'engineering',  label: 'Engineering' },
   { id: 'growth',       label: 'Growth' },
-  { id: 'testimonials', label: 'Clients' },
+  { id: 'process',      label: 'Process' },
+  { id: 'work',         label: 'Work' },
   { id: 'contact',      label: 'Contact' },
 ];
 

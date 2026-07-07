@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, MotionConfig } from 'framer-motion';
 import { gsap } from 'gsap';
 import RevealText from './RevealText';
+import DrawRule from './DrawRule';
 
 const testimonials = [
   {
@@ -94,6 +95,7 @@ const Testimonials: React.FC = () => {
         ref={sectionRef}
         className="relative py-16 md:py-24 bg-transparent border-t border-white/[0.06] overflow-hidden"
       >
+        <DrawRule />
         <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
 
           {/* Heading */}
@@ -103,24 +105,38 @@ const Testimonials: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/25 block mb-5"
+              className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-brand-accent/80 block mb-5"
             >
-              Client Feedback
+              07 · Client Feedback
             </motion.span>
             <RevealText
               as="h2"
-              className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-white"
+              className="text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95] text-white"
             >
               WHAT
             </RevealText>
             <RevealText
               as="h2"
-              className="text-[8vw] md:text-[6vw] lg:text-[5vw] font-black uppercase tracking-[-0.03em] leading-[0.9] text-transparent"
-              style={{ WebkitTextStroke: '2px rgba(255,255,255,0.12)' }}
+              className="text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95]"
+              wordClassName="text-gradient-tech"
               delay={0.15}
             >
               THEY SAY
             </RevealText>
+
+            {/* Rating badge pops in */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.7, y: 12 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ type: 'spring', stiffness: 280, damping: 18, delay: 0.35 }}
+              className="inline-flex items-center gap-2.5 mt-6 rounded-full border border-brand-secondary/30 bg-brand-secondary/10 px-4 py-2"
+            >
+              <span className="text-brand-secondary text-sm leading-none" aria-hidden="true">★★★★★</span>
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-brand-secondary/90">
+                5.0 · Loved by clients
+              </span>
+            </motion.div>
           </div>
 
           {/* Testimonial body */}
@@ -167,7 +183,7 @@ const Testimonials: React.FC = () => {
                     <div className="text-xs font-bold text-white uppercase tracking-[0.2em]">
                       {active.author}
                     </div>
-                    <div className="text-[10px] text-white/30 font-bold tracking-[0.2em] uppercase mt-1">
+                    <div className="text-[10px] text-white/50 font-bold tracking-[0.2em] uppercase mt-1">
                       {active.role}
                     </div>
                   </div>

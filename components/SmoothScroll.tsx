@@ -8,10 +8,10 @@ gsap.registerPlugin(ScrollTrigger);
 const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
     const lenis = new Lenis({
-      // Tighter, weighted easing for a premium "agency" feel (vs. the default floaty lerp).
-      duration: 1.1,
+      // Slightly longer glide + softer lerp for a silkier feel.
+      duration: 1.25,
       easing: (t: number) => 1 - Math.pow(1 - t, 4), // easeOutQuart
-      lerp: 0.085,
+      lerp: 0.075,
       wheelMultiplier: 1,
       smoothWheel: true,
       syncTouch: false,

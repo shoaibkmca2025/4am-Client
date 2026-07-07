@@ -1,9 +1,7 @@
-import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplineScene } from './ui/splite';
-import type { Application } from '@splinetool/runtime';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,59 +27,6 @@ const Hero: React.FC = () => {
   const rootRef       = useRef<HTMLElement>(null);
   const subtitleRef   = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
-  const [show3D, setShow3D] = useState(false);
-  const splineAppRef = useRef<Application | null>(null);
-  const heroVisibleRef = useRef(true);
-
-  // Stop the WebGL render loop whenever the hero is scrolled out of
-  // view — the robot costs GPU/CPU every frame while playing, and the
-  // page is ~13k px tall. Resume instantly when the hero returns.
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        heroVisibleRef.current = entry.isIntersecting;
-        const app = splineAppRef.current;
-        if (!app) return;
-        try {
-          if (entry.isIntersecting) app.play();
-          else app.stop();
-        } catch { /* runtime may not be ready yet */ }
-      },
-      { threshold: 0.05 },
-    );
-    observer.observe(root);
-    return () => observer.disconnect();
-  }, []);
-
-  // Spline runtime is heavy — mount it only once the browser is idle,
-  // on capable desktop devices (project-wide performance gate pattern).
-  useEffect(() => {
-    const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
-    if (
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      window.matchMedia('(max-width: 1024px)').matches ||
-      (navigator.hardwareConcurrency || 8) < 4 ||
-      nav.connection?.saveData
-    ) return;
-
-    const w = window as Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
-    };
-    let idleId: number | undefined;
-    let timeoutId: number | undefined;
-    if (w.requestIdleCallback) {
-      idleId = w.requestIdleCallback(() => setShow3D(true), { timeout: 3500 });
-    } else {
-      timeoutId = window.setTimeout(() => setShow3D(true), 2500);
-    }
-    return () => {
-      if (idleId !== undefined && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
-    };
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: rootRef,
@@ -148,7 +93,10 @@ const Hero: React.FC = () => {
       id="home"
       ref={rootRef}
       style={{ opacity: heroOpacity, y: heroY }}
-      className="relative min-h-screen supports-[height:100svh]:min-h-[100svh] flex items-center justify-center overflow-hidden bg-transparent pt-[70px] md:pt-[80px]"
+      // pointer-events-none: the hero has no clickable elements, and its
+      // transparent box otherwise sits above the fixed robot layer and
+      // swallows the mouse events the robot needs for head-tracking.
+      className="relative min-h-screen supports-[height:100svh]:min-h-[100svh] flex items-center justify-center overflow-hidden bg-transparent pt-[70px] md:pt-[80px] pointer-events-none"
     >
       {/* Giant "4AM" background letter */}
       <motion.div
@@ -210,30 +158,11 @@ const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* Right — interactive 3D robot (desktop only, idle-loaded) */}
-          <div className="hidden lg:block relative h-[62vh] xl:h-[66vh] min-h-[440px]" aria-hidden="true">
-            {show3D && (
-              <motion.div
-                className="absolute inset-0"
-                initial={{ opacity: 0, x: 60 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-              >
-                <SplineScene
-                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="w-full h-full"
-                  onLoad={(app) => {
-                    splineAppRef.current = app;
-                    // If the user already scrolled past the hero while
-                    // the scene was downloading, start paused.
-                    if (!heroVisibleRef.current) {
-                      try { app.stop(); } catch { /* noop */ }
-                    }
-                  }}
-                />
-              </motion.div>
-            )}
-          </div>
+          {/* Right — layout spacer. The robot itself lives in a fixed
+              layer in LandingPage (RobotBackdrop) positioned exactly
+              here on load, so it can morph into the page background
+              when the visitor scrolls. */}
+          <div className="hidden lg:block relative h-[62vh] xl:h-[66vh] min-h-[440px]" aria-hidden="true" />
         </div>
 
         {/* Bottom bar */}

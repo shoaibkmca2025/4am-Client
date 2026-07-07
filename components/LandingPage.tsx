@@ -1,5 +1,6 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Hero from './Hero';
@@ -8,14 +9,14 @@ import Projects from './Projects';
 import Contact from './Contact';
 import Testimonials from './Testimonials';
 import StatsSection from './Stats';
-import NetworkAndTrends from './NetworkAndTrends';
 import ProcessSection from './ProcessSection';
-import ScrollFillSection from './ScrollFillSection';
 import CodeShowcase from './CodeShowcase';
 import GrowthChart from './GrowthChart';
 import Marquee from './Marquee';
 import ScrollCanvasBackground, { ACCENT_EVENT } from './ScrollCanvasBackground';
 import SectionNav from './SectionNav';
+import ScrollCTA from './ScrollCTA';
+import { SplineScene } from './ui/splite';
 import { scrollToSection } from '../utils/scroll';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -35,7 +36,137 @@ type OrbKey = 'orange' | 'violet' | 'cyan';
 const LandingPage: React.FC = () => {
   const location = useLocation();
   const mainRef  = useRef<HTMLDivElement>(null);
+  const bgRef    = useRef<HTMLDivElement>(null);
   const orbRefs  = useRef<Record<OrbKey, HTMLDivElement | null>>({ orange: null, violet: null, cyan: null });
+  const heroZoneRef  = useRef<HTMLDivElement>(null);
+  const robotWrapRef = useRef<HTMLDivElement>(null);
+  const robotRef     = useRef<HTMLDivElement>(null);
+  const [show3D, setShow3D] = useState(false);
+
+  // NOTE: no stop()/play() scroll-freezing here — Spline's play() replays
+  // the scene's camera intro, which showed up as a zoom pulse every time
+  // scrolling paused. The scene runs continuously so head-tracking and
+  // the idle pose stay stable in backdrop mode.
+
+  // Head-tracking everywhere: section containers sit above the robot
+  // layer and swallow pointer events, so we mirror every window mouse
+  // move to the robot's canvas as a synthetic event. Clicks/hovers on
+  // real UI are untouched — we only forward the movement signal.
+  useEffect(() => {
+    if (!show3D) return;
+    let canvas: HTMLCanvasElement | null = null;
+    const forward = (e: PointerEvent) => {
+      if (!canvas || !canvas.isConnected) {
+        canvas = robotWrapRef.current?.querySelector('canvas') ?? null;
+      }
+      if (!canvas || e.target === canvas) return;
+      canvas.dispatchEvent(new PointerEvent('pointermove', {
+        clientX: e.clientX,
+        clientY: e.clientY,
+        pointerId: e.pointerId,
+        pointerType: 'mouse',
+        bubbles: false,
+      }));
+      canvas.dispatchEvent(new MouseEvent('mousemove', {
+        clientX: e.clientX,
+        clientY: e.clientY,
+        bubbles: false,
+      }));
+    };
+    window.addEventListener('pointermove', forward, { passive: true });
+    return () => window.removeEventListener('pointermove', forward);
+  }, [show3D]);
+
+  // Spline runtime is heavy — mount it only once the browser is idle,
+  // on capable desktop devices (project-wide performance gate pattern).
+  useEffect(() => {
+    const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      window.matchMedia('(max-width: 1024px)').matches ||
+      (navigator.hardwareConcurrency || 8) < 4 ||
+      nav.connection?.saveData
+    ) return;
+
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+    const enable = () => {
+      // Cap devicePixelRatio before the Spline runtime initializes: on
+      // 1.5×/2× Windows displays this cuts WebGL pixels ~40-60% with no
+      // change to camera framing. (Our own canvas already caps itself.)
+      if (window.devicePixelRatio > 1.25) {
+        try {
+          Object.defineProperty(window, 'devicePixelRatio', {
+            get: () => 1.25,
+            configurable: true,
+          });
+        } catch { /* read-only in some browsers — full-res fallback */ }
+      }
+      setShow3D(true);
+    };
+    if (w.requestIdleCallback) {
+      idleId = w.requestIdleCallback(enable, { timeout: 3500 });
+    } else {
+      timeoutId = window.setTimeout(enable, 2500);
+    }
+    return () => {
+      if (idleId !== undefined && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+    };
+  }, []);
+
+  // ── Robot: hero companion → page backdrop ──────────────────────────
+  // Starts positioned exactly over the hero's right column. As the hero
+  // scrolls away, a scrub morphs it to screen center, scales it up and
+  // dims it — it then lives fixed behind every section's content.
+  useLayoutEffect(() => {
+    if (!show3D) return;
+    const wrap = robotWrapRef.current;
+    const robot = robotRef.current;
+    const heroZone = heroZoneRef.current;
+    if (!wrap || !robot || !heroZone) return;
+
+    const ctx = gsap.context(() => {
+      // Hero position: centered on the right column (~25vw right of center)
+      gsap.set(robot, { xPercent: -50, yPercent: -50, x: '25vw', y: '1vh' });
+
+      // Entrance (matches the old hero fade-in)
+      gsap.fromTo(wrap, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.1, ease: 'power2.out', delay: 0.25 });
+
+      // Morph to backdrop as the hero leaves the viewport
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: heroZone,
+          start: 'bottom 92%',
+          end: 'bottom 30%',
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+        },
+      })
+        .to(robot, { x: '0vw', y: '0vh', scale: 1.45, ease: 'none' }, 0)
+        .to(robot, { opacity: 0.15, ease: 'none' }, 0.15);
+
+      // The robot keeps pointer events in backdrop mode too, so its
+      // head follows the cursor everywhere. Real UI (buttons, links,
+      // cards) lives in positioned containers that paint above this
+      // layer, so clicks on content are unaffected.
+
+      // Gentle ambient drift once it's a backdrop (composited transform)
+      gsap.to(wrap, {
+        y: '1.2vh',
+        duration: 7,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+      });
+    });
+
+    return () => ctx.revert();
+  }, [show3D]);
 
   useEffect(() => {
     const state = location.state as { scrollTo?: string } | null;
@@ -50,13 +181,14 @@ const LandingPage: React.FC = () => {
   }, []);
 
   // ── Scroll color grading ────────────────────────────────────────────
-  // Each [data-grade] zone tweens the page background to its tint and
-  // fades the fixed ambient orbs to the mix declared in [data-orbs]
-  // (e.g. "orange:0.14,violet:0.06") as the zone crosses mid-viewport.
+  // Each [data-grade] zone tweens the FIXED viewport underlay's tint and
+  // fades the ambient orbs to the mix in [data-orbs] as the zone crosses
+  // mid-viewport. The underlay keeps repaints viewport-sized.
   useLayoutEffect(() => {
     const root = mainRef.current;
     if (!root) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
     if (reduced) {
       const orange = orbRefs.current.orange;
@@ -78,12 +210,13 @@ const LandingPage: React.FC = () => {
 
         const accent = zone.dataset.accent;
         const apply = () => {
-          gsap.to(root, { backgroundColor: bg, duration: 1.1, ease: 'power2.out', overwrite: 'auto' });
+          if (bgRef.current) {
+            gsap.to(bgRef.current, { backgroundColor: bg, duration: 1.1, ease: 'power2.out', overwrite: 'auto' });
+          }
           (Object.keys(targets) as OrbKey[]).forEach((k) => {
             const orb = orbRefs.current[k];
             if (orb) gsap.to(orb, { opacity: targets[k], duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
           });
-          // Re-tint the canvas background to this zone's accent
           if (accent) window.dispatchEvent(new CustomEvent(ACCENT_EVENT, { detail: accent }));
         };
 
@@ -96,19 +229,21 @@ const LandingPage: React.FC = () => {
         });
       });
 
-      // Slow ambient drift so the "lighting" never feels frozen
-      (Object.keys(orbRefs.current) as OrbKey[]).forEach((k, i) => {
-        const orb = orbRefs.current[k];
-        if (!orb) return;
-        gsap.to(orb, {
-          x: i % 2 === 0 ? '6vw' : '-6vw',
-          y: '4vh',
-          duration: 9 + i * 3,
-          ease: 'sine.inOut',
-          yoyo: true,
-          repeat: -1,
+      // Slow ambient drift (desktop only — large moving layers cost on phones)
+      if (!isMobile) {
+        (Object.keys(orbRefs.current) as OrbKey[]).forEach((k, i) => {
+          const orb = orbRefs.current[k];
+          if (!orb) return;
+          gsap.to(orb, {
+            x: i % 2 === 0 ? '6vw' : '-6vw',
+            y: '4vh',
+            duration: 9 + i * 3,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: -1,
+          });
         });
-      });
+      }
     }, root);
 
     return () => ctx.revert();
@@ -117,11 +252,23 @@ const LandingPage: React.FC = () => {
   return (
     <div ref={mainRef} className="relative z-[2] bg-black">
 
+      {/* ── Fixed viewport underlay — color grading tweens THIS, not the
+           full-height root (viewport-sized repaints only) ── */}
+      <div
+        ref={bgRef}
+        className="fixed inset-0 pointer-events-none"
+        style={{ backgroundColor: '#050505' }}
+        aria-hidden="true"
+      />
+
       {/* ── Scroll-reactive canvas background (particle network + grid) ── */}
       <ScrollCanvasBackground />
 
       {/* ── Right-edge section dot navigation (desktop) ── */}
       <SectionNav />
+
+      {/* ── Scroll-triggered "book a call" popup (once per session) ── */}
+      <ScrollCTA />
 
       {/* ── Fixed ambient color-grade orbs (behind all sections) ── */}
       <div className="pointer-events-none" aria-hidden="true">
@@ -142,62 +289,44 @@ const LandingPage: React.FC = () => {
         />
       </div>
 
-      <div data-grade="#050505" data-orbs="orange:0.10,violet:0.05" data-accent="#FF6A3D">
+      {/* ── Robot: fixed layer — hero companion on load, then morphs into
+           the backdrop behind every section (desktop only, idle-loaded).
+           Painted before all sections, so their content covers it. ── */}
+      {show3D && (
+        <div
+          ref={robotWrapRef}
+          className="fixed inset-0 pointer-events-none hidden lg:block opacity-0"
+          aria-hidden="true"
+        >
+          <div
+            ref={robotRef}
+            className="absolute left-1/2 top-1/2 w-[44vw] max-w-[720px] h-[62vh] xl:h-[66vh] min-h-[440px] will-change-transform"
+            style={{ pointerEvents: 'auto' }}
+          >
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* 1 ── Hero (unchanged text/entrance; robot floats in the fixed layer) */}
+      <div ref={heroZoneRef} data-grade="#050505" data-orbs="orange:0.10,violet:0.05" data-accent="#FF6A3D">
         <Hero />
       </div>
 
-      {/* ── Pinned outline→fill statement (Dentsu-style scrollytelling) ── */}
-      <div data-grade="#0A0604" data-orbs="orange:0.16" data-accent="#FF6A3D">
-        <ScrollFillSection />
-      </div>
-
-      {/* ── Kinetic marquee #1 — after hero ── */}
-      <Marquee
-        items={['Strategy', 'Design', 'Engineering', 'Growth', 'Brand', 'Content', 'Digital']}
-        speed={30}
-        className="border-y border-white/[0.06] py-4 md:py-6 text-[9vw] md:text-[5vw] font-black uppercase tracking-[-0.02em] text-white/80"
-      />
-
-      <div data-grade="#050505" data-orbs="orange:0.08,cyan:0.06" data-accent="#FF8A5C">
-        <StatsSection />
-      </div>
-
-      {/* ── Scroll-scrubbed code editor — software development story ── */}
-      <div data-grade="#06060E" data-orbs="violet:0.18,cyan:0.10" data-accent="#8B5CF6">
-        <CodeShowcase />
-      </div>
-
-      <div data-grade="#04080A" data-orbs="cyan:0.14,violet:0.08" data-accent="#22D3EE">
-        <ProcessSection />
-      </div>
-
-      {/* ── Kinetic marquee #2 — between process and services ── */}
-      <Marquee
-        items={['Accepting New Projects', '4AM Global Media', "Let's Build Something", 'Available Worldwide', 'Est. 2024']}
-        speed={45}
-        direction="right"
-        separator="—"
-        className="border-y border-white/[0.06] py-4 md:py-6 text-[4vw] md:text-[2vw] font-black uppercase tracking-[0.08em] text-white/25"
-      />
-
-      <div data-grade="#0A0505" data-orbs="orange:0.14,violet:0.06" data-accent="#FF6A3D">
-        <Services />
-      </div>
-
-      <div data-grade="#050505" data-orbs="orange:0.08" data-accent="#FF6A3D">
-        <Projects />
-      </div>
-
-      {/* ── Scroll-drawn growth curve — digital marketing story ── */}
-      <div data-grade="#0A0703" data-orbs="orange:0.18,cyan:0.06" data-accent="#FFC56A">
-        <GrowthChart />
-      </div>
-
-      {/* ── Clients strip ── */}
-      <div className="border-t border-white/[0.06] py-8 md:py-10">
-        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 mb-5">
-          <p className="text-[9px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-white/15">
-            Brands We've Worked With
+      {/* 2 ── Clients strip */}
+      <motion.div
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="border-y border-white/[0.06] py-7 md:py-9"
+      >
+        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 mb-4">
+          <p className="text-[9px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-white/40 text-center">
+            Trusted by ambitious brands worldwide
           </p>
         </div>
         <Marquee
@@ -205,18 +334,46 @@ const LandingPage: React.FC = () => {
           speed={55}
           separator="·"
           scrollVelocity={false}
-          className="text-[3.5vw] md:text-[1.6vw] font-black uppercase tracking-[0.08em] text-white/12"
+          className="text-[4.5vw] md:text-[1.8vw] font-black uppercase tracking-[0.08em] text-white/30"
         />
+      </motion.div>
+
+      {/* 3 ── Impact stats */}
+      <div data-grade="#0A0604" data-orbs="orange:0.14" data-accent="#FF6A3D">
+        <StatsSection />
       </div>
 
-      <div data-grade="#04070A" data-orbs="cyan:0.12,violet:0.10" data-accent="#22D3EE">
-        <NetworkAndTrends />
+      {/* 4 ── Services */}
+      <div data-grade="#0A0505" data-orbs="orange:0.14,violet:0.06" data-accent="#FF6A3D">
+        <Services />
       </div>
 
+      {/* 5 ── Software development */}
+      <div data-grade="#06060E" data-orbs="violet:0.18,cyan:0.10" data-accent="#8B5CF6">
+        <CodeShowcase />
+      </div>
+
+      {/* 6 ── Digital marketing */}
+      <div data-grade="#0A0703" data-orbs="orange:0.18,cyan:0.06" data-accent="#FFC56A">
+        <GrowthChart />
+      </div>
+
+      {/* 7 ── Process */}
+      <div data-grade="#04080A" data-orbs="cyan:0.14,violet:0.08" data-accent="#22D3EE">
+        <ProcessSection />
+      </div>
+
+      {/* 8 ── Work */}
+      <div data-grade="#050505" data-orbs="orange:0.10" data-accent="#FF6A3D">
+        <Projects />
+      </div>
+
+      {/* 9 ── Testimonials */}
       <div data-grade="#070409" data-orbs="violet:0.14,orange:0.06" data-accent="#8B5CF6">
         <Testimonials />
       </div>
 
+      {/* 10 ── Contact */}
       <div data-grade="#0A0502" data-orbs="orange:0.16" data-accent="#FF6A3D">
         <Contact />
       </div>
