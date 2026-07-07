@@ -12,7 +12,19 @@ module.exports = {
         display: ['DM Sans', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
+      // shadcn/ui tokens used by components/ui/* (mapped to the dark theme)
+      borderColor: {
+        DEFAULT: 'rgba(255, 255, 255, 0.08)',
+      },
       colors: {
+        card: {
+          DEFAULT: '#0A0A0A',
+          foreground: '#FFFFFF',
+        },
+        muted: {
+          DEFAULT: '#1A1A1A',
+          foreground: 'rgba(255, 255, 255, 0.5)',
+        },
         brand: {
           primary: '#FF6A3D',   // electric orange — energy / marketing
           secondary: '#FFC56A', // warm gold
@@ -38,11 +50,16 @@ module.exports = {
           '0%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(6px)' },
           '100%': { transform: 'translateY(0)' },
-        }
+        },
+        spotlight: {
+          '0%': { opacity: '0', transform: 'translate(-72%, -62%) scale(0.5)' },
+          '100%': { opacity: '1', transform: 'translate(-50%, -40%) scale(1)' },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
         'scroll': 'scroll 1.5s ease-in-out infinite',
+        'spotlight': 'spotlight 2s ease 0.75s 1 forwards',
       },
     },
   },

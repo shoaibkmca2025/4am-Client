@@ -1,7 +1,8 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplineScene } from './ui/splite';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,6 +28,35 @@ const Hero: React.FC = () => {
   const rootRef       = useRef<HTMLElement>(null);
   const subtitleRef   = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
+  const [show3D, setShow3D] = useState(false);
+
+  // Spline runtime is heavy — mount it only once the browser is idle,
+  // on capable desktop devices (project-wide performance gate pattern).
+  useEffect(() => {
+    const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      window.matchMedia('(max-width: 1024px)').matches ||
+      (navigator.hardwareConcurrency || 8) < 4 ||
+      nav.connection?.saveData
+    ) return;
+
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+    if (w.requestIdleCallback) {
+      idleId = w.requestIdleCallback(() => setShow3D(true), { timeout: 3500 });
+    } else {
+      timeoutId = window.setTimeout(() => setShow3D(true), 2500);
+    }
+    return () => {
+      if (idleId !== undefined && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+    };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: rootRef,
@@ -115,43 +145,66 @@ const Hero: React.FC = () => {
         <div className="absolute w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full border border-white/[0.02]" />
       </div>
 
-      <div className="hero-title-container relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10 text-center">
-        {/* Badge */}
-        <div className="hero-badge mb-6 md:mb-10">
-          <span className="inline-block text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/40">
-            A Creative Network Made For Today & Tomorrow
-          </span>
-        </div>
+      <div className="hero-title-container relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10 text-center lg:text-left">
+        <div className="lg:grid lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
 
-        {/* Main title — characters split for per-char stagger */}
-        <h1 className="flex flex-col items-center gap-1 md:gap-2 overflow-hidden">
-          <HeroWord
-            text="WE BUILD"
-            className="block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-white"
-          />
-          <HeroWord
-            text="GROWTH"
-            className="hero-grad block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase"
-          />
-          <HeroWord
-            text="THROUGH"
-            className="block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-white"
-          />
-          <HeroWord
-            text="DIGITAL"
-            className="block text-[12vw] md:text-[10vw] lg:text-[9vw] font-black leading-[0.85] tracking-[-0.04em] uppercase italic text-white/50"
-          />
-        </h1>
+          {/* Left — headline stack */}
+          <div>
+            {/* Badge */}
+            <div className="hero-badge mb-6 md:mb-10">
+              <span className="inline-block text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-white/40">
+                A Creative Network Made For Today & Tomorrow
+              </span>
+            </div>
 
-        {/* Subtitle */}
-        <div ref={subtitleRef} className="mt-10 md:mt-16 max-w-2xl mx-auto">
-          <p className="text-white/40 text-sm md:text-base font-medium leading-relaxed">
-            Powering founders, operators, and teams across the globe with strategy, design, engineering, and growth marketing that compounds.
-          </p>
+            {/* Main title — characters split for per-char stagger */}
+            <h1 className="flex flex-col items-center lg:items-start gap-1 md:gap-2 overflow-hidden">
+              <HeroWord
+                text="WE BUILD"
+                className="block text-[12vw] md:text-[10vw] lg:text-[6.2vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-white"
+              />
+              <HeroWord
+                text="GROWTH"
+                className="hero-grad block text-[12vw] md:text-[10vw] lg:text-[6.2vw] font-black leading-[0.85] tracking-[-0.04em] uppercase"
+              />
+              <HeroWord
+                text="THROUGH"
+                className="block text-[12vw] md:text-[10vw] lg:text-[6.2vw] font-black leading-[0.85] tracking-[-0.04em] uppercase text-white"
+              />
+              <HeroWord
+                text="DIGITAL"
+                className="block text-[12vw] md:text-[10vw] lg:text-[6.2vw] font-black leading-[0.85] tracking-[-0.04em] uppercase italic text-white/50"
+              />
+            </h1>
+
+            {/* Subtitle */}
+            <div ref={subtitleRef} className="mt-10 md:mt-16 lg:mt-8 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-white/40 text-sm md:text-base font-medium leading-relaxed">
+                Powering founders, operators, and teams across the globe with strategy, design, engineering, and growth marketing that compounds.
+              </p>
+            </div>
+          </div>
+
+          {/* Right — interactive 3D robot (desktop only, idle-loaded) */}
+          <div className="hidden lg:block relative h-[62vh] xl:h-[66vh] min-h-[440px]" aria-hidden="true">
+            {show3D && (
+              <motion.div
+                className="absolute inset-0"
+                initial={{ opacity: 0, x: 60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+              >
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="w-full h-full"
+                />
+              </motion.div>
+            )}
+          </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="hero-bottom mt-10 md:mt-14 flex flex-col md:flex-row items-center justify-between gap-6 text-[10px] md:text-[11px] font-bold tracking-[0.25em] uppercase text-white/25 border-t border-white/[0.06] pt-6">
+        <div className="hero-bottom mt-10 md:mt-14 lg:mt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-[10px] md:text-[11px] font-bold tracking-[0.25em] uppercase text-white/25 border-t border-white/[0.06] pt-6">
           <span>Strategy · Design · Engineering · Growth</span>
           <span className="flex items-center gap-2">
             Scroll to explore
