@@ -54,7 +54,7 @@ const ScrollToTopBtn: React.FC = () => {
   return (
     <div
       ref={wrapRef}
-      className="fixed bottom-10 left-8 z-[9990] w-11 h-11 flex items-center justify-center opacity-0 translate-y-3 pointer-events-none transition-all duration-400"
+      className="fixed bottom-10 left-8 max-md:bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] max-md:left-4 max-md:scale-[0.85] z-[9990] w-11 h-11 flex items-center justify-center opacity-0 translate-y-3 pointer-events-none transition-all duration-400"
     >
       {/* Circular progress ring */}
       <svg

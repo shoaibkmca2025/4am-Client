@@ -75,6 +75,10 @@ const ProcessSection: React.FC = () => {
       // Scroll distance = full track width minus one viewport width
       const scrollDist = () => track.scrollWidth - window.innerWidth;
 
+      // Only retarget card-highlight tweens when the active step actually
+      // changes — creating tweens on every scroll frame causes jank.
+      let lastActive = 0;
+
       ScrollTrigger.create({
         trigger: section,
         start: 'top top',
@@ -95,27 +99,28 @@ const ProcessSection: React.FC = () => {
             progressRef.current.style.transform = `scaleX(${self.progress})`;
           }
 
-          // Active step counter
+          // Active step counter + card highlight — only on index change
           const numCards = cards.length;
           const activeIndex = Math.min(
             Math.floor(self.progress * numCards),
             numCards - 1,
           );
-          if (stepNumRef.current) {
-            stepNumRef.current.textContent = `0${activeIndex + 1}`;
-          }
-
-          // Card highlight
-          cards.forEach((card, i) => {
-            const isActive = i === activeIndex;
-            gsap.to(card, {
-              opacity: isActive ? 1 : 0.2,
-              scale:   isActive ? 1 : 0.92,
-              duration: 0.35,
-              ease: 'power2.out',
-              overwrite: 'auto',
+          if (activeIndex !== lastActive) {
+            lastActive = activeIndex;
+            if (stepNumRef.current) {
+              stepNumRef.current.textContent = `0${activeIndex + 1}`;
+            }
+            cards.forEach((card, i) => {
+              const isActive = i === activeIndex;
+              gsap.to(card, {
+                opacity: isActive ? 1 : 0.2,
+                scale:   isActive ? 1 : 0.92,
+                duration: 0.35,
+                ease: 'power2.out',
+                overwrite: 'auto',
+              });
             });
-          });
+          }
         },
       });
 

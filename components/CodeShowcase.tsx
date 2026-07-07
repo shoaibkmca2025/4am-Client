@@ -154,7 +154,7 @@ const CodeShowcase: React.FC = () => {
         {/* Editor + terminal */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 lg:gap-6">
           {/* ── Code editor ── */}
-          <div className="lg:col-span-3 rounded-xl border border-white/[0.08] bg-[#0A0A12]/80 backdrop-blur-sm overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+          <div className="lg:col-span-3 rounded-xl border border-white/[0.08] bg-[#0A0A12] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
             {/* Title bar */}
             <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
               <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
@@ -191,7 +191,7 @@ const CodeShowcase: React.FC = () => {
           </div>
 
           {/* ── Terminal ── */}
-          <div className="lg:col-span-2 rounded-xl border border-white/[0.08] bg-black/60 backdrop-blur-sm overflow-hidden flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+          <div className="lg:col-span-2 rounded-xl border border-white/[0.08] bg-[#060608] overflow-hidden flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
               <span className="text-[11px] font-mono text-white/40">zsh — deploy</span>
               <span

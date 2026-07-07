@@ -13,8 +13,8 @@ import React, { useEffect, useRef, useState } from 'react';
 export const ACCENT_EVENT = '4am:accent';
 
 const GRID_STEP = 52;
-const LINK_DIST = 150;
-const DPR_CAP = 1.5;
+const LINK_DIST = 130;
+const DPR_CAP = 1.25;
 
 type RGB = [number, number, number];
 
@@ -89,7 +89,7 @@ const ScrollCanvasBackground: React.FC = () => {
     window.addEventListener('resize', resize);
 
     // ── State ──
-    const count = Math.round(Math.min(85, (width * height) / 24000));
+    const count = Math.round(Math.min(60, (width * height) / 28000));
     const particles: Particle[] = Array.from({ length: count }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -115,6 +115,29 @@ const ScrollCanvasBackground: React.FC = () => {
     let raf = 0;
     let running = true;
 
+    // Grid dots pre-rendered to a repeating pattern tile — one fill per
+    // frame instead of hundreds of fillRect calls. Rebuilt only when
+    // the zone tint actually changes.
+    const gridTile = document.createElement('canvas');
+    gridTile.width = GRID_STEP;
+    gridTile.height = GRID_STEP;
+    let gridPattern: CanvasPattern | null = null;
+    let gridKey = '';
+    const getGridPattern = (r: number, g: number, b: number) => {
+      const key = `${r},${g},${b}`;
+      if (key !== gridKey || !gridPattern) {
+        gridKey = key;
+        const tctx = gridTile.getContext('2d');
+        if (tctx) {
+          tctx.clearRect(0, 0, GRID_STEP, GRID_STEP);
+          tctx.fillStyle = `rgb(${r},${g},${b})`;
+          tctx.fillRect(0, 0, 1.5, 1.5);
+        }
+        gridPattern = ctx.createPattern(gridTile, 'repeat');
+      }
+      return gridPattern;
+    };
+
     const onVisibility = () => {
       running = document.visibilityState === 'visible';
       if (running) { raf = requestAnimationFrame(frame); }
@@ -137,14 +160,16 @@ const ScrollCanvasBackground: React.FC = () => {
 
       ctx.clearRect(0, 0, width, height);
 
-      // ── Dot grid, parallax-drifting against scroll ──
+      // ── Dot grid, parallax-drifting against scroll (pattern fill) ──
       gridDrift = (sy * 0.12) % GRID_STEP;
-      const gridAlpha = 0.035 + energy * 0.03;
-      ctx.fillStyle = `rgba(${tr},${tg},${tb},${gridAlpha})`;
-      for (let gx = (width % GRID_STEP) / 2; gx < width; gx += GRID_STEP) {
-        for (let gy = -gridDrift; gy < height; gy += GRID_STEP) {
-          ctx.fillRect(gx, gy, 1.5, 1.5);
-        }
+      const pattern = getGridPattern(tr, tg, tb);
+      if (pattern) {
+        ctx.save();
+        ctx.globalAlpha = 0.035 + energy * 0.03;
+        ctx.translate(0, -gridDrift);
+        ctx.fillStyle = pattern;
+        ctx.fillRect(0, 0, width, height + GRID_STEP);
+        ctx.restore();
       }
 
       // ── Particles ──

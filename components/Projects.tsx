@@ -147,13 +147,13 @@ const Projects: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Mobile: native horizontal scroll ── */}
+      {/* ── Mobile: native horizontal scroll with snap ── */}
       <div className="block md:hidden pb-8">
-        <div className="flex gap-5 overflow-x-auto no-scrollbar pl-6 pr-6">
+        <div className="flex gap-5 overflow-x-auto no-scrollbar pl-6 pr-6 snap-x snap-mandatory scroll-pl-6">
           {FEATURED.map((project) => (
             <div
               key={project.id}
-              className="project-card w-[75vw] max-w-[320px] shrink-0 cursor-pointer"
+              className="project-card w-[75vw] max-w-[320px] shrink-0 cursor-pointer snap-start"
               onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
             >
               <div className="card-inner group">
@@ -166,7 +166,7 @@ const Projects: React.FC = () => {
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
                   <div className="absolute top-3 left-3">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/50 backdrop-blur-sm px-2.5 py-1">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-2.5 py-1">
                       {project.industry ?? project.category}
                     </span>
                   </div>
@@ -211,7 +211,7 @@ const Projects: React.FC = () => {
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
                   <div className="absolute top-4 left-4">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/50 backdrop-blur-sm px-3 py-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-3 py-1.5">
                       {project.industry ?? project.category}
                     </span>
                   </div>

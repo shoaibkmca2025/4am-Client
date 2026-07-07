@@ -41,11 +41,13 @@ const validate = (form: FormState): FormErrors => {
   return errors;
 };
 
+// text-base on mobile (16px) prevents phones from auto-zooming the page
+// when a field gains focus; desktop keeps the original 14px.
 const inputClasses = (hasError: boolean) =>
-  `peer w-full bg-transparent border-b ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} px-0 pt-6 pb-3 text-white text-sm placeholder-transparent focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium`;
+  `peer w-full bg-transparent border-b ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} px-0 pt-6 pb-3 text-white text-base md:text-sm placeholder-transparent focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium`;
 
 const selectClasses = (hasError: boolean) =>
-  `w-full bg-transparent border-b ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} px-0 pt-2 pb-3 pr-6 text-white text-sm focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium appearance-none cursor-pointer`;
+  `w-full bg-transparent border-b ${hasError ? 'border-red-500/50' : 'border-white/[0.08]'} px-0 pt-2 pb-3 pr-6 text-white text-base md:text-sm focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium appearance-none cursor-pointer`;
 
 // Floating label: rests inside the empty field, floats up (and turns gold)
 // on focus or once the field has a value — never disappears while typing.

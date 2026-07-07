@@ -130,10 +130,10 @@ const Services: React.FC = () => {
             <motion.div key={service.slug} variants={rowVariant} transition={{ duration: 0.75, ease: E }}>
               <Link
                 to={`/services/${service.slug}`}
-                className="service-item group relative flex items-center gap-6 md:gap-10 py-6 md:py-8 border-b border-white/[0.07] block"
+                className="service-item group relative flex items-center gap-6 md:gap-10 py-6 md:py-8 border-b border-white/[0.07] block transition-colors duration-200 max-lg:active:bg-white/[0.04]"
               >
                 <span className="service-item-line absolute left-0 right-0 bottom-0 h-px bg-gradient-to-r from-brand-primary via-brand-secondary to-transparent origin-left scale-x-0 pointer-events-none" />
-                <span className="service-num text-xs md:text-sm font-bold tracking-[0.2em] text-white/20 w-10 md:w-14 shrink-0 opacity-20">{service.number}</span>
+                <span className="service-num text-xs md:text-sm font-bold tracking-[0.2em] text-white/20 w-10 md:w-14 shrink-0 opacity-20 max-lg:opacity-100 max-lg:text-brand-primary/60">{service.number}</span>
                 <h3 className="service-title text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-[-0.02em] text-white flex-1">{service.title}</h3>
                 <p className="service-desc hidden lg:block text-white/30 text-sm max-w-xs leading-relaxed font-medium text-right opacity-30">{service.description}</p>
                 <div className="service-arrow w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:bg-brand-primary group-hover:border-brand-primary transition-colors duration-300 text-white/40 group-hover:text-black">

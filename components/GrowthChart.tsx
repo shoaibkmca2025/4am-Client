@@ -155,7 +155,7 @@ const GrowthChart: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
           {/* ── Chart ── */}
-          <div className="lg:col-span-3 relative rounded-xl border border-white/[0.08] bg-white/[0.015] backdrop-blur-sm p-4 md:p-8">
+          <div className="lg:col-span-3 relative rounded-xl border border-white/[0.08] bg-[#0B0906] p-4 md:p-8">
             <div className="relative">
               <svg viewBox="0 0 800 420" className="w-full h-auto" role="img" aria-label="Growth curve — revenue rising from launch to 4.2x return on ad spend">
                 <defs>
@@ -202,10 +202,10 @@ const GrowthChart: React.FC = () => {
                 return (
                   <div
                     key={m.label}
-                    className={`growth-chip absolute -translate-x-1/2 -translate-y-[135%] whitespace-nowrap rounded-full border px-3 py-1 text-[9px] md:text-[10px] font-bold tracking-[0.15em] uppercase backdrop-blur-sm ${
+                    className={`growth-chip absolute -translate-x-1/2 -translate-y-[135%] whitespace-nowrap rounded-full border px-3 py-1 text-[9px] md:text-[10px] font-bold tracking-[0.15em] uppercase ${
                       m.big
-                        ? 'border-brand-primary/50 bg-brand-primary/15 text-brand-secondary'
-                        : 'border-white/10 bg-black/60 text-white/60'
+                        ? 'border-brand-primary/50 bg-[#2A1408] text-brand-secondary'
+                        : 'border-white/10 bg-[#111111] text-white/60'
                     }`}
                     style={{ left: `${(x / 800) * 100}%`, top: `${(y / 420) * 100}%` }}
                   >

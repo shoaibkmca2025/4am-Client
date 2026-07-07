@@ -13,7 +13,14 @@ html, body, #root {
   overflow-x: hidden;
   scroll-padding-top: 80px;
 }
+html {
+  /* Android/iOS: stop browsers from inflating font sizes on rotate */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
+  -webkit-tap-highlight-color: transparent;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
@@ -338,8 +345,7 @@ a[role="button"]:active {
   height: 2.75rem;
   border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.85);
   display: flex;
   align-items: center;
   justify-content: center;

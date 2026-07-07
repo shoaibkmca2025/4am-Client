@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplineScene } from './ui/splite';
+import type { Application } from '@splinetool/runtime';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,6 +30,30 @@ const Hero: React.FC = () => {
   const subtitleRef   = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
   const [show3D, setShow3D] = useState(false);
+  const splineAppRef = useRef<Application | null>(null);
+  const heroVisibleRef = useRef(true);
+
+  // Stop the WebGL render loop whenever the hero is scrolled out of
+  // view — the robot costs GPU/CPU every frame while playing, and the
+  // page is ~13k px tall. Resume instantly when the hero returns.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        heroVisibleRef.current = entry.isIntersecting;
+        const app = splineAppRef.current;
+        if (!app) return;
+        try {
+          if (entry.isIntersecting) app.play();
+          else app.stop();
+        } catch { /* runtime may not be ready yet */ }
+      },
+      { threshold: 0.05 },
+    );
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
 
   // Spline runtime is heavy — mount it only once the browser is idle,
   // on capable desktop devices (project-wide performance gate pattern).
@@ -123,7 +148,7 @@ const Hero: React.FC = () => {
       id="home"
       ref={rootRef}
       style={{ opacity: heroOpacity, y: heroY }}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-transparent pt-[70px] md:pt-[80px]"
+      className="relative min-h-screen supports-[height:100svh]:min-h-[100svh] flex items-center justify-center overflow-hidden bg-transparent pt-[70px] md:pt-[80px]"
     >
       {/* Giant "4AM" background letter */}
       <motion.div
@@ -197,6 +222,14 @@ const Hero: React.FC = () => {
                 <SplineScene
                   scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
                   className="w-full h-full"
+                  onLoad={(app) => {
+                    splineAppRef.current = app;
+                    // If the user already scrolled past the hero while
+                    // the scene was downloading, start paused.
+                    if (!heroVisibleRef.current) {
+                      try { app.stop(); } catch { /* noop */ }
+                    }
+                  }}
                 />
               </motion.div>
             )}

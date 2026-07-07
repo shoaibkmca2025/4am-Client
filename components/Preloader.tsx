@@ -32,9 +32,11 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
       },
     });
 
+    // Keep the branded moment but never make visitors wait: the whole
+    // sequence clears in ~1s instead of 2.6s.
     tl.to(obj, {
       val: 100,
-      duration: 1.4,
+      duration: 0.6,
       ease: 'power2.inOut',
       onUpdate() {
         const v = Math.round(obj.val);
@@ -42,8 +44,8 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
         gsap.set(bar, { scaleX: obj.val / 100 });
       },
     })
-      .to(text, { autoAlpha: 0, y: -24, duration: 0.35, ease: 'power2.in' }, '-=0.3')
-      .to(curtain, { yPercent: -100, duration: 0.85, ease: 'expo.inOut' }, '-=0.1');
+      .to(text, { autoAlpha: 0, y: -24, duration: 0.25, ease: 'power2.in' }, '-=0.2')
+      .to(curtain, { yPercent: -100, duration: 0.6, ease: 'expo.inOut' }, '-=0.15');
 
     return () => {
       tl.kill();
