@@ -90,7 +90,7 @@ const Contact: React.FC = () => {
     setErrors({});
     setStatus('submitting');
     try {
-      const response = await fetch("https://formsubmit.co/ajax/4amglobalmedia@gmail.com", {
+      const response = await fetch("https://formsubmit.co/ajax/Info@4amglobalmedia.com", {
         method: "POST",
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ ...form, _subject: `New Inquiry from ${form.fullName}`, _template: "table", email: form.workEmail }),
@@ -170,7 +170,7 @@ const Contact: React.FC = () => {
             variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } } }}
           >
             {[
-              { label: 'Email', content: <a href="mailto:4amglobalmedia@gmail.com" className="text-base md:text-lg font-bold text-white hover:text-white/50 transition-colors break-all">4amglobalmedia@gmail.com</a> },
+              { label: 'Email', content: <a href="mailto:Info@4amglobalmedia.com" className="text-base md:text-lg font-bold text-white hover:text-white/50 transition-colors break-all">Info@4amglobalmedia.com</a> },
               { label: 'Phone', content: <a href="tel:8826406545" className="text-base md:text-lg font-bold text-white hover:text-white/50 transition-colors">8826406545</a> },
               { label: 'Location', content: <p className="text-base md:text-lg font-bold text-white">Global / Remote Team</p> },
             ].map(({ label, content }) => (
@@ -280,6 +280,7 @@ const Contact: React.FC = () => {
                       <option value="paid-ads" className="bg-black">Paid Ads</option>
                       <option value="branding" className="bg-black">Branding</option>
                       <option value="content-creation" className="bg-black">Content Creation</option>
+                      <option value="marketplace-product-onboarding" className="bg-black">Marketplace Product Onboarding</option>
                       <option value="other" className="bg-black">Other</option>
                     </select>
                     <SelectChevron />

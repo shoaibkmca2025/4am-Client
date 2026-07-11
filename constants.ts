@@ -19,6 +19,7 @@ export const NAV_ITEMS: NavItem[] = [
       { label: 'SEO', href: '/services/seo' },
       { label: 'Web Dev', href: '/services/web-development' },
       { label: 'Content', href: '/services/content-creation' },
+      { label: 'Marketplace', href: '/services/marketplace-product-onboarding' },
     ]
   },
   { label: 'About', href: '/', sectionId: 'about' },
@@ -213,6 +214,110 @@ export const SERVICES: Service[] = [
       'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=800&q=80'
+    ]
+  },
+  {
+    id: 'marketplace-product-onboarding',
+    title: 'Marketplace Product Onboarding',
+    slug: 'marketplace-product-onboarding',
+    description: "End-to-end seller registration, product listing, catalog management, and marketplace growth support across India's leading platforms.",
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80',
+    seo: {
+      title: 'Marketplace Product Onboarding Services | Amazon, Flipkart, Blinkit, Zepto | 4am Global Media',
+      description: '4am Global Media offers professional marketplace product onboarding services for Amazon, Flipkart, Blinkit, Zepto, Swiggy Instamart, BigBasket, JioMart, Meesho, ONDC, and more. End-to-end seller registration, product listing, catalog management, and marketplace support.',
+    },
+    longDescription: "Launch your products on India's leading e-commerce and quick-commerce platforms with complete marketplace onboarding support. We help brands, manufacturers, startups, and SMEs manage seller registration, product listings, catalog setup, marketplace compliance, and ongoing optimization so you can focus on growing your business.",
+    features: [
+      'Seller Registration & Verification',
+      'Product Onboarding',
+      'Catalog Management',
+      'Product Content Creation',
+      'Product Image Optimization',
+      'Brand Store Setup',
+      'Marketplace Compliance',
+      'Inventory & Pricing Management',
+      'Advertising & Promotions',
+      'Ongoing Account Management'
+    ],
+    benefits: [
+      'Complete End-to-End Marketplace Solutions',
+      'Experienced Marketplace Specialists',
+      'Multi-Platform Product Listing',
+      'Fast Turnaround Time',
+      'Marketplace Compliance Support',
+      'SEO-Optimized Product Listings',
+      'Professional Catalog Management',
+      'Dedicated Account Support',
+      'Scalable Solutions for Growing Businesses',
+      'Transparent Process & Timely Delivery'
+    ],
+    process: [
+      { title: 'Consultation', description: 'Understanding your business goals and selecting the right marketplaces.' },
+      { title: 'Documentation Review', description: 'Verification of GST, PAN, FSSAI, Trademark, bank details, and other required documents.' },
+      { title: 'Seller Account Setup', description: 'Registration and verification on your selected marketplaces.' },
+      { title: 'Product Catalog Creation', description: 'Preparation of product data, images, pricing, and inventory.' },
+      { title: 'Product Listing', description: 'Uploading and optimizing products according to marketplace guidelines.' },
+      { title: 'Quality Review', description: 'Ensuring listings meet platform standards and compliance requirements.' },
+      { title: 'Go Live', description: 'Publishing products and making them available to customers.' },
+      { title: 'Growth & Support', description: 'Ongoing optimization, catalog updates, advertising support, and account management.' }
+    ],
+    partners: [
+      'Amazon',
+      'Flipkart',
+      'Blinkit',
+      'Zepto',
+      'Swiggy Instamart',
+      'BigBasket',
+      'JioMart',
+      'Meesho',
+      'Myntra',
+      'Ajio',
+      'Nykaa',
+      'FirstCry',
+      'ONDC',
+      'Shopify',
+      'WooCommerce'
+    ],
+    industries: [
+      'Food & Beverages',
+      'FMCG',
+      'Cosmetics & Beauty',
+      'Health & Wellness',
+      'Fashion & Apparel',
+      'Electronics & Gadgets',
+      'Home & Kitchen',
+      'Furniture & Decor',
+      'Baby & Kids Products',
+      'Pet Care',
+      'Industrial Products',
+      'Handmade Products',
+      'Consumer Goods',
+      'D2C Brands',
+      'Manufacturers & Wholesalers'
+    ],
+    faqs: [
+      {
+        question: 'How long does onboarding take?',
+        answer: 'The timeline depends on the marketplace and document verification process. Most platforms complete onboarding within a few business days after successful verification.'
+      },
+      {
+        question: 'What documents are required?',
+        answer: 'Requirements vary by platform but generally include GST registration, PAN, bank account details, address proof, business registration, and product-specific licenses such as FSSAI where applicable.'
+      },
+      {
+        question: 'Can you onboard products to multiple marketplaces?',
+        answer: 'Yes. We can onboard your products across multiple marketplaces simultaneously to maximize your online reach.'
+      },
+      {
+        question: 'Do you provide ongoing support?',
+        answer: 'Yes. We offer catalog management, account maintenance, listing optimization, advertising support, and marketplace growth services.'
+      }
+    ],
+    cta: "Expand your business across India's leading e-commerce and quick-commerce platforms with expert marketplace onboarding services from 4am Global Media.",
+    relatedImages: [
+      'https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1556741533-6e6a62bd8b49?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?auto=format&fit=crop&w=800&q=80'
     ]
   }
 ];

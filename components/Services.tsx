@@ -13,6 +13,7 @@ const SERVICES_DATA = [
   { number: '04', title: 'SEO & Content',       description: 'Search strategies that compound and bring high-intent traffic.',               slug: 'seo' },
   { number: '05', title: 'Web Development',     description: 'Conversion-focused sites built for speed and clarity.',                        slug: 'web-development' },
   { number: '06', title: 'Content Creation',    description: 'Video, copy, and assets that keep your brand impactful everywhere.',           slug: 'content-creation' },
+  { number: '07', title: 'Marketplace Onboarding', description: 'Seller setup, product listings, and catalog support for leading platforms.', slug: 'marketplace-product-onboarding' },
 ];
 
 const cardVariant = {
@@ -49,7 +50,7 @@ const Services: React.FC = () => {
             transition={{ duration: 0.7, ease: E, delay: 0.2 }}
             className="mt-5 text-white/60 text-base leading-relaxed font-medium"
           >
-            Six services, one team, one goal — measurable growth for your business.
+            Seven services, one team, one goal — measurable growth for your business.
             Pick what you need or let us build the full engine.
           </motion.p>
         </div>

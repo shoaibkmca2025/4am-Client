@@ -24,11 +24,12 @@ const FOOTER_SERVICES = [
   { label: 'SEO',               href: '/services/seo' },
   { label: 'Web Development',   href: '/services/web-development' },
   { label: 'Content Creation',  href: '/services/content-creation' },
+  { label: 'Marketplace Onboarding', href: '/services/marketplace-product-onboarding' },
 ];
 
 const FOOTER_SOCIALS = [
   { label: 'Instagram', href: 'https://www.instagram.com/reel/DUBIUl5DfBU/?utm_source=ig_web_copy_link' },
-  { label: 'Email',     href: 'mailto:4amglobalmedia@gmail.com' },
+  { label: 'Email',     href: 'mailto:Info@4amglobalmedia.com' },
 ];
 
 const colVariant = {

@@ -29,10 +29,50 @@ const ServicePage: React.FC = () => {
     if (!service) return;
     const fb  = `${service.title} Services | 4AM Global Media`;
     const fd  = `Explore ${service.title.toLowerCase()} services from 4AM Global Media.`;
-    const seo = SERVICE_SEO_OVERRIDES[service.slug] ?? { title: fb, description: fd };
+    const seo = service.seo ?? SERVICE_SEO_OVERRIDES[service.slug] ?? { title: fb, description: fd };
     document.title = seo.title;
     const tag = document.querySelector('meta[name="description"]');
     if (tag) tag.setAttribute('content', seo.description);
+
+    const scriptId = 'service-structured-data';
+    const existing = document.getElementById(scriptId);
+    existing?.remove();
+
+    const graph: object[] = [
+      {
+        '@type': 'Service',
+        name: service.title,
+        description: seo.description,
+        provider: {
+          '@type': 'Organization',
+          name: '4am Global Media',
+        },
+        areaServed: 'India',
+        url: window.location.href,
+      },
+    ];
+
+    if (service.faqs?.length) {
+      graph.push({
+        '@type': 'FAQPage',
+        mainEntity: service.faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
+      });
+    }
+
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+    document.head.appendChild(script);
+
+    return () => { script.remove(); };
   }, [service]);
 
   // ── Page animations ──────────────────────────────────────────────────
@@ -211,6 +251,25 @@ const ServicePage: React.FC = () => {
         </div>
       </section>
 
+      {service.partners?.length ? (
+        <section className="py-20 md:py-28 bg-black border-t border-white/[0.07]">
+          <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
+            <div className="mb-12">
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Marketplace Partners</span>
+              <RevealText as="h2" className="block text-section-title text-white">PLATFORMS</RevealText>
+              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>WE ONBOARD</RevealText>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px bg-white/[0.05]">
+              {service.partners.map((partner) => (
+                <div key={partner} className="bg-black px-5 py-4 min-h-16 flex items-center justify-center text-center text-xs md:text-sm font-bold uppercase tracking-[0.08em] text-white/65 hover:text-white hover:bg-white/[0.025] transition-colors duration-300">
+                  {partner}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* ── Features ── */}
       <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
         <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
@@ -272,6 +331,25 @@ const ServicePage: React.FC = () => {
         </div>
       </section>
 
+      {service.industries?.length ? (
+        <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+          <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
+            <div className="mb-12">
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Industries We Serve</span>
+              <RevealText as="h2" className="block text-section-title text-white">BUILT FOR</RevealText>
+              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>YOUR CATEGORY</RevealText>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-px bg-white/[0.05]">
+              {service.industries.map((industry) => (
+                <div key={industry} className="bg-black p-5 min-h-20 flex items-center text-sm font-bold uppercase tracking-[0.06em] text-white/55 hover:text-white hover:bg-white/[0.025] transition-colors duration-300">
+                  {industry}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* ── Process ── */}
       <section id="process" className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
         <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
@@ -298,6 +376,34 @@ const ServicePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {service.faqs?.length ? (
+        <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+          <div className="w-full max-w-[1000px] mx-auto px-6 md:px-10">
+            <div className="mb-12">
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Frequently Asked Questions</span>
+              <RevealText as="h2" className="block text-section-title text-white">CLEAR</RevealText>
+              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>ANSWERS</RevealText>
+            </div>
+            <div className="border-t border-white/[0.07]">
+              {service.faqs.map((faq, i) => (
+                <details key={faq.question} className="group border-b border-white/[0.07] py-7" open={i === 0}>
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-6 [&::-webkit-details-marker]:hidden">
+                    <span className="flex gap-5">
+                      <span className="mt-1 text-xs font-bold tracking-[0.2em] text-white/20">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="text-lg md:text-xl font-bold uppercase tracking-tight text-white">{faq.question}</span>
+                    </span>
+                    <span className="mt-1 text-2xl leading-none text-white/30 transition-transform duration-300 group-open:rotate-45">+</span>
+                  </summary>
+                  <p className="ml-12 mt-5 max-w-2xl text-sm md:text-base leading-relaxed text-white/45 font-medium">
+                    {faq.answer}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       {/* ── Related Work ── */}
       <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
@@ -346,7 +452,7 @@ const ServicePage: React.FC = () => {
           <RevealText as="h2" className="block text-display text-white mb-2">READY TO</RevealText>
           <RevealText as="h2" className="block text-display text-transparent mb-10" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>TRANSFORM?</RevealText>
           <p className="text-white/35 text-lg mb-14 max-w-lg mx-auto font-medium leading-relaxed">
-            Partner with us to build a {service.title.toLowerCase()} strategy that scales and compounds.
+            {service.cta ?? `Partner with us to build a ${service.title.toLowerCase()} strategy that scales and compounds.`}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button

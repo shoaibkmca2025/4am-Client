@@ -5,10 +5,17 @@ export interface Service {
   slug: string;
   description: string;
   image: string;
+  seo?: {
+    title: string;
+    description: string;
+  };
   longDescription?: string;
   features: string[]; // What We Offer
   benefits: string[]; // Benefits / Results
   process: { title: string; description: string }[]; // Process Section
+  partners?: string[];
+  industries?: string[];
+  faqs?: { question: string; answer: string }[];
   relatedImages?: string[]; // New field for related images
   cta?: string;
 }

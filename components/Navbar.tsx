@@ -200,8 +200,8 @@ const Navbar: React.FC = () => {
         {/* Bottom bar */}
         <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between text-[10px] font-bold tracking-[0.25em] uppercase text-white/20">
           <span>4AM Global Media</span>
-          <a href="mailto:4amglobalmedia@gmail.com" className="hover:text-white/60 transition-colors">
-            4amglobalmedia@gmail.com
+          <a href="mailto:Info@4amglobalmedia.com" className="hover:text-white/60 transition-colors">
+            Info@4amglobalmedia.com
           </a>
         </div>
       </div>
