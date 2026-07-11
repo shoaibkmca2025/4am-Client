@@ -36,15 +36,21 @@ const ScrollToTopBtn: React.FC = () => {
     const ring = ringRef.current;
     if (!wrap) return;
 
+    let ticking = false;
     const onScroll = () => {
-      if (window.scrollY > 600) wrap.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
-      else wrap.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        if (window.scrollY > 600) wrap.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+        else wrap.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
 
-      if (ring) {
-        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-        const progress   = scrollable > 0 ? window.scrollY / scrollable : 0;
-        ring.style.strokeDashoffset = String(circ * (1 - progress));
-      }
+        if (ring) {
+          const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+          const progress   = scrollable > 0 ? window.scrollY / scrollable : 0;
+          ring.style.strokeDashoffset = String(circ * (1 - progress));
+        }
+      });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -76,7 +82,7 @@ const ScrollToTopBtn: React.FC = () => {
         />
       </svg>
       <button
-        className="relative w-11 h-11 rounded-full border border-white/[0.12] bg-black/75 backdrop-blur-md flex items-center justify-center text-white/50 hover:bg-white hover:text-black hover:border-white transition-colors duration-300"
+        className="relative w-11 h-11 rounded-full border border-white/[0.12] bg-black/90 flex items-center justify-center text-white/50 hover:bg-white hover:text-black hover:border-white transition-colors duration-300"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Back to top"
       >
@@ -103,6 +109,10 @@ function App() {
 
     if (saveData) {
       timer = window.setTimeout(() => setShowChatbot(true), 12000);
+    } else if (window.matchMedia('(max-width: 768px)').matches) {
+      // Phones: keep the main thread free while the visitor starts
+      // reading — the chatbot can arrive fashionably late.
+      timer = window.setTimeout(() => setShowChatbot(true), 14000);
     } else {
       const requestIdle = (window as Window & {
         requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;

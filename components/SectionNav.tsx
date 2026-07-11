@@ -19,7 +19,12 @@ const SECTIONS = [
 const IDS = SECTIONS.map((s) => s.id);
 
 const SectionNav: React.FC = () => {
-  const active = useActiveSection(IDS);
+  // The dot nav is desktop-only (hidden lg) — skip the scroll-position
+  // tracking work entirely on smaller screens.
+  const [enabled] = React.useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches,
+  );
+  const active = useActiveSection(enabled ? IDS : []);
   const rootRef = useRef<HTMLElement>(null);
 
   // Gentle entrance once the page has settled
