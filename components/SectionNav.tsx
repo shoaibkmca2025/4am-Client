@@ -13,7 +13,7 @@ const SECTIONS = [
   { id: 'growth',       label: 'Growth' },
   { id: 'process',      label: 'Process' },
   { id: 'work',         label: 'Work' },
-  { id: 'founder',      label: 'Founder' },
+  { id: 'founder',      label: 'Leadership' },
   { id: 'contact',      label: 'Contact' },
 ];
 

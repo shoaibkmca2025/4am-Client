@@ -35,6 +35,28 @@ const EXPERTISE = [
   'Digital Transformation Strategy',
 ];
 
+const CTO_ROLES = [
+  'Chief Technology Officer',
+  'Android Development',
+  'Java & .NET Technologies',
+  'Product Engineering',
+];
+
+const CTO_EXPERTISE = [
+  'Android Application Development',
+  'Java & Advanced Java',
+  'Microsoft .NET Technologies',
+  'Enterprise Software Development',
+  'REST API Design & Integration',
+  'Database Design & Management',
+  'Software Architecture & System Design',
+  'Cloud-Ready Application Development',
+  'Performance Optimization',
+  'Agile Development Methodologies',
+  'Product Engineering & Technical Leadership',
+  'Technology Strategy & Digital Transformation',
+];
+
 const FEATURED_IN = [
   { name: 'Smart Bharat News',      href: 'https://www.smartbharatnews.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
   { name: 'National Outlook Daily', href: 'https://www.nationaloutlookdaily.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
@@ -60,14 +82,13 @@ const Founder: React.FC = () => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const ctx = gsap.context(() => {
-      // Cinematic zoom-out reveal on the portrait
-      const img = section.querySelector('.founder-photo img');
-      if (img) {
+      // Cinematic zoom-out reveal on each leadership portrait
+      section.querySelectorAll('.founder-photo img').forEach((img) => {
         gsap.fromTo(img, { scale: 1.15 }, {
           scale: 1, duration: 1.4, ease: 'power3.out',
           scrollTrigger: { trigger: img, start: 'top 85%', once: true },
         });
-      }
+      });
     }, section);
 
     return () => ctx.revert();
@@ -91,7 +112,7 @@ const Founder: React.FC = () => {
             transition={{ duration: 0.5, ease: E }}
             className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-brand-secondary/80 block mb-5"
           >
-            08 · Meet the Founder
+            08 · Leadership
           </motion.span>
           <RevealText as="h2" className="block text-[9vw] md:text-[5vw] lg:text-[3.8vw] font-black uppercase tracking-[-0.03em] leading-[0.95] text-white">
             THE VISION BEHIND
@@ -294,6 +315,145 @@ const Founder: React.FC = () => {
               </motion.a>
             ))}
           </motion.div>
+        </div>
+
+        {/* ══ CTO — Abhishek Prasad ══ */}
+        <div className="mt-16 md:mt-24 pt-12 md:pt-16 border-t border-white/[0.06]">
+          <div className="mb-10 md:mb-14">
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: E }}
+              className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-brand-cyan/80 block mb-5"
+            >
+              Chief Technology Officer
+            </motion.span>
+            <RevealText as="h3" className="block text-[8vw] md:text-[4.2vw] lg:text-[3.2vw] font-black uppercase tracking-[-0.03em] leading-[0.95]" wordClassName="text-gradient-tech">
+              ABHISHEK PRASAD
+            </RevealText>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-10 lg:gap-16 items-start">
+
+            {/* Portrait first in DOM (mobile order), right column on desktop */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.9, ease: E }}
+              className="lg:sticky lg:top-28 lg:order-2"
+            >
+              <div className="founder-photo relative rounded-2xl overflow-hidden border border-white/[0.08] max-w-md lg:ml-auto">
+                <img
+                  src="/assets/abhishek-prasad.jpeg"
+                  alt="Abhishek Prasad — Chief Technology Officer of 4AM Global Media"
+                  loading="lazy"
+                  className="w-full h-auto"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <div className="text-xl md:text-2xl font-black uppercase tracking-[-0.01em] text-white">
+                    Abhishek Prasad
+                  </div>
+                  <div className="text-[10px] font-bold tracking-[0.25em] uppercase text-brand-cyan mt-1">
+                    CTO · 4AM Global Media
+                  </div>
+                </div>
+              </div>
+
+              <motion.div
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.2 } } }}
+                className="mt-5 flex flex-wrap gap-2 max-w-md lg:ml-auto lg:justify-end"
+              >
+                {CTO_ROLES.map((role) => (
+                  <motion.span
+                    key={role}
+                    variants={chipVariant}
+                    transition={{ duration: 0.5, ease: E }}
+                    className="rounded-full border border-white/[0.1] bg-white/[0.03] px-3.5 py-1.5 text-[10px] font-bold tracking-[0.12em] uppercase text-white/60"
+                  >
+                    {role}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Story */}
+            <div className="lg:order-1">
+              <motion.div
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: '-60px' }}
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12 } } }}
+                className="space-y-5"
+              >
+                {[
+                  'Abhishek Prasad is the Chief Technology Officer at 4AM Global Media, where he leads the company’s technology vision, product engineering, and digital innovation initiatives. With a strong foundation in software engineering and mobile application development, he plays a key role in delivering scalable, secure, and future-ready technology solutions.',
+                  'Specializing in Android application development, Java, and .NET technologies, Abhishek has extensive experience building high-performance mobile and enterprise applications. His expertise covers end-to-end software development, system architecture, API integration, database design, cloud-ready applications, and performance optimization.',
+                  'As the technology leader, he is responsible for defining the technical roadmap, implementing modern development practices, and ensuring the delivery of reliable, user-centric digital products. His focus on clean architecture, code quality, security, and emerging technologies enables businesses to accelerate digital transformation and achieve sustainable growth.',
+                  'Abhishek believes that technology should not only solve today’s challenges but also prepare organizations for tomorrow’s opportunities. His commitment to innovation, continuous learning, and engineering excellence drives the development of intelligent, scalable solutions that create lasting business value.',
+                ].map((para, i) => (
+                  <motion.p
+                    key={i}
+                    variants={{ hidden: { y: 24, opacity: 0 }, show: { y: 0, opacity: 1 } }}
+                    transition={{ duration: 0.8, ease: E }}
+                    className="text-white/60 text-base leading-relaxed font-medium"
+                  >
+                    {para}
+                  </motion.p>
+                ))}
+              </motion.div>
+
+              {/* Expertise chips */}
+              <div className="mt-8">
+                <motion.h4
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease: E }}
+                  className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/40 mb-4"
+                >
+                  Areas of Expertise
+                </motion.h4>
+                <motion.div
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: '-40px' }}
+                  variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+                  className="flex flex-wrap gap-2"
+                >
+                  {CTO_EXPERTISE.map((skill) => (
+                    <motion.span
+                      key={skill}
+                      variants={chipVariant}
+                      transition={{ duration: 0.45, ease: E }}
+                      className="rounded-full border border-brand-cyan/20 bg-brand-cyan/[0.05] px-3.5 py-1.5 text-[10px] font-bold tracking-[0.1em] uppercase text-brand-cyan/80"
+                    >
+                      {skill}
+                    </motion.span>
+                  ))}
+                </motion.div>
+              </div>
+
+              {/* Quote */}
+              <motion.blockquote
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.9, ease: E, delay: 0.1 }}
+                className="mt-8 border-l-2 border-brand-cyan/60 pl-5"
+              >
+                <p className="text-white/70 text-base md:text-lg leading-relaxed font-medium italic">
+                  "Innovation begins with strong engineering, and great engineering creates
+                  exceptional digital experiences."
+                </p>
+              </motion.blockquote>
+            </div>
+          </div>
         </div>
 
       </div>
