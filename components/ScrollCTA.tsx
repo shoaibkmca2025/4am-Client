@@ -8,20 +8,25 @@ gsap.registerPlugin(ScrollTrigger);
 
 const DISMISS_KEY = '4am-cta-dismissed';
 
+// iOS Safari private mode throws on sessionStorage writes — never let
+// a dismissed marketing popup crash the page.
+const safeGet = (k: string) => { try { return sessionStorage.getItem(k); } catch { return null; } };
+const safeSet = (k: string, v: string) => { try { sessionStorage.setItem(k, v); } catch { /* noop */ } };
+
 // Scroll-triggered conversion popup: slides in once the visitor has read
 // deep into the page (testimonials), dismissible, shows once per session.
 const ScrollCTA: React.FC = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (sessionStorage.getItem(DISMISS_KEY)) return;
+    if (safeGet(DISMISS_KEY)) return;
 
     const trigger = ScrollTrigger.create({
       trigger: '#testimonials',
       start: 'top 65%',
       once: true,
       onEnter: () => {
-        if (!sessionStorage.getItem(DISMISS_KEY)) setVisible(true);
+        if (!safeGet(DISMISS_KEY)) setVisible(true);
       },
     });
     return () => trigger.kill();
@@ -29,7 +34,7 @@ const ScrollCTA: React.FC = () => {
 
   const dismiss = () => {
     setVisible(false);
-    sessionStorage.setItem(DISMISS_KEY, '1');
+    safeSet(DISMISS_KEY, '1');
   };
 
   return (

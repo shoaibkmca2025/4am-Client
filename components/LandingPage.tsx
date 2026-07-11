@@ -102,6 +102,7 @@ const LandingPage: React.FC = () => {
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
+    preload.crossOrigin = 'anonymous';
     preload.href = SPLINE_SCENE;
     preload.setAttribute('fetchpriority', 'high');
     document.head.appendChild(preload);
