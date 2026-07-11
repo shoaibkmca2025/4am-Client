@@ -12,6 +12,7 @@ import StatsSection from './Stats';
 import ProcessSection from './ProcessSection';
 import CodeShowcase from './CodeShowcase';
 import GrowthChart from './GrowthChart';
+import Founder from './Founder';
 import Marquee from './Marquee';
 import ScrollCanvasBackground, { ACCENT_EVENT } from './ScrollCanvasBackground';
 import SectionNav from './SectionNav';
@@ -397,7 +398,12 @@ const LandingPage: React.FC = () => {
         <Testimonials />
       </div>
 
-      {/* 10 ── Contact */}
+      {/* 10 ── Founder */}
+      <div data-grade="#0A0703" data-orbs="orange:0.14,violet:0.06" data-accent="#FFC56A">
+        <Founder />
+      </div>
+
+      {/* 11 ── Contact */}
       <div data-grade="#0A0502" data-orbs="orange:0.16" data-accent="#FF6A3D">
         <Contact />
       </div>

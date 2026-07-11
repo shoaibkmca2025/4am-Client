@@ -121,13 +121,12 @@ const Navbar: React.FC = () => {
 
           {/* Logo */}
           <div ref={logoRef}>
-            <Link to="/" onClick={handleLogoClick} className="flex items-center gap-3 shrink-0 group">
-              <div className="w-9 h-9 rounded-lg overflow-hidden bg-white flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <img src="/assets/logo.jpeg" alt="4AM Global Media" className="w-full h-full object-cover" />
-              </div>
-              <span className="text-white text-sm font-black tracking-[0.15em] uppercase hidden md:block group-hover:opacity-70 transition-opacity duration-300">
-                4AM
-              </span>
+            <Link to="/" onClick={handleLogoClick} className="flex items-center shrink-0 group" aria-label="4AM Global Media — home">
+              <img
+                src="/assets/logo-4am.png"
+                alt="4AM Global Media"
+                className="h-10 md:h-12 w-auto group-hover:opacity-80 transition-opacity duration-300"
+              />
             </Link>
           </div>
 

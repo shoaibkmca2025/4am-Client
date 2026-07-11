@@ -158,11 +158,12 @@ const Footer: React.FC = () => {
           className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-14"
         >
           <motion.div variants={colVariant} transition={{ duration: 0.7, ease: E }} className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-lg overflow-hidden bg-white flex items-center justify-center">
-                <img src="/assets/logo.jpeg" alt="4AM Global Media" className="w-full h-full object-cover" />
-              </div>
-              <span className="text-xs font-black tracking-[0.2em] uppercase">4AM</span>
+            <div className="mb-4">
+              <img
+                src="/assets/logo-4am.png"
+                alt="4AM Global Media"
+                className="h-12 w-auto"
+              />
             </div>
             <p className="text-white/25 text-xs leading-relaxed font-medium max-w-xs">
               The growth engine that never sleeps. A creative network made for today and tomorrow.

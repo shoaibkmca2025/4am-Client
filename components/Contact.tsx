@@ -114,7 +114,7 @@ const Contact: React.FC = () => {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-brand-primary/80 block mb-5"
           >
-            08 · Get in Touch
+            09 · Get in Touch
           </motion.span>
           <RevealText
             as="h2"
