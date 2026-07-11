@@ -33,6 +33,10 @@ const CLIENTS = [
 
 type OrbKey = 'orange' | 'violet' | 'cyan';
 
+// Self-hosted (public/assets): rides our own CDN edge after deployment —
+// no third-party DNS/TLS handshake, cached alongside the site.
+const SPLINE_SCENE = '/assets/robot.splinecode';
+
 const LandingPage: React.FC = () => {
   const location = useLocation();
   const mainRef  = useRef<HTMLDivElement>(null);
@@ -77,8 +81,14 @@ const LandingPage: React.FC = () => {
     return () => window.removeEventListener('pointermove', forward);
   }, [show3D]);
 
-  // Spline runtime is heavy — mount it only once the browser is idle,
-  // on capable desktop devices (project-wide performance gate pattern).
+  // Robot loading strategy — everything in PARALLEL, starting NOW:
+  //   1. The scene file (multi-MB, third-party CDN — the slowest link)
+  //      starts downloading immediately via <link rel="preload">.
+  //   2. The Spline runtime chunk is warmed with a dynamic import so it
+  //      fetches + background-compiles alongside the scene.
+  //   3. The component mounts at the first idle moment (≤1.2s), by which
+  //      time both downloads are usually already done or in flight.
+  // Desktop-only: phones never pay a byte of this.
   useEffect(() => {
     const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
     if (
@@ -87,6 +97,18 @@ const LandingPage: React.FC = () => {
       (navigator.hardwareConcurrency || 8) < 4 ||
       nav.connection?.saveData
     ) return;
+
+    // 1) Scene file: fire the network request right away
+    const preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'fetch';
+    preload.href = SPLINE_SCENE;
+    preload.setAttribute('fetchpriority', 'high');
+    document.head.appendChild(preload);
+
+    // 2) Runtime chunk: fetch + compile in parallel (resolves the same
+    //    lazy chunk SplineScene imports, so mounting is instant later)
+    import('@splinetool/react-spline').catch(() => { /* retried on mount */ });
 
     const w = window as Window & {
       requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
@@ -108,10 +130,11 @@ const LandingPage: React.FC = () => {
       }
       setShow3D(true);
     };
+    // 3) Mount at the first breather — not after a long artificial wait
     if (w.requestIdleCallback) {
-      idleId = w.requestIdleCallback(enable, { timeout: 3500 });
+      idleId = w.requestIdleCallback(enable, { timeout: 1200 });
     } else {
-      timeoutId = window.setTimeout(enable, 2500);
+      timeoutId = window.setTimeout(enable, 800);
     }
     return () => {
       if (idleId !== undefined && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
@@ -304,7 +327,7 @@ const LandingPage: React.FC = () => {
             style={{ pointerEvents: 'auto' }}
           >
             <SplineScene
-              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              scene={SPLINE_SCENE}
               className="w-full h-full"
             />
           </div>
