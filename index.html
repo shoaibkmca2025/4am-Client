@@ -68,12 +68,87 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+
+    /* ── Instant splash ──────────────────────────────────────────────
+       Pure HTML/CSS branded loader painted BEFORE the JS bundle loads,
+       so phones never see a black void while React boots. It lives
+       inside #root, so React's first render clears it automatically. */
+    #boot-splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      background: #000;
+      z-index: 2147483647;
+      transition: opacity 0.4s ease;
+    }
+    #boot-splash.bs-hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #boot-splash .bs-mark {
+      font-family: "Inter", system-ui, sans-serif;
+      font-weight: 900;
+      font-size: 16vw;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: #fff;
+      text-transform: uppercase;
+      animation: bs-pulse 1.15s ease-in-out infinite;
+    }
+    #boot-splash .bs-bar {
+      width: 128px;
+      height: 2px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+    #boot-splash .bs-bar::after {
+      content: "";
+      display: block;
+      width: 40%;
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #FF6A3D, #FFC56A);
+      animation: bs-slide 1.05s ease-in-out infinite;
+    }
+    @media (min-width: 640px) {
+      #boot-splash .bs-mark { font-size: 6rem; }
+    }
+    @keyframes bs-pulse {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 1; }
+    }
+    @keyframes bs-slide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(320%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #boot-splash .bs-mark { animation: none; opacity: 1; }
+      #boot-splash .bs-bar::after { animation: none; }
+    }
   </style>
 </head>
 
 <body
   class="bg-black text-white selection:bg-white/20 selection:text-white font-sans leading-relaxed">
   <div id="root"></div>
+  <!-- Instant branded splash: overlays #root until React has painted its
+       first frame, then app.tsx fades + removes it (no black flash). -->
+  <div id="boot-splash" aria-hidden="true">
+    <div class="bs-mark">4AM</div>
+    <div class="bs-bar"></div>
+  </div>
+  <script>
+    // Failsafe: never let the splash trap the page if the bundle fails.
+    window.setTimeout(function () {
+      var s = document.getElementById('boot-splash');
+      if (s) { s.classList.add('bs-hide'); setTimeout(function () { s.remove(); }, 450); }
+    }, 9000);
+  </script>
   <script type="module" src="/index.tsx"></script>
 </body>
 

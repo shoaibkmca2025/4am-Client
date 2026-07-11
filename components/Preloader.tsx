@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 
 interface PreloaderProps {
@@ -9,15 +9,20 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
   const rootRef    = useRef<HTMLDivElement>(null);
   const barRef     = useRef<HTMLDivElement>(null);
   const textRef    = useRef<HTMLDivElement>(null);
-  const curtainRef = useRef<HTMLDivElement>(null);
   const pctRef     = useRef<HTMLSpanElement>(null);
+
+  // Remove the instant HTML splash the moment React has committed this
+  // (visually identical) preloader to the DOM — runs before paint, so
+  // the swap never exposes a black frame.
+  useLayoutEffect(() => {
+    document.getElementById('boot-splash')?.remove();
+  }, []);
 
   useEffect(() => {
     const root    = rootRef.current;
     const bar     = barRef.current;
     const text    = textRef.current;
-    const curtain = curtainRef.current;
-    if (!root || !bar || !text || !curtain) return;
+    if (!root || !bar || !text) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { onComplete(); return; }
@@ -45,7 +50,8 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
       },
     })
       .to(text, { autoAlpha: 0, y: -24, duration: 0.25, ease: 'power2.in' }, '-=0.2')
-      .to(curtain, { yPercent: -100, duration: 0.6, ease: 'expo.inOut' }, '-=0.15');
+      // Slide the whole branded panel up to wipe-reveal the hero.
+      .to(root, { yPercent: -100, duration: 0.6, ease: 'expo.inOut' }, '-=0.1');
 
     return () => {
       tl.kill();
@@ -78,9 +84,6 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
           Loading Experience
         </p>
       </div>
-
-      {/* Curtain slides up to reveal the page */}
-      <div ref={curtainRef} className="absolute inset-0 bg-black pointer-events-none" />
     </div>
   );
 };
