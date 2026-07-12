@@ -21,6 +21,21 @@ interface FormState {
   message: string;
 }
 
+// India detection without a geo API: the device timezone (and locale as a
+// fallback) is set by the OS — instant, offline, no privacy concerns.
+const isIndianVisitor = (): boolean => {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta') return true;
+  } catch { /* older browsers: fall through to locale */ }
+  return (navigator.languages ?? [navigator.language]).some((l) => /-IN$/i.test(l));
+};
+
+// Budget brackets per market — the picked label (currency included) is
+// submitted as-is, so inquiries always say which currency was quoted.
+const BUDGETS_USD = ['Under $500', '$500 – $1,500', '$1,500 – $5,000', '$5,000 – $15,000', '$15,000+'];
+const BUDGETS_INR = ['Under ₹40,000', '₹40,000 – ₹1,25,000', '₹1,25,000 – ₹4,00,000', '₹4,00,000 – ₹12,00,000', '₹12,00,000+'];
+
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const NAME_REGEX = /^[a-zA-Z\s'.-]{2,}$/;
 const PHONE_DIGITS_REGEX = /\d/g;
@@ -78,6 +93,7 @@ const Contact: React.FC = () => {
     interestedIn: '', budget: '', message: '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [budgetOptions] = useState<string[]>(() => (isIndianVisitor() ? BUDGETS_INR : BUDGETS_USD));
 
   const updateField = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -309,11 +325,9 @@ const Contact: React.FC = () => {
                       className={selectClasses(!!errors.budget)}
                       aria-required="true">
                       <option value="" className="bg-[#0b0b0b] text-white">Select a budget…</option>
-                      <option value="under-500" className="bg-[#0b0b0b] text-white">Under $500</option>
-                      <option value="500-1500" className="bg-[#0b0b0b] text-white">$500 – $1,500</option>
-                      <option value="1500-5000" className="bg-[#0b0b0b] text-white">$1,500 – $5,000</option>
-                      <option value="5000-15000" className="bg-[#0b0b0b] text-white">$5,000 – $15,000</option>
-                      <option value="15000-plus" className="bg-[#0b0b0b] text-white">$15,000+</option>
+                      {budgetOptions.map((label) => (
+                        <option key={label} value={label} className="bg-[#0b0b0b] text-white">{label}</option>
+                      ))}
                     </select>
                     <SelectChevron />
                     {errors.budget && <p className="text-red-400 text-[10px] mt-1">{errors.budget}</p>}
