@@ -44,9 +44,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Case-study images: resolve DNS early (3D scene is self-hosted) -->
   <link rel="dns-prefetch" href="https://picsum.photos">
+  <!-- Non-blocking font load: first paint (boot splash) never waits on
+       Google Fonts; text swaps from the system fallback when ready. -->
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet">
+  </noscript>
   <style>
     html {
       background-color: #000000;

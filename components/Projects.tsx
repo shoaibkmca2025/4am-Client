@@ -6,7 +6,11 @@ import RevealText from './RevealText';
 import type { Project } from '../types';
 
 const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const FEATURED = PROJECTS.slice(0, 10);
+// Phones carry fewer cards — half the images to fetch/decode mid-scroll.
+const FEATURED = PROJECTS.slice(
+  0,
+  typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches ? 6 : 10,
+);
 
 const ProjectCard: React.FC<{ project: Project; ghost?: boolean }> = ({ project, ghost }) => (
   <button
@@ -22,6 +26,7 @@ const ProjectCard: React.FC<{ project: Project; ghost?: boolean }> = ({ project,
         src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/900/675`}
         alt={project.title}
         loading="lazy"
+        decoding="async"
         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
@@ -88,9 +93,21 @@ const Projects: React.FC = () => {
       track.addEventListener('mouseenter', pause);
       track.addEventListener('mouseleave', resume);
 
+      // Sleep while the Work section is offscreen — no frame budget spent
+      // animating cards nobody can see.
+      let io: IntersectionObserver | undefined;
+      if ('IntersectionObserver' in window) {
+        io = new IntersectionObserver(
+          ([entry]) => { if (entry.isIntersecting) tween.play(); else tween.pause(); },
+          { rootMargin: '160px 0px' },
+        );
+        io.observe(track);
+      }
+
       cleanup = () => {
         track.removeEventListener('mouseenter', pause);
         track.removeEventListener('mouseleave', resume);
+        io?.disconnect();
         tween.kill();
       };
     });

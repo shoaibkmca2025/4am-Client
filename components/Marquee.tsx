@@ -49,8 +49,26 @@ const Marquee: React.FC<MarqueeProps> = ({
         },
       });
 
+      // Sleep while offscreen: an infinite transform tween otherwise burns
+      // a slice of every frame for a strip nobody can see.
+      let io: IntersectionObserver | undefined;
+      const root = rootRef.current;
+      if (root && 'IntersectionObserver' in window) {
+        io = new IntersectionObserver(
+          ([entry]) => { if (entry.isIntersecting) tween.play(); else tween.pause(); },
+          { rootMargin: '160px 0px' },
+        );
+        io.observe(root);
+      }
+
       // Velocity boost on scroll — stored outside GSAP context for proper cleanup
-      if (!scrollVelocity) return;
+      if (!scrollVelocity) {
+        (track as HTMLDivElement & { _cleanup?: () => void })._cleanup = () => {
+          tween.kill();
+          io?.disconnect();
+        };
+        return;
+      }
 
       let lastY   = window.scrollY;
       let pending: number | null = null;
@@ -76,6 +94,7 @@ const Marquee: React.FC<MarqueeProps> = ({
       // Store cleanup on the ref so we can access it in the return
       (track as HTMLDivElement & { _cleanup?: () => void })._cleanup = () => {
         tween.kill();
+        io?.disconnect();
         window.removeEventListener('scroll', onScroll);
         if (pending !== null) clearTimeout(pending);
       };
