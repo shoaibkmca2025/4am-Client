@@ -61,10 +61,14 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
 
   return (
     <div ref={rootRef} className="fixed inset-0 z-[10000] bg-black flex items-center justify-center">
-      <div ref={textRef} className="text-center select-none px-8">
-        <div className="text-[16vw] sm:text-[18vw] font-black text-white tracking-[-0.05em] uppercase leading-none">
-          4AM
-        </div>
+      <div ref={textRef} className="text-center select-none px-8 w-[80vw] max-w-[420px]">
+        <img
+          src="/assets/logo-4am-load.png"
+          alt="4AM Global Media"
+          width={253}
+          height={143}
+          className="mx-auto w-[56vw] max-w-[250px] h-auto"
+        />
         <div className="mt-6 flex items-center gap-4">
           <div className="h-px flex-1 bg-white/10 overflow-hidden relative">
             <div
