@@ -46,6 +46,9 @@ const LandingPage: React.FC = () => {
   const heroZoneRef  = useRef<HTMLDivElement>(null);
   const robotWrapRef = useRef<HTMLDivElement>(null);
   const robotRef     = useRef<HTMLDivElement>(null);
+  // 0 = robot in hero position, 1 = fully morphed into the page backdrop.
+  // The cursor forwarder reads this to soften tracking as the robot grows.
+  const morphProgress = useRef(0);
   const [show3D, setShow3D] = useState(false);
 
   // NOTE: no stop()/play() scroll-freezing here — Spline's play() replays
@@ -65,16 +68,27 @@ const LandingPage: React.FC = () => {
         canvas = robotWrapRef.current?.querySelector('canvas') ?? null;
       }
       if (!canvas || e.target === canvas) return;
+      // In backdrop mode the rig fills the screen — raw edge-of-screen
+      // coordinates made the whole body bend/contort toward the cursor.
+      // Damp the relayed position toward head level as the morph
+      // progresses: full tracking in the hero, a gentle head-turn only
+      // once the robot is the backdrop.
+      const p = morphProgress.current;
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight * 0.38;
+      const x = cx + (e.clientX - cx) * (1 - 0.65 * p);
+      let y = cy + (e.clientY - cy) * (1 - 0.75 * p);
+      if (p > 0.5) y = Math.min(y, window.innerHeight * 0.62);
       canvas.dispatchEvent(new PointerEvent('pointermove', {
-        clientX: e.clientX,
-        clientY: e.clientY,
+        clientX: x,
+        clientY: y,
         pointerId: e.pointerId,
         pointerType: 'mouse',
         bubbles: false,
       }));
       canvas.dispatchEvent(new MouseEvent('mousemove', {
-        clientX: e.clientX,
-        clientY: e.clientY,
+        clientX: x,
+        clientY: y,
         bubbles: false,
       }));
     };
@@ -175,6 +189,14 @@ const LandingPage: React.FC = () => {
           end: 'bottom 30%',
           scrub: 0.6,
           invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            morphProgress.current = self.progress;
+            // Past the hero, direct canvas hits would bypass the damped
+            // relay — route ALL cursor motion through the forwarder.
+            if (robotRef.current) {
+              robotRef.current.style.pointerEvents = self.progress > 0.05 ? 'none' : 'auto';
+            }
+          },
         },
       })
         .to(robot, { x: '0vw', y: '0vh', scale: 1.45, ease: 'none' }, 0)
