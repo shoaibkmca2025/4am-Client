@@ -72,6 +72,7 @@ const SelectChevron: React.FC = () => (
 const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [serverMessage, setServerMessage] = useState('');
   const [form, setForm] = useState<FormState>({
     fullName: '', workEmail: '', phone: '', company: '',
     interestedIn: '', budget: '', message: '',
@@ -89,13 +90,29 @@ const Contact: React.FC = () => {
     if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return; }
     setErrors({});
     setStatus('submitting');
+    setServerMessage('');
     try {
       const response = await fetch("https://formsubmit.co/ajax/Info@4amglobalmedia.com", {
         method: "POST",
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ ...form, _subject: `New Inquiry from ${form.fullName}`, _template: "table", email: form.workEmail }),
+        body: JSON.stringify({
+          ...form,
+          _subject: `New Inquiry from ${form.fullName}`,
+          _template: "table",
+          // AJAX submissions can't render a captcha challenge — must be off
+          _captcha: "false",
+          // Replying to the notification goes straight to the visitor
+          _replyto: form.workEmail,
+          email: form.workEmail,
+        }),
       });
-      setStatus(response.ok ? 'success' : 'error');
+      // FormSubmit answers HTTP 200 even for rejected submissions and
+      // signals the real outcome in the body — response.ok alone showed
+      // "Message Sent" while nothing was delivered.
+      const data = await response.json().catch(() => null);
+      const delivered = response.ok && data && String(data.success) === 'true';
+      if (!delivered && data?.message) setServerMessage(String(data.message));
+      setStatus(delivered ? 'success' : 'error');
     } catch {
       setStatus('error');
     }
@@ -227,7 +244,7 @@ const Contact: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-0" noValidate>
                 {status === 'error' && (
                   <div className="px-4 py-3 border-b border-red-500/20 text-red-400 text-xs font-medium mb-2">
-                    Something went wrong. Please try again.
+                    {serverMessage || 'Something went wrong. Please try again — or email us directly at Info@4amglobalmedia.com.'}
                   </div>
                 )}
 
@@ -273,15 +290,15 @@ const Contact: React.FC = () => {
                     <select id="cf-interest" value={form.interestedIn} onChange={(e) => updateField('interestedIn', e.currentTarget.value)}
                       className={selectClasses(!!errors.interestedIn)}
                       aria-required="true">
-                      <option value="" className="bg-black">Select a service…</option>
-                      <option value="web-development" className="bg-black">Web Development</option>
-                      <option value="social-media" className="bg-black">Social Media</option>
-                      <option value="seo" className="bg-black">SEO</option>
-                      <option value="paid-ads" className="bg-black">Paid Ads</option>
-                      <option value="branding" className="bg-black">Branding</option>
-                      <option value="content-creation" className="bg-black">Content Creation</option>
-                      <option value="marketplace-product-onboarding" className="bg-black">Marketplace Product Onboarding</option>
-                      <option value="other" className="bg-black">Other</option>
+                      <option value="" className="bg-[#0b0b0b] text-white">Select a service…</option>
+                      <option value="web-development" className="bg-[#0b0b0b] text-white">Web Development</option>
+                      <option value="social-media" className="bg-[#0b0b0b] text-white">Social Media</option>
+                      <option value="seo" className="bg-[#0b0b0b] text-white">SEO</option>
+                      <option value="paid-ads" className="bg-[#0b0b0b] text-white">Paid Ads</option>
+                      <option value="branding" className="bg-[#0b0b0b] text-white">Branding</option>
+                      <option value="content-creation" className="bg-[#0b0b0b] text-white">Content Creation</option>
+                      <option value="marketplace-product-onboarding" className="bg-[#0b0b0b] text-white">Marketplace Product Onboarding</option>
+                      <option value="other" className="bg-[#0b0b0b] text-white">Other</option>
                     </select>
                     <SelectChevron />
                     {errors.interestedIn && <p className="text-red-400 text-[10px] mt-1">{errors.interestedIn}</p>}
@@ -291,12 +308,12 @@ const Contact: React.FC = () => {
                     <select id="cf-budget" value={form.budget} onChange={(e) => updateField('budget', e.currentTarget.value)}
                       className={selectClasses(!!errors.budget)}
                       aria-required="true">
-                      <option value="" className="bg-black">Select a budget…</option>
-                      <option value="under-500" className="bg-black">Under $500</option>
-                      <option value="500-1500" className="bg-black">$500 – $1,500</option>
-                      <option value="1500-5000" className="bg-black">$1,500 – $5,000</option>
-                      <option value="5000-15000" className="bg-black">$5,000 – $15,000</option>
-                      <option value="15000-plus" className="bg-black">$15,000+</option>
+                      <option value="" className="bg-[#0b0b0b] text-white">Select a budget…</option>
+                      <option value="under-500" className="bg-[#0b0b0b] text-white">Under $500</option>
+                      <option value="500-1500" className="bg-[#0b0b0b] text-white">$500 – $1,500</option>
+                      <option value="1500-5000" className="bg-[#0b0b0b] text-white">$1,500 – $5,000</option>
+                      <option value="5000-15000" className="bg-[#0b0b0b] text-white">$5,000 – $15,000</option>
+                      <option value="15000-plus" className="bg-[#0b0b0b] text-white">$15,000+</option>
                     </select>
                     <SelectChevron />
                     {errors.budget && <p className="text-red-400 text-[10px] mt-1">{errors.budget}</p>}
