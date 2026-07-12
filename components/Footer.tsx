@@ -161,7 +161,7 @@ const Footer: React.FC = () => {
           <motion.div variants={colVariant} transition={{ duration: 0.7, ease: E }} className="col-span-2 md:col-span-1">
             <div className="mb-4">
               <img
-                src="/assets/logo-4am.png"
+                src="/assets/logo-4am-nav.png"
                 alt="4AM Global Media"
                 className="h-12 w-auto"
               />

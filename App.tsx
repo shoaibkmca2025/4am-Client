@@ -9,7 +9,11 @@ import MagneticCursor from './components/MagneticCursor';
 import Preloader from './components/Preloader';
 import ScrollProgress from './components/ScrollProgress';
 
-const LandingPage = lazy(() => import('./components/LandingPage'));
+// Fire the landing-chunk request the moment the main bundle evaluates —
+// in parallel with React's first render — instead of letting Suspense
+// discover it a round-trip later. Biggest win on phone connections.
+const landingChunk = import('./components/LandingPage');
+const LandingPage = lazy(() => landingChunk.catch(() => import('./components/LandingPage')));
 const ServicePage  = lazy(() => import('./components/ServicePage'));
 const AIChatbot    = lazy(() => import('./components/AIChatbot'));
 

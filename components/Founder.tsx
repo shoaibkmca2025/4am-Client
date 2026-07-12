@@ -134,7 +134,7 @@ const Founder: React.FC = () => {
           >
             <div className="founder-photo relative rounded-2xl overflow-hidden border border-white/[0.08] max-w-md">
               <img
-                src="/assets/vaibhav-pasi.png"
+                src="/assets/vaibhav-pasi.jpg"
                 alt="Vaibhav Pasi — Co-Founder of 4AM Global Media"
                 loading="lazy"
                 className="w-full h-auto"
@@ -346,7 +346,7 @@ const Founder: React.FC = () => {
             >
               <div className="founder-photo relative rounded-2xl overflow-hidden border border-white/[0.08] max-w-md lg:ml-auto">
                 <img
-                  src="/assets/abhishek-prasad.jpeg"
+                  src="/assets/abhishek-prasad-web.jpg"
                   alt="Abhishek Prasad — Chief Technology Officer of 4AM Global Media"
                   loading="lazy"
                   className="w-full h-auto"
