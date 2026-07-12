@@ -29,11 +29,23 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
 
     document.body.style.overflow = 'hidden';
 
+    // Hard failsafe: if ANYTHING stalls the GSAP ticker on this device
+    // (throttled tab, broken rAF, low-power mode), never leave the page
+    // scroll-locked — force-unlock and hand off after 2.6s regardless.
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      document.body.style.overflow = '';
+      onComplete();
+    };
+    const failsafe = window.setTimeout(finish, 2600);
+
     const obj = { val: 0 };
     const tl = gsap.timeline({
       onComplete: () => {
-        document.body.style.overflow = '';
-        onComplete();
+        window.clearTimeout(failsafe);
+        finish();
       },
     });
 
@@ -54,6 +66,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
       .to(root, { yPercent: -100, duration: 0.6, ease: 'expo.inOut' }, '-=0.1');
 
     return () => {
+      window.clearTimeout(failsafe);
       tl.kill();
       document.body.style.overflow = '';
     };

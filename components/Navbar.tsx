@@ -29,7 +29,12 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const onHome = location.pathname === '/';
-  const activeSection = useActiveSection(onHome ? NAV_IDS : []);
+  // The active-link underline only exists in the desktop nav (hidden lg) —
+  // skip the per-scroll layout reads entirely on phones.
+  const [trackSections] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches,
+  );
+  const activeSection = useActiveSection(onHome && trackSections ? NAV_IDS : []);
 
   // ── entrance on mount ──────────────────────────────────────────────
   useLayoutEffect(() => {

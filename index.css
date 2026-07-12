@@ -429,6 +429,14 @@ a[role="button"]:active {
   pointer-events: none;
   will-change: transform, opacity;
 }
+/* Phones: three 60vw composited layers blow the GPU budget on budget
+   Androids and drag touch scrolling — the ambience isn't worth it. */
+@media (max-width: 768px) {
+  .glow-orb {
+    display: none;
+    will-change: auto;
+  }
+}
 
 /* ─── Reduced motion overrides ───────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

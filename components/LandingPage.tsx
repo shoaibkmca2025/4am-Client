@@ -236,12 +236,17 @@ const LandingPage: React.FC = () => {
         const accent = zone.dataset.accent;
         const apply = () => {
           if (bgRef.current) {
-            gsap.to(bgRef.current, { backgroundColor: bg, duration: 1.1, ease: 'power2.out', overwrite: 'auto' });
+            // Phones: snap the tint in one repaint — a 1.1s background tween
+            // repaints the whole viewport every frame and stutters touch scroll.
+            if (isMobile) gsap.set(bgRef.current, { backgroundColor: bg });
+            else gsap.to(bgRef.current, { backgroundColor: bg, duration: 1.1, ease: 'power2.out', overwrite: 'auto' });
           }
-          (Object.keys(targets) as OrbKey[]).forEach((k) => {
-            const orb = orbRefs.current[k];
-            if (orb) gsap.to(orb, { opacity: targets[k], duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
-          });
+          if (!isMobile) {
+            (Object.keys(targets) as OrbKey[]).forEach((k) => {
+              const orb = orbRefs.current[k];
+              if (orb) gsap.to(orb, { opacity: targets[k], duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
+            });
+          }
           if (accent) window.dispatchEvent(new CustomEvent(ACCENT_EVENT, { detail: accent }));
         };
 
