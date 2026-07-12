@@ -58,14 +58,14 @@ const CTO_EXPERTISE = [
 ];
 
 const FEATURED_IN = [
-  { name: 'Smart Bharat News',      href: 'https://www.smartbharatnews.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
-  { name: 'National Outlook Daily', href: 'https://www.nationaloutlookdaily.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
-  { name: 'Bharat Biz Wire',        href: 'https://www.bharatbizwire.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
-  { name: 'Saga of India',          href: 'https://www.sagaofindia.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
-  { name: 'The Republic News',      href: 'https://www.therepublicnews.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
-  { name: 'Indian Economics News',  href: 'https://www.indianeconomicsnews.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
-  { name: 'Times News Express',     href: 'http://www.timesnewsexpress.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
-  { name: 'Dailyhunt',              href: 'https://m.dailyhunt.in/news/india/english/punjabbytes-epaper-dhb7faabc774324241990251ac4336f653/-newsid-dhb7faabc774324241990251ac4336f653_9e048369b0044e30a55581dd34c09d1f' },
+  { name: 'Dailyhunt',              icon: '/assets/press/dailyhunt.png',          href: 'https://m.dailyhunt.in/news/india/english/punjabbytes-epaper-dhb7faabc774324241990251ac4336f653/-newsid-dhb7faabc774324241990251ac4336f653_9e048369b0044e30a55581dd34c09d1f' },
+  { name: 'Smart Bharat News',      icon: '/assets/press/smart-bharat.png',       href: 'https://www.smartbharatnews.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'National Outlook Daily', icon: '/assets/press/national-outlook.png',   href: 'https://www.nationaloutlookdaily.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'Bharat Biz Wire',        icon: '/assets/press/bharat-biz-wire.png',    href: 'https://www.bharatbizwire.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'Saga of India',          icon: '/assets/press/saga-of-india.png',      href: 'https://www.sagaofindia.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'The Republic News',      icon: '/assets/press/republic-news.png',      href: 'https://www.therepublicnews.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'Indian Economics News',  icon: '/assets/press/indian-economics.png',   href: 'https://www.indianeconomicsnews.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'Times News Express',     icon: '/assets/press/times-news-express.png', href: 'http://www.timesnewsexpress.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
 ];
 
 const chipVariant = {
@@ -306,8 +306,16 @@ const Founder: React.FC = () => {
                 rel="noopener noreferrer"
                 variants={chipVariant}
                 transition={{ duration: 0.45, ease: E }}
-                className="group inline-flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.02] px-4 py-2 text-[11px] font-bold text-white/60 hover:border-brand-secondary/50 hover:text-brand-secondary transition-colors duration-300"
+                className="group inline-flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.02] pl-2.5 pr-4 py-1.5 text-[11px] font-bold text-white/60 hover:border-brand-secondary/50 hover:text-brand-secondary transition-colors duration-300"
               >
+                <img
+                  src={outlet.icon}
+                  alt=""
+                  width={18}
+                  height={18}
+                  loading="lazy"
+                  className="w-[18px] h-[18px] rounded-[4px] object-cover shrink-0"
+                />
                 {outlet.name}
                 <svg className="opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" width="10" height="10" viewBox="0 0 16 16" fill="none">
                   <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
