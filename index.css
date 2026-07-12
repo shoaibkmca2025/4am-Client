@@ -429,12 +429,21 @@ a[role="button"]:active {
   pointer-events: none;
   will-change: transform, opacity;
 }
-/* Phones: three 60vw composited layers blow the GPU budget on budget
-   Androids and drag touch scrolling — the ambience isn't worth it. */
-@media (max-width: 768px) {
+/* Touch-first devices (incl. phones in "desktop site" mode): three 60vw
+   composited layers blow the GPU budget and drag touch scrolling. */
+@media (max-width: 768px), (pointer: coarse) {
   .glow-orb {
     display: none;
     will-change: auto;
+  }
+}
+
+/* Scroll guarantee on touch devices: no canvas (Spline sets its own
+   touch-action:none for orbit controls) may ever swallow a vertical pan.
+   Nothing on this site needs touch-drag on a canvas. */
+@media (pointer: coarse) {
+  canvas {
+    touch-action: pan-y !important;
   }
 }
 

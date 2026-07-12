@@ -95,6 +95,11 @@ const LandingPage: React.FC = () => {
     if (
       window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
       window.matchMedia('(max-width: 1024px)').matches ||
+      // Touch devices in "desktop site" mode pass the width check, but
+      // Spline's canvas sets touch-action:none — a finger dragging on the
+      // robot (which backdrops every section) can't scroll the page. The
+      // robot is strictly for real fine-pointer desktops.
+      window.matchMedia('(pointer: coarse)').matches ||
       (navigator.hardwareConcurrency || 8) < 4 ||
       nav.connection?.saveData
     ) return;
@@ -213,7 +218,11 @@ const LandingPage: React.FC = () => {
     const root = mainRef.current;
     if (!root) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    // Touch-first devices count as mobile even at desktop widths
+    // ("desktop site" mode on Android) — same repaint constraints apply.
+    const isMobile =
+      window.matchMedia('(max-width: 768px)').matches ||
+      window.matchMedia('(pointer: coarse)').matches;
 
     if (reduced) {
       const orange = orbRefs.current.orange;

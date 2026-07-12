@@ -189,7 +189,7 @@ const Founder: React.FC = () => {
                   key={i}
                   variants={{ hidden: { y: 24, opacity: 0 }, show: { y: 0, opacity: 1 } }}
                   transition={{ duration: 0.8, ease: E }}
-                  className="text-white/60 text-base leading-relaxed font-medium"
+                  className="text-white/60 text-base leading-relaxed font-medium text-justify"
                 >
                   {para}
                 </motion.p>
@@ -409,7 +409,7 @@ const Founder: React.FC = () => {
                     key={i}
                     variants={{ hidden: { y: 24, opacity: 0 }, show: { y: 0, opacity: 1 } }}
                     transition={{ duration: 0.8, ease: E }}
-                    className="text-white/60 text-base leading-relaxed font-medium"
+                    className="text-white/60 text-base leading-relaxed font-medium text-justify"
                   >
                     {para}
                   </motion.p>
