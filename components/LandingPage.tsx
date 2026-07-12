@@ -76,9 +76,11 @@ const LandingPage: React.FC = () => {
       const p = morphProgress.current;
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight * 0.38;
-      const x = cx + (e.clientX - cx) * (1 - 0.65 * p);
-      let y = cy + (e.clientY - cy) * (1 - 0.75 * p);
-      if (p > 0.5) y = Math.min(y, window.innerHeight * 0.62);
+      // At full backdrop: horizontal sway only (±25%), vertical LOCKED at
+      // head level — with no vertical delta the rig can never bend over.
+      const x = cx + (e.clientX - cx) * (1 - 0.75 * p);
+      let y = cy + (e.clientY - cy) * (1 - p);
+      if (p > 0.5) y = Math.min(y, window.innerHeight * 0.55);
       canvas.dispatchEvent(new PointerEvent('pointermove', {
         clientX: x,
         clientY: y,
