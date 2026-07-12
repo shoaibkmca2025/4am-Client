@@ -26,10 +26,11 @@ const HOME_PAGE_TITLE = 'A Creative Network made for today & tomorrow | 4AM Glob
 const HOME_PAGE_DESCRIPTION =
   '4AM Global Media provides digital marketing and software development services including web and mobile app solutions to help businesses grow online.';
 
-// Client / partner names shown in the scrolling strip
+// Marketplace platforms we onboard brands onto — shown in the scrolling strip
 const CLIENTS = [
-  'Nike', 'Spotify', 'Shopify', 'Airbnb', 'Notion', 'Stripe',
-  'Linear', 'Figma', 'Vercel', 'Framer', 'Arc', 'Loom',
+  'Amazon', 'Flipkart', 'Blinkit', 'Zepto', 'Swiggy Instamart',
+  'BigBasket', 'JioMart', 'Meesho', 'Myntra', 'Ajio',
+  'Nykaa', 'FirstCry', 'ONDC', 'Shopify', 'WooCommerce',
 ];
 
 type OrbKey = 'orange' | 'violet' | 'cyan';
@@ -388,8 +389,8 @@ const LandingPage: React.FC = () => {
         className="border-y border-white/[0.06] py-7 md:py-9"
       >
         <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 mb-4">
-          <p className="text-[9px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-white/40 text-center">
-            Trusted by ambitious brands worldwide
+          <p className="text-[9px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-white/60 text-center">
+            We launch brands on India's leading platforms
           </p>
         </div>
         <Marquee
@@ -397,7 +398,7 @@ const LandingPage: React.FC = () => {
           speed={55}
           separator="·"
           scrollVelocity={false}
-          className="text-[4.5vw] md:text-[1.8vw] font-black uppercase tracking-[0.08em] text-white/30"
+          className="text-[4.5vw] md:text-[1.8vw] font-black uppercase tracking-[0.08em] text-white/70"
         />
       </motion.div>
 
