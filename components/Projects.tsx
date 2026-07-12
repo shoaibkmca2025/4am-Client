@@ -1,52 +1,105 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROJECTS } from '../constants';
 import RevealText from './RevealText';
-
-gsap.registerPlugin(ScrollTrigger);
+import type { Project } from '../types';
 
 const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const FEATURED = PROJECTS.slice(0, 6);
+const FEATURED = PROJECTS.slice(0, 10);
 
-const cardVariant = {
-  hidden: { y: 40, opacity: 0 },
-  show:   { y: 0,  opacity: 1 },
-};
+const ProjectCard: React.FC<{ project: Project; ghost?: boolean }> = ({ project, ghost }) => (
+  <button
+    type="button"
+    onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
+    className="project-card group block text-left cursor-pointer shrink-0 w-[78vw] sm:w-[340px] md:w-[380px] mr-5 md:mr-6"
+    aria-label={`Open case study: ${project.title}`}
+    aria-hidden={ghost || undefined}
+    tabIndex={ghost ? -1 : undefined}
+  >
+    <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-white/[0.04] mb-4">
+      <img
+        src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/900/675`}
+        alt={project.title}
+        loading="lazy"
+        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+      <span className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-3 py-1.5 rounded-full">
+        {project.industry ?? project.category}
+      </span>
+      <span className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-white flex items-center justify-center text-black opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+          <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </span>
+    </div>
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <h3 className="text-base font-bold text-white uppercase tracking-[0.04em] group-hover:text-brand-secondary transition-colors duration-300">
+          {project.title}
+        </h3>
+        <p className="text-white/55 text-xs mt-1.5 leading-relaxed max-w-[36ch]">{project.description}</p>
+      </div>
+      {project.result && (
+        <span className="shrink-0 text-[10px] font-bold tracking-[0.15em] uppercase text-brand-secondary/90 border border-brand-secondary/25 rounded-full px-3 py-1.5 whitespace-nowrap">
+          {project.result}
+        </span>
+      )}
+    </div>
+  </button>
+);
 
 const Projects: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const trackRef   = useRef<HTMLDivElement>(null);
+  // Reduced motion: no auto-flow — the same strip becomes a manual
+  // horizontal scroller instead.
+  const [reduced] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
 
+  // ── Infinite right-to-left project flow ────────────────────────────
+  // The track holds the card list twice; a wrapped x-tween glides it
+  // leftward forever. Hovering pauses the flow so cards are easy to click.
   useLayoutEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (reduced) return;
+    const track = trackRef.current;
+    if (!track) return;
 
-    const ctx = gsap.context(() => {
-      // Cinematic zoom-out reveal on each project image
-      gsap.utils.toArray<HTMLElement>('.project-card img', section).forEach((img) => {
-        gsap.fromTo(img, { scale: 1.18 }, {
-          scale: 1, duration: 1.3, ease: 'power3.out',
-          scrollTrigger: { trigger: img, start: 'top 88%', once: true },
-        });
+    let cleanup: (() => void) | undefined;
+    // Wait a frame so scrollWidth is measured after images/layout settle
+    const raf = requestAnimationFrame(() => {
+      const half = track.scrollWidth / 2;
+      if (half <= 0) return;
+
+      const tween = gsap.to(track, {
+        x: -half,
+        duration: 60,
+        ease: 'none',
+        repeat: -1,
+        modifiers: {
+          x: gsap.utils.unitize((raw: number) => -((-raw % half + half) % half)),
+        },
       });
 
-      // Subtle depth: middle column drifts on desktop 3-col layout
-      const mm = gsap.matchMedia();
-      mm.add('(min-width: 1280px)', () => {
-        gsap.utils.toArray<HTMLElement>('.project-card', section).forEach((card, i) => {
-          if (i % 3 !== 1) return;
-          gsap.fromTo(card, { y: 28 }, {
-            y: -28, ease: 'none',
-            scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: 0.8 },
-          });
-        });
-      });
-    }, section);
+      const pause  = () => { gsap.to(tween, { timeScale: 0, duration: 0.5, overwrite: true }); };
+      const resume = () => { gsap.to(tween, { timeScale: 1, duration: 0.5, overwrite: true }); };
+      track.addEventListener('mouseenter', pause);
+      track.addEventListener('mouseleave', resume);
 
-    return () => ctx.revert();
-  }, []);
+      cleanup = () => {
+        track.removeEventListener('mouseenter', pause);
+        track.removeEventListener('mouseleave', resume);
+        tween.kill();
+      };
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      cleanup?.();
+    };
+  }, [reduced]);
 
   return (
     <section id="work" ref={sectionRef} className="relative py-16 md:py-24 bg-transparent overflow-hidden">
@@ -81,63 +134,33 @@ const Projects: React.FC = () => {
             Real clients, real results — every project ships with a number we're proud of.
           </motion.p>
         </div>
-
-        {/* ── Project grid ── */}
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
-          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6"
-        >
-          {FEATURED.map((project) => (
-            <motion.div
-              key={project.id}
-              variants={cardVariant}
-              transition={{ duration: 0.8, ease: E }}
-            >
-              <button
-                type="button"
-                onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
-                className="project-card group block w-full text-left cursor-pointer"
-                aria-label={`Open case study: ${project.title}`}
-              >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-white/[0.04] mb-4">
-                  <img
-                    src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/900/675`}
-                    alt={project.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                  <span className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-3 py-1.5 rounded-full">
-                    {project.industry ?? project.category}
-                  </span>
-                  <span className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-white flex items-center justify-center text-black opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                      <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </span>
-                </div>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-base font-bold text-white uppercase tracking-[0.04em] group-hover:text-brand-secondary transition-colors duration-300">
-                      {project.title}
-                    </h3>
-                    <p className="text-white/55 text-xs mt-1.5 leading-relaxed max-w-[36ch]">{project.description}</p>
-                  </div>
-                  {project.result && (
-                    <span className="shrink-0 text-[10px] font-bold tracking-[0.15em] uppercase text-brand-secondary/90 border border-brand-secondary/25 rounded-full px-3 py-1.5 whitespace-nowrap">
-                      {project.result}
-                    </span>
-                  )}
-                </div>
-              </button>
-            </motion.div>
-          ))}
-        </motion.div>
-
       </div>
+
+      {/* ── Flowing project strip (right → left, pauses on hover) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 36 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 0.9, ease: E }}
+        className="relative z-10"
+      >
+        {/* Edge fades so cards dissolve at the viewport borders */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-28 bg-gradient-to-r from-black/70 to-transparent z-10" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-28 bg-gradient-to-l from-black/70 to-transparent z-10" aria-hidden="true" />
+
+        <div className={reduced ? 'overflow-x-auto no-scrollbar' : 'overflow-hidden'}>
+          <div ref={trackRef} className="flex will-change-transform">
+            {FEATURED.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+            {/* Second copy makes the loop seamless */}
+            {FEATURED.map((project) => (
+              <ProjectCard key={`ghost-${project.id}`} project={project} ghost />
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
     </section>
   );
 };
