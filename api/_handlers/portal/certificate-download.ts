@@ -1,8 +1,8 @@
-import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
-import { allowMethods, json } from '../../../lib/server/http';
-import { requireUser } from '../../../lib/server/auth';
-import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
-import { writeAudit } from '../../../lib/server/audit';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http.js';
+import { allowMethods, json } from '../../../lib/server/http.js';
+import { requireUser } from '../../../lib/server/auth.js';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin.js';
+import { writeAudit } from '../../../lib/server/audit.js';
 
 const SIGNED_URL_TTL_SEC = 300; // 5 minutes — download links expire fast
 

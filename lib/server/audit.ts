@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './supabaseAdmin';
+import { supabaseAdmin } from './supabaseAdmin.js';
 
 /**
  * Append-only record of sensitive actions (rules.md §3): certificate

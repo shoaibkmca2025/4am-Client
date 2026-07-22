@@ -1,5 +1,5 @@
 import { createHash, createHmac, randomInt, timingSafeEqual } from 'node:crypto';
-import { env } from './env';
+import { env } from './env.js';
 
 // Unambiguous alphabet (no 0/O, 1/I/L) — keys get read aloud and retyped.
 const ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';

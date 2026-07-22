@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { env } from './env';
+import { env } from './env.js';
 
 // Service-role client: bypasses RLS. Server-only (see env.ts warning).
 let cached: SupabaseClient | null = null;

@@ -1,7 +1,7 @@
-import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
-import { allowMethods, json } from '../../../lib/server/http';
-import { requireUser } from '../../../lib/server/auth';
-import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http.js';
+import { allowMethods, json } from '../../../lib/server/http.js';
+import { requireUser } from '../../../lib/server/auth.js';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin.js';
 
 // GET /api/portal/certificates — the signed-in student's certificates.
 export default async function handler(req: ApiRequest, res: ApiResponse): Promise<void> {

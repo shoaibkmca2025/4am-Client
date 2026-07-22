@@ -1,6 +1,6 @@
-import type { ApiRequest, ApiResponse } from './http';
-import { json } from './http';
-import { supabaseAdmin } from './supabaseAdmin';
+import type { ApiRequest, ApiResponse } from './http.js';
+import { json } from './http.js';
+import { supabaseAdmin } from './supabaseAdmin.js';
 
 export type Role = 'admin' | 'staff' | 'student';
 

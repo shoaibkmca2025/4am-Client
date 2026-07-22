@@ -1,5 +1,5 @@
-import type { ApiRequest, ApiResponse } from '../lib/server/http';
-import { json } from '../lib/server/http';
+import type { ApiRequest, ApiResponse } from '../lib/server/http.js';
+import { json } from '../lib/server/http.js';
 
 // ── Single entry point for every /api/* request ──────────────────────
 // The Hobby plan allows 12 Serverless Functions; we have 23 endpoints, so
@@ -24,28 +24,28 @@ type Loader = () => Promise<{ default: Handler }>;
 
 /** Exact paths (after the leading /api/). */
 const STATIC_ROUTES: Record<string, Loader> = {
-  'health': () => import('./_handlers/health'),
-  'leads': () => import('./_handlers/leads'),
-  'newsletter': () => import('./_handlers/newsletter'),
-  'verify': () => import('./_handlers/verify'),
-  'verify-page': () => import('./_handlers/verify-page'),
-  'blog-page': () => import('./_handlers/blog-page'),
-  'careers-page': () => import('./_handlers/careers-page'),
-  'content/testimonials': () => import('./_handlers/content/testimonials'),
-  'careers/apply': () => import('./_handlers/careers/apply'),
-  'portal/claim': () => import('./_handlers/portal/claim'),
-  'portal/certificates': () => import('./_handlers/portal/certificates'),
-  'admin/courses': () => import('./_handlers/admin/courses'),
-  'admin/enrollments': () => import('./_handlers/admin/enrollments'),
-  'admin/enrollments-bulk': () => import('./_handlers/admin/enrollments-bulk'),
-  'admin/certificates': () => import('./_handlers/admin/certificates'),
-  'admin/leads': () => import('./_handlers/admin/leads'),
-  'admin/testimonials': () => import('./_handlers/admin/testimonials'),
-  'admin/metrics': () => import('./_handlers/admin/metrics'),
-  'admin/posts': () => import('./_handlers/admin/posts'),
-  'admin/audit': () => import('./_handlers/admin/audit'),
-  'admin/openings': () => import('./_handlers/admin/openings'),
-  'admin/applications': () => import('./_handlers/admin/applications'),
+  'health': () => import('./_handlers/health.js'),
+  'leads': () => import('./_handlers/leads.js'),
+  'newsletter': () => import('./_handlers/newsletter.js'),
+  'verify': () => import('./_handlers/verify.js'),
+  'verify-page': () => import('./_handlers/verify-page.js'),
+  'blog-page': () => import('./_handlers/blog-page.js'),
+  'careers-page': () => import('./_handlers/careers-page.js'),
+  'content/testimonials': () => import('./_handlers/content/testimonials.js'),
+  'careers/apply': () => import('./_handlers/careers/apply.js'),
+  'portal/claim': () => import('./_handlers/portal/claim.js'),
+  'portal/certificates': () => import('./_handlers/portal/certificates.js'),
+  'admin/courses': () => import('./_handlers/admin/courses.js'),
+  'admin/enrollments': () => import('./_handlers/admin/enrollments.js'),
+  'admin/enrollments-bulk': () => import('./_handlers/admin/enrollments-bulk.js'),
+  'admin/certificates': () => import('./_handlers/admin/certificates.js'),
+  'admin/leads': () => import('./_handlers/admin/leads.js'),
+  'admin/testimonials': () => import('./_handlers/admin/testimonials.js'),
+  'admin/metrics': () => import('./_handlers/admin/metrics.js'),
+  'admin/posts': () => import('./_handlers/admin/posts.js'),
+  'admin/audit': () => import('./_handlers/admin/audit.js'),
+  'admin/openings': () => import('./_handlers/admin/openings.js'),
+  'admin/applications': () => import('./_handlers/admin/applications.js'),
 };
 
 /** Paths with parameters; captured groups are merged into req.query. */
@@ -53,7 +53,7 @@ const DYNAMIC_ROUTES: Array<{ pattern: RegExp; params: string[]; loader: Loader 
   {
     pattern: /^portal\/certificates\/([^/]+)\/download$/,
     params: ['id'],
-    loader: () => import('./_handlers/portal/certificate-download'),
+    loader: () => import('./_handlers/portal/certificate-download.js'),
   },
 ];
 

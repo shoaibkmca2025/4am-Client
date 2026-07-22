@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
-import { allowMethods, json } from '../../../lib/server/http';
-import { requireStaff } from '../../../lib/server/auth';
-import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
-import { writeAudit } from '../../../lib/server/audit';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http.js';
+import { allowMethods, json } from '../../../lib/server/http.js';
+import { requireStaff } from '../../../lib/server/auth.js';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin.js';
+import { writeAudit } from '../../../lib/server/audit.js';
 
 const createSchema = z.object({
   client_name: z.string().trim().min(2).max(120),

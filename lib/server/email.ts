@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { env } from './env';
+import { env } from './env.js';
 
 // Transactional email. Degrades gracefully: if RESEND_API_KEY is absent the
 // send is skipped and reported as such — a lead is NEVER lost because email

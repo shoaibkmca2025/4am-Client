@@ -1,9 +1,9 @@
-import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
-import { allowMethods, json } from '../../../lib/server/http';
-import { requireStaff } from '../../../lib/server/auth';
-import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
-import { courseSchema } from '../../../lib/server/validation';
-import { writeAudit } from '../../../lib/server/audit';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http.js';
+import { allowMethods, json } from '../../../lib/server/http.js';
+import { requireStaff } from '../../../lib/server/auth.js';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin.js';
+import { courseSchema } from '../../../lib/server/validation.js';
+import { writeAudit } from '../../../lib/server/audit.js';
 
 // GET  /api/admin/courses  → list courses (newest first)
 // POST /api/admin/courses  → create a course

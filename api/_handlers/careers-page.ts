@@ -1,9 +1,9 @@
-import type { ApiRequest, ApiResponse } from '../../lib/server/http';
-import { allowMethods, clientIp } from '../../lib/server/http';
-import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
-import { rateLimit } from '../../lib/server/ratelimit';
-import { env } from '../../lib/server/env';
-import { brandPage, esc, renderMarkdown } from '../../lib/server/brandPage';
+import type { ApiRequest, ApiResponse } from '../../lib/server/http.js';
+import { allowMethods, clientIp } from '../../lib/server/http.js';
+import { supabaseAdmin } from '../../lib/server/supabaseAdmin.js';
+import { rateLimit } from '../../lib/server/ratelimit.js';
+import { env } from '../../lib/server/env.js';
+import { brandPage, esc, renderMarkdown } from '../../lib/server/brandPage.js';
 
 // GET /careers and /careers/:slug (rewritten here by vercel.json)
 // Server-rendered: roles are indexable, and the apply form works without the
