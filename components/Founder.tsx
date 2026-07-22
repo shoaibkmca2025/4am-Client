@@ -35,6 +35,25 @@ const EXPERTISE = [
   'Digital Transformation Strategy',
 ];
 
+const SHOAIB_ROLES = [
+  'Co-Founder',
+  'Software Developer',
+  'Technology Strategist',
+  'AI Solutions',
+];
+
+const SHOAIB_EXPERTISE = [
+  'Full-Stack Development',
+  'Python',
+  'MERN Stack',
+  'React Native',
+  'AI-Powered Solutions',
+  'Cloud Technologies',
+  'Modern Web Technologies',
+  'Scalable Product Architecture',
+  'Technology Strategy',
+];
+
 const CTO_ROLES = [
   'Chief Technology Officer',
   'Android Development',
@@ -323,6 +342,130 @@ const Founder: React.FC = () => {
               </motion.a>
             ))}
           </motion.div>
+        </div>
+
+        {/* ══ Co-Founder — Shoaib Khatik ══ */}
+        <div className="mt-16 md:mt-24 pt-12 md:pt-16 border-t border-white/[0.06]">
+          <div className="mb-10 md:mb-14">
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: E }}
+              className="text-[10px] md:text-[11px] font-bold tracking-[0.35em] uppercase text-brand-accent/80 block mb-5"
+            >
+              Co-Founder
+            </motion.span>
+            <RevealText as="h3" className="block text-[8vw] md:text-[4.2vw] lg:text-[3.2vw] font-black uppercase tracking-[-0.03em] leading-[0.95]" wordClassName="text-gradient-tech">
+              SHOAIB KHATIK
+            </RevealText>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16 items-start">
+
+            {/* Portrait */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.9, ease: E }}
+              className="lg:sticky lg:top-28"
+            >
+              <div className="founder-photo relative rounded-2xl overflow-hidden border border-white/[0.08] max-w-md">
+                <img
+                  src="/assets/shoaib-khatik-web.jpg"
+                  alt="Shoaib Khatik — Co-Founder of 4AM Global Media"
+                  loading="lazy"
+                  className="w-full h-auto"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <div className="text-xl md:text-2xl font-black uppercase tracking-[-0.01em] text-white">
+                    Shoaib Khatik
+                  </div>
+                  <div className="text-[10px] font-bold tracking-[0.25em] uppercase text-brand-accent mt-1">
+                    Co-Founder · 4AM Global Media
+                  </div>
+                </div>
+              </div>
+
+              <motion.div
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.2 } } }}
+                className="mt-5 flex flex-wrap gap-2 max-w-md"
+              >
+                {SHOAIB_ROLES.map((role) => (
+                  <motion.span
+                    key={role}
+                    variants={chipVariant}
+                    transition={{ duration: 0.5, ease: E }}
+                    className="rounded-full border border-white/[0.1] bg-white/[0.03] px-3.5 py-1.5 text-[10px] font-bold tracking-[0.12em] uppercase text-white/60"
+                  >
+                    {role}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Story */}
+            <div>
+              <motion.div
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: '-60px' }}
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12 } } }}
+                className="space-y-5"
+              >
+                {[
+                  'Shoaib Khatik is the Co-Founder of 4AM Global Media, where he leads the company’s technology vision and digital innovation initiatives. With a strong background in full-stack software development, AI-powered solutions, and modern web technologies, he is dedicated to building scalable, user-focused digital products that help businesses grow.',
+                  'He specializes in Python, the MERN Stack, React Native, and cloud-based technologies, combining technical expertise with strategic thinking to deliver high-quality digital experiences. His passion for innovation and continuous learning enables 4AM Global Media to stay ahead in an ever-evolving digital landscape.',
+                  'As Co-Founder, Shoaib is committed to transforming ideas into impactful digital solutions while fostering creativity, collaboration, and excellence across every project.',
+                ].map((para, i) => (
+                  <motion.p
+                    key={i}
+                    variants={{ hidden: { y: 24, opacity: 0 }, show: { y: 0, opacity: 1 } }}
+                    transition={{ duration: 0.8, ease: E }}
+                    className="text-white/60 text-base leading-relaxed font-medium"
+                  >
+                    {para}
+                  </motion.p>
+                ))}
+              </motion.div>
+
+              {/* Expertise chips */}
+              <div className="mt-8">
+                <motion.h4
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease: E }}
+                  className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/40 mb-4"
+                >
+                  Core Expertise
+                </motion.h4>
+                <motion.div
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: '-40px' }}
+                  variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
+                  className="flex flex-wrap gap-2"
+                >
+                  {SHOAIB_EXPERTISE.map((skill) => (
+                    <motion.span
+                      key={skill}
+                      variants={chipVariant}
+                      transition={{ duration: 0.45, ease: E }}
+                      className="rounded-full border border-brand-accent/20 bg-brand-accent/[0.05] px-3.5 py-1.5 text-[10px] font-bold tracking-[0.1em] uppercase text-brand-accent/90"
+                    >
+                      {skill}
+                    </motion.span>
+                  ))}
+                </motion.div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* ══ CTO — Abhishek Prasad ══ */}
