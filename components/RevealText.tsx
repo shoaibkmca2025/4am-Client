@@ -32,11 +32,16 @@ const RevealText: React.FC<RevealTextProps> = ({
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Touch/small screens also skip the reveal — the per-character GSAP
+    // splits were a measurable scroll-jank source on phones. Headings just
+    // appear. Desktop (fine pointer) is unchanged.
+    const skip = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.matchMedia('(max-width: 1024px)').matches;
 
     const inners = root.querySelectorAll<HTMLElement>('.reveal-word-inner');
 
-    if (prefersReducedMotion) {
+    if (skip) {
       gsap.set(inners, { yPercent: 0, autoAlpha: 1 });
       return;
     }

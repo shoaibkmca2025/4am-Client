@@ -12,7 +12,11 @@ const DrawRule: React.FC<{ className?: string }> = ({ className = '' }) => {
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Touch/small screens: no scrubbed draw — one fewer ScrollTrigger per
+    // section on phones (there are many). The rule just shows.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        window.matchMedia('(pointer: coarse)').matches ||
+        window.matchMedia('(max-width: 1024px)').matches) {
       gsap.set(el, { scaleX: 1 });
       return;
     }

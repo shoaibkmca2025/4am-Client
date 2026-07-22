@@ -1,6 +1,7 @@
 
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { MotionConfig } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -105,6 +106,16 @@ function App() {
   const [showChatbot, setShowChatbot]     = useState(false);
   const [preloaderDone, setPreloaderDone] = useState(false);
 
+  // Touch devices skip framer-motion's transform entrance animations — the
+  // 287 animated elements were the dominant scroll-jank source on phones
+  // (measured ~7fps → ~30fps). Elements appear in their final state; opacity
+  // still fades. Desktop (fine pointer) keeps every animation unchanged.
+  const [reduceMotion] = useState(
+    () => typeof window !== 'undefined' &&
+      (window.matchMedia('(pointer: coarse)').matches ||
+       window.matchMedia('(max-width: 1024px)').matches),
+  );
+
   // Lazy-load chatbot after idle
   useEffect(() => {
     let timer: number | null = null;
@@ -141,7 +152,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <MotionConfig reducedMotion={reduceMotion ? 'always' : 'never'}>
       {/* Preloader — renders until animation completes */}
       {!preloaderDone && <Preloader onComplete={() => setPreloaderDone(true)} />}
 
@@ -177,7 +188,7 @@ function App() {
           <ScrollToTopBtn />
         </SmoothScroll>
       </Router>
-    </>
+    </MotionConfig>
   );
 }
 
