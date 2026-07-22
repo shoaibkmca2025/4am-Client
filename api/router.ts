@@ -2,12 +2,16 @@ import type { ApiRequest, ApiResponse } from '../lib/server/http';
 import { json } from '../lib/server/http';
 
 // ── Single entry point for every /api/* request ──────────────────────
-// Vercel turns each file under api/ into its own Serverless Function, and
-// the Hobby plan allows 12. Twenty-three endpoints therefore failed to
-// deploy. Everything now lives in api/_handlers/ (Vercel ignores paths
-// beginning with an underscore) and this catch-all dispatches to them, so
-// the whole backend ships as ONE function — no limit, one warm instance,
-// shared dependency bundle.
+// The Hobby plan allows 12 Serverless Functions; we have 23 endpoints, so
+// the whole backend ships as ONE plainly-named function. All handlers live
+// in api/_handlers/ (Vercel ignores paths beginning with an underscore).
+//
+// Routing is done with EXPLICIT rewrites in vercel.json — every /api/* path
+// (and the SSR pages /verify, /blog, /careers) is rewritten to
+// `/api/router?__path=<the-route>`. We do NOT use a `[...catch-all].ts`
+// filename: that spread syntax is a Next.js feature and does NOT reliably
+// register as a plain Vercel Function, which left the whole API returning
+// the SPA's HTML (404-as-index) in production.
 //
 // Handlers are imported statically so the bundler definitely includes them.
 
@@ -72,13 +76,23 @@ const DYNAMIC_ROUTES: Array<{ pattern: RegExp; params: string[]; handler: Handle
   },
 ];
 
+/** Resolve the logical route from (in priority) the rewrite's __path, a
+ *  legacy `route` param, or the raw URL — so it works behind vercel.json
+ *  rewrites AND when called directly (local emulator, /api/router?...). */
+const resolveRoute = (req: ApiRequest): string => {
+  const pick = (v: unknown): string =>
+    Array.isArray(v) ? v.join('/') : typeof v === 'string' ? v : '';
+  const fromQuery = pick(req.query.__path) || pick(req.query.route);
+  const fromUrl = (req.url ?? '')
+    .split('?')[0]
+    .replace(/^\/api\/(router|index)\b/, '')
+    .replace(/^\/api\/?/, '')
+    .replace(/^\/+|\/+$/g, '');
+  return (fromQuery || fromUrl).replace(/^\/+|\/+$/g, '');
+};
+
 export default async function handler(req: ApiRequest, res: ApiResponse): Promise<void> {
-  // Vercel supplies the catch-all segments in req.query.route; fall back to
-  // parsing the URL so local emulation and edge cases behave identically.
-  const raw = req.query.route;
-  const fromQuery = Array.isArray(raw) ? raw.join('/') : typeof raw === 'string' ? raw : '';
-  const fromUrl = (req.url ?? '').split('?')[0].replace(/^\/api\/?/, '').replace(/\/$/, '');
-  const route = (fromQuery || fromUrl).replace(/^\/+|\/+$/g, '');
+  const route = resolveRoute(req);
 
   const exact = STATIC_ROUTES[route];
   if (exact) return exact(req, res);
@@ -90,5 +104,5 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
     return h(req, res);
   }
 
-  return json(res, 404, { error: 'Not found' });
+  return json(res, 404, { error: `Not found: ${route || '(empty)'}` });
 }

@@ -24,35 +24,38 @@ const MIME: Record<string, string> = {
   '.woff2': 'font/woff2', '.splinecode': 'application/octet-stream',
 };
 
-// Production ships ONE serverless function (api/[...route].ts) that
-// dispatches internally — see the note in that file. The emulator delegates
-// to the very same router, so local and production routing are identical by
-// construction.
-const apiRouter = (await import(new URL('api/[...route].ts', ROOT).href)).default;
+// Production ships ONE serverless function (api/router.ts) that dispatches
+// internally. The emulator delegates to the very same router, parsing the
+// SAME vercel.json rewrites, so local and production routing are identical
+// by construction.
+const apiRouter = (await import(new URL('api/router.ts', ROOT).href)).default;
 
-interface Rewrite { pattern: RegExp; params: string[]; apiPath: string }
+interface Rewrite { pattern: RegExp; params: string[]; destQuery: Record<string, string> }
 
-/** Mirrors vercel.json rewrites, e.g. /blog/:slug → /api/blog-page?slug=:slug */
+/** Mirrors vercel.json rewrites, e.g.
+ *  /blog/:slug → /api/router?__path=blog-page&slug=:slug */
 const rewrites: Rewrite[] = await (async () => {
   const cfg = JSON.parse(await readFile(fileURLToPath(new URL('vercel.json', ROOT)), 'utf8'));
   const out: Rewrite[] = [];
   for (const rw of cfg.rewrites ?? []) {
     const dest: string = rw.destination;
-    if (!dest.startsWith('/api/')) continue; // SPA catch-all handled separately
+    if (!dest.startsWith('/api/router')) continue; // SPA catch-all handled separately
     const params: string[] = [];
-    const source = '^' + String(rw.source).replace(/:(\w+)/g, (_m, name: string) => {
-      params.push(name);
-      return '([^/]+)';
-    }) + '$';
-    out.push({
-      pattern: new RegExp(source),
-      params,
-      apiPath: dest.slice('/api/'.length).split('?')[0],
-    });
+    const source = '^' + String(rw.source)
+      .replace(/:(\w+)\*/g, (_m, name: string) => { params.push(name); return '(.*)'; })
+      .replace(/:(\w+)/g, (_m, name: string) => { params.push(name); return '([^/]+)'; }) + '$';
+    // Capture the destination's query template (__path, slug=:slug, …)
+    const destQuery: Record<string, string> = {};
+    const q = dest.split('?')[1] ?? '';
+    for (const pair of q.split('&').filter(Boolean)) {
+      const [k, v] = pair.split('=');
+      destQuery[k] = decodeURIComponent(v ?? '');
+    }
+    out.push({ pattern: new RegExp(source), params, destQuery });
   }
   return out;
 })();
-console.log(`api: 1 function (catch-all) · ${rewrites.length} vercel.json rewrites`);
+console.log(`api: 1 function (api/router.ts) · ${rewrites.length} vercel.json rewrites`);
 
 const readBody = (req: any): Promise<unknown> =>
   new Promise((resolve) => {
@@ -69,25 +72,34 @@ createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', `http://localhost:${PORT}`);
   const path = decodeURIComponent(url.pathname);
 
-  // ── API: resolve to the catch-all router, exactly like production ──
-  let apiPath: string | null = null;
+  // ── API: resolve to the single router, exactly like production ──
+  // Direct /api/* → __path is the sub-path. Otherwise a vercel.json rewrite
+  // (/blog, /verify, /careers) supplies __path + extra params.
+  let isApi = false;
   const query: Record<string, string> = Object.fromEntries(url.searchParams);
 
-  if (path.startsWith('/api/')) {
-    apiPath = path.slice('/api/'.length);
+  if (path === '/api/router') {
+    isApi = true; // __path already in the query string
+  } else if (path.startsWith('/api/')) {
+    isApi = true;
+    query.__path = path.slice('/api/'.length);
   } else {
     for (const rw of rewrites) {
       const m = path.match(rw.pattern);
       if (!m) continue;
-      rw.params.forEach((name, i) => { query[name] = m[i + 1]; });
-      apiPath = rw.apiPath;
+      // Fill destination-query template, substituting :captures positionally
+      for (const [k, tmpl] of Object.entries(rw.destQuery)) {
+        const idx = rw.params.indexOf(tmpl.replace(/^:/, ''));
+        query[k] = tmpl.startsWith(':') && idx >= 0 ? m[idx + 1] : tmpl;
+      }
+      isApi = true;
       break;
     }
   }
 
-  if (apiPath !== null) {
+  if (isApi) {
     const anyReq = req as any;
-    anyReq.query = { ...query, route: apiPath };
+    anyReq.query = query;
     anyReq.cookies = {};
     anyReq.body = ['POST', 'PATCH', 'PUT'].includes(req.method ?? '') ? await readBody(req) : undefined;
 

@@ -1,29 +1,13 @@
 {
   "rewrites": [
-    {
-      "source": "/verify/:serial",
-      "destination": "/api/verify-page?serial=:serial"
-    },
-    {
-      "source": "/blog",
-      "destination": "/api/blog-page"
-    },
-    {
-      "source": "/blog/:slug",
-      "destination": "/api/blog-page?slug=:slug"
-    },
-    {
-      "source": "/careers",
-      "destination": "/api/careers-page"
-    },
-    {
-      "source": "/careers/:slug",
-      "destination": "/api/careers-page?slug=:slug"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/verify/:serial", "destination": "/api/router?__path=verify-page&serial=:serial" },
+    { "source": "/blog", "destination": "/api/router?__path=blog-page" },
+    { "source": "/blog/:slug", "destination": "/api/router?__path=blog-page&slug=:slug" },
+    { "source": "/careers", "destination": "/api/router?__path=careers-page" },
+    { "source": "/careers/:slug", "destination": "/api/router?__path=careers-page&slug=:slug" },
+    { "source": "/api/router", "destination": "/api/router" },
+    { "source": "/api/:path*", "destination": "/api/router?__path=:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
