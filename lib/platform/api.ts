@@ -30,11 +30,29 @@ export const apiFetch = async <T>(
   }
   if (body !== undefined) headers['Content-Type'] = 'application/json';
 
-  const res = await fetch(path, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch(path, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  } catch {
+    // Network-level failure (offline, DNS, CORS).
+    throw new ApiError(0, 'Could not reach the server. Check your connection and try again.');
+  }
+
+  // The API always answers JSON. If we got HTML instead, the serverless
+  // function isn't running — almost always because the deploy hasn't
+  // published the API yet, or the Vercel environment variables are missing.
+  // Surface that plainly instead of a generic "something went wrong".
+  const contentType = res.headers.get('content-type') ?? '';
+  if (!contentType.includes('application/json')) {
+    throw new ApiError(
+      res.status,
+      'The server API is not responding. If the site was just deployed, wait a minute and retry — otherwise the backend needs its environment variables set in Vercel.',
+    );
+  }
 
   const payload = await res.json().catch(() => null);
   if (!res.ok) {
