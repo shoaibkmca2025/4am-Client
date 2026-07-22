@@ -6,6 +6,7 @@
     { "source": "/careers", "destination": "/api/router?__path=careers-page" },
     { "source": "/careers/:slug", "destination": "/api/router?__path=careers-page&slug=:slug" },
     { "source": "/api/router", "destination": "/api/router" },
+    { "source": "/api/ping", "destination": "/api/ping" },
     { "source": "/api/:path*", "destination": "/api/router?__path=:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],

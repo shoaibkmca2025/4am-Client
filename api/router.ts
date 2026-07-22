@@ -13,66 +13,47 @@ import { json } from '../lib/server/http';
 // register as a plain Vercel Function, which left the whole API returning
 // the SPA's HTML (404-as-index) in production.
 //
-// Handlers are imported statically so the bundler definitely includes them.
-
-import health from './_handlers/health';
-import leads from './_handlers/leads';
-import newsletter from './_handlers/newsletter';
-import verify from './_handlers/verify';
-import verifyPage from './_handlers/verify-page';
-import blogPage from './_handlers/blog-page';
-import careersPage from './_handlers/careers-page';
-import contentTestimonials from './_handlers/content/testimonials';
-import careersApply from './_handlers/careers/apply';
-import portalClaim from './_handlers/portal/claim';
-import portalCertificates from './_handlers/portal/certificates';
-import portalDownload from './_handlers/portal/certificate-download';
-import adminCourses from './_handlers/admin/courses';
-import adminEnrollments from './_handlers/admin/enrollments';
-import adminEnrollmentsBulk from './_handlers/admin/enrollments-bulk';
-import adminCertificates from './_handlers/admin/certificates';
-import adminLeads from './_handlers/admin/leads';
-import adminTestimonials from './_handlers/admin/testimonials';
-import adminMetrics from './_handlers/admin/metrics';
-import adminPosts from './_handlers/admin/posts';
-import adminAudit from './_handlers/admin/audit';
-import adminOpenings from './_handlers/admin/openings';
-import adminApplications from './_handlers/admin/applications';
+// Handlers are LAZY-loaded (dynamic import) so that a failing import in one
+// handler can't take down module initialisation for the whole API — the
+// error is caught per-request and returned as JSON instead of an opaque
+// FUNCTION_INVOCATION_FAILED. Dynamic imports with literal paths are still
+// traced and bundled by Vercel.
 
 type Handler = (req: ApiRequest, res: ApiResponse) => Promise<void> | void;
+type Loader = () => Promise<{ default: Handler }>;
 
 /** Exact paths (after the leading /api/). */
-const STATIC_ROUTES: Record<string, Handler> = {
-  'health': health,
-  'leads': leads,
-  'newsletter': newsletter,
-  'verify': verify,
-  'verify-page': verifyPage,
-  'blog-page': blogPage,
-  'careers-page': careersPage,
-  'content/testimonials': contentTestimonials,
-  'careers/apply': careersApply,
-  'portal/claim': portalClaim,
-  'portal/certificates': portalCertificates,
-  'admin/courses': adminCourses,
-  'admin/enrollments': adminEnrollments,
-  'admin/enrollments-bulk': adminEnrollmentsBulk,
-  'admin/certificates': adminCertificates,
-  'admin/leads': adminLeads,
-  'admin/testimonials': adminTestimonials,
-  'admin/metrics': adminMetrics,
-  'admin/posts': adminPosts,
-  'admin/audit': adminAudit,
-  'admin/openings': adminOpenings,
-  'admin/applications': adminApplications,
+const STATIC_ROUTES: Record<string, Loader> = {
+  'health': () => import('./_handlers/health'),
+  'leads': () => import('./_handlers/leads'),
+  'newsletter': () => import('./_handlers/newsletter'),
+  'verify': () => import('./_handlers/verify'),
+  'verify-page': () => import('./_handlers/verify-page'),
+  'blog-page': () => import('./_handlers/blog-page'),
+  'careers-page': () => import('./_handlers/careers-page'),
+  'content/testimonials': () => import('./_handlers/content/testimonials'),
+  'careers/apply': () => import('./_handlers/careers/apply'),
+  'portal/claim': () => import('./_handlers/portal/claim'),
+  'portal/certificates': () => import('./_handlers/portal/certificates'),
+  'admin/courses': () => import('./_handlers/admin/courses'),
+  'admin/enrollments': () => import('./_handlers/admin/enrollments'),
+  'admin/enrollments-bulk': () => import('./_handlers/admin/enrollments-bulk'),
+  'admin/certificates': () => import('./_handlers/admin/certificates'),
+  'admin/leads': () => import('./_handlers/admin/leads'),
+  'admin/testimonials': () => import('./_handlers/admin/testimonials'),
+  'admin/metrics': () => import('./_handlers/admin/metrics'),
+  'admin/posts': () => import('./_handlers/admin/posts'),
+  'admin/audit': () => import('./_handlers/admin/audit'),
+  'admin/openings': () => import('./_handlers/admin/openings'),
+  'admin/applications': () => import('./_handlers/admin/applications'),
 };
 
 /** Paths with parameters; captured groups are merged into req.query. */
-const DYNAMIC_ROUTES: Array<{ pattern: RegExp; params: string[]; handler: Handler }> = [
+const DYNAMIC_ROUTES: Array<{ pattern: RegExp; params: string[]; loader: Loader }> = [
   {
     pattern: /^portal\/certificates\/([^/]+)\/download$/,
     params: ['id'],
-    handler: portalDownload,
+    loader: () => import('./_handlers/portal/certificate-download'),
   },
 ];
 
@@ -120,13 +101,17 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
     const route = resolveRoute(req);
 
     const exact = STATIC_ROUTES[route];
-    if (exact) return await exact(req, res);
+    if (exact) {
+      const mod = await exact();
+      return await mod.default(req, res);
+    }
 
-    for (const { pattern, params, handler: h } of DYNAMIC_ROUTES) {
+    for (const { pattern, params, loader } of DYNAMIC_ROUTES) {
       const m = route.match(pattern);
       if (!m) continue;
       params.forEach((name, i) => { req.query[name] = m[i + 1]; });
-      return await h(req, res);
+      const mod = await loader();
+      return await mod.default(req, res);
     }
 
     return json(res, 404, { error: `Not found: ${route || '(empty)'}` });
