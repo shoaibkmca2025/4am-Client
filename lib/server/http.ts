@@ -22,7 +22,9 @@ export interface ApiResponse extends ServerResponse {
 // FUNCTION_INVOCATION_FAILED in production. Raw statusCode/end always work.
 export const json = (res: ApiResponse, code: number, data: unknown): void => {
   res.statusCode = code;
-  if (!res.getHeader('Content-Type')) res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  // setHeader only — no getHeader probe, so this works with any minimal
+  // response object (Vercel runtime, Node server, or a test double).
+  res.setHeader?.('Content-Type', 'application/json; charset=utf-8');
   res.end(JSON.stringify(data));
 };
 

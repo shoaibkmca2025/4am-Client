@@ -39,11 +39,21 @@ const call = async (
     cookies: {},
     socket: { remoteAddress: '127.0.0.1' },
   };
-  const res = {
-    setHeader: () => res,
-    status: (c: number) => { out.code = c; return res; },
-    json: (d: unknown) => { out.body = d; },
-    send: (d: unknown) => { out.body = d; },
+  const res: any = {
+    statusCode: 200,
+    _h: {} as Record<string,string>,
+    setHeader(k: string, v: string) { this._h[k.toLowerCase()] = v; if ((out as any).headers) (out as any).headers[k.toLowerCase()] = v; return this; },
+    getHeader(k: string) { return this._h[k.toLowerCase()]; },
+    status(c: number) { this.statusCode = c; return this; },
+    json(d: unknown) { out.code = this.statusCode; out.body = d; this.writableEnded = true; },
+    send(d: unknown) { out.code = this.statusCode; out.body = d; this.writableEnded = true; },
+    end(d?: unknown) {
+      out.code = this.statusCode;
+      if (typeof d === 'string') { try { out.body = JSON.parse(d); } catch { out.body = d; } }
+      else if (d !== undefined) out.body = d;
+      this.writableEnded = true;
+    },
+    writableEnded: false,
   };
   await handler(req, res);
   return out;

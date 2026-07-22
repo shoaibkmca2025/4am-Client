@@ -24,13 +24,21 @@ const call = async (
     headers: { authorization: opts.token ? `Bearer ${opts.token}` : undefined, 'x-forwarded-for': '10.3.3.3' },
     query: opts.query ?? {}, body: opts.body, cookies: {}, socket: { remoteAddress: '10.3.3.3' },
   };
-  const res = {
+  const res: any = {
     statusCode: 200,
-    setHeader: () => res,
-    status: (c: number) => { out.code = c; return res; },
-    json: (d: unknown) => { out.body = d; },
-    send: (d: unknown) => { out.body = d; },
-    end: (d: unknown) => { out.body = d; out.code = res.statusCode === 200 ? out.code : res.statusCode; },
+    _h: {} as Record<string,string>,
+    setHeader(k: string, v: string) { this._h[k.toLowerCase()] = v; if ((out as any).headers) (out as any).headers[k.toLowerCase()] = v; return this; },
+    getHeader(k: string) { return this._h[k.toLowerCase()]; },
+    status(c: number) { this.statusCode = c; return this; },
+    json(d: unknown) { out.code = this.statusCode; out.body = d; this.writableEnded = true; },
+    send(d: unknown) { out.code = this.statusCode; out.body = d; this.writableEnded = true; },
+    end(d?: unknown) {
+      out.code = this.statusCode;
+      if (typeof d === 'string') { try { out.body = JSON.parse(d); } catch { out.body = d; } }
+      else if (d !== undefined) out.body = d;
+      this.writableEnded = true;
+    },
+    writableEnded: false,
   };
   await handler(req, res);
   if (typeof out.body === 'string') out.code = res.statusCode;
