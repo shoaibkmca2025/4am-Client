@@ -1,11 +1,11 @@
-import type { ApiRequest, ApiResponse } from '../../lib/server/http';
-import { allowMethods, clientIp, json } from '../../lib/server/http';
-import { requireUser } from '../../lib/server/auth';
-import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
-import { claimSchema } from '../../lib/server/validation';
-import { hashClaimKey } from '../../lib/server/crypto';
-import { rateLimit } from '../../lib/server/ratelimit';
-import { writeAudit } from '../../lib/server/audit';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
+import { allowMethods, clientIp, json } from '../../../lib/server/http';
+import { requireUser } from '../../../lib/server/auth';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
+import { claimSchema } from '../../../lib/server/validation';
+import { hashClaimKey } from '../../../lib/server/crypto';
+import { rateLimit } from '../../../lib/server/ratelimit';
+import { writeAudit } from '../../../lib/server/audit';
 
 // POST /api/portal/claim — link a signed-in student to an enrollment
 // via their one-time claim key. Single-use by construction: the UPDATE

@@ -8,12 +8,12 @@ loadEnvLocal();
 
 const ROOT = new URL('..', import.meta.url);
 const load = async (rel: string) => (await import(new URL(rel, ROOT).href)).default;
-const leadsApi = await load('api/leads.ts');
-const newsletterApi = await load('api/newsletter.ts');
-const publicTestimonials = await load('api/content/testimonials.ts');
-const adminLeads = await load('api/admin/leads.ts');
-const adminTestimonials = await load('api/admin/testimonials.ts');
-const metricsApi = await load('api/admin/metrics.ts');
+const leadsApi = await load('api/_handlers/leads.ts');
+const newsletterApi = await load('api/_handlers/newsletter.ts');
+const publicTestimonials = await load('api/_handlers/content/testimonials.ts');
+const adminLeads = await load('api/_handlers/admin/leads.ts');
+const adminTestimonials = await load('api/_handlers/admin/testimonials.ts');
+const metricsApi = await load('api/_handlers/admin/metrics.ts');
 
 interface Res { code: number; body: any; headers: Record<string, string> }
 const call = async (

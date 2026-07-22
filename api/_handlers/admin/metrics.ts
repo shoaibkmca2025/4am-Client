@@ -1,7 +1,7 @@
-import type { ApiRequest, ApiResponse } from '../../lib/server/http';
-import { allowMethods, json } from '../../lib/server/http';
-import { requireStaff } from '../../lib/server/auth';
-import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
+import { allowMethods, json } from '../../../lib/server/http';
+import { requireStaff } from '../../../lib/server/auth';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
 
 // GET /api/admin/metrics — dashboard counters.
 // Uses head-only count queries: no rows travel over the wire.

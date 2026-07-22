@@ -24,64 +24,35 @@ const MIME: Record<string, string> = {
   '.woff2': 'font/woff2', '.splinecode': 'application/octet-stream',
 };
 
-// Route table built by SCANNING api/ — mirrors Vercel's file-based routing,
-// so a new endpoint file is picked up automatically (a hand-written list
-// silently 404s new routes into the SPA fallback, which answers 200).
-interface Route { pattern: RegExp; file: string; params: string[] }
+// Production ships ONE serverless function (api/[...route].ts) that
+// dispatches internally — see the note in that file. The emulator delegates
+// to the very same router, so local and production routing are identical by
+// construction.
+const apiRouter = (await import(new URL('api/[...route].ts', ROOT).href)).default;
 
-const scanRoutes = async (dir = 'api', prefix = '/api'): Promise<Route[]> => {
-  const abs = fileURLToPath(new URL(`${dir}/`, ROOT));
-  const out: Route[] = [];
-  for (const entry of await readdir(abs, { withFileTypes: true })) {
-    if (entry.isDirectory()) {
-      out.push(...(await scanRoutes(`${dir}/${entry.name}`, `${prefix}/${entry.name}`)));
-      continue;
-    }
-    if (!entry.name.endsWith('.ts')) continue;
-    const base = entry.name.replace(/\.ts$/, '');
-    const urlPath = base === 'index' ? prefix : `${prefix}/${base}`;
-    const params: string[] = [];
-    const source =
-      '^' +
-      urlPath
-        .split('/')
-        .map((seg) => {
-          const dyn = seg.match(/^\[(.+)\]$/);
-          if (!dyn) return seg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          params.push(dyn[1]);
-          return '([^/]+)';
-        })
-        .join('/') +
-      '$';
-    out.push({ pattern: new RegExp(source), file: `${dir}/${entry.name}`, params });
-  }
-  return out;
-};
+interface Rewrite { pattern: RegExp; params: string[]; apiPath: string }
 
-/**
- * Mirrors the `rewrites` in vercel.json so local routing can't drift from
- * production. Handles `/blog/:slug` → `/api/blog-page?slug=:slug`.
- */
-const rewriteRoutes = async (): Promise<Route[]> => {
+/** Mirrors vercel.json rewrites, e.g. /blog/:slug → /api/blog-page?slug=:slug */
+const rewrites: Rewrite[] = await (async () => {
   const cfg = JSON.parse(await readFile(fileURLToPath(new URL('vercel.json', ROOT)), 'utf8'));
-  const out: Route[] = [];
+  const out: Rewrite[] = [];
   for (const rw of cfg.rewrites ?? []) {
     const dest: string = rw.destination;
-    if (!dest.startsWith('/api/')) continue; // SPA catch-all handled below
+    if (!dest.startsWith('/api/')) continue; // SPA catch-all handled separately
     const params: string[] = [];
     const source = '^' + String(rw.source).replace(/:(\w+)/g, (_m, name: string) => {
       params.push(name);
       return '([^/]+)';
     }) + '$';
-    const file = `api/${dest.slice('/api/'.length).split('?')[0]}.ts`;
-    // Query-string params in the destination map positionally to source params.
-    out.push({ pattern: new RegExp(source), file, params });
+    out.push({
+      pattern: new RegExp(source),
+      params,
+      apiPath: dest.slice('/api/'.length).split('?')[0],
+    });
   }
   return out;
-};
-
-const ROUTES: Route[] = [...(await rewriteRoutes()), ...(await scanRoutes())];
-console.log(`routes: ${ROUTES.length} (${ROUTES.filter((r) => !r.pattern.source.startsWith('^\\/api')).length} from vercel.json rewrites)`);
+})();
+console.log(`api: 1 function (catch-all) · ${rewrites.length} vercel.json rewrites`);
 
 const readBody = (req: any): Promise<unknown> =>
   new Promise((resolve) => {
@@ -98,16 +69,25 @@ createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', `http://localhost:${PORT}`);
   const path = decodeURIComponent(url.pathname);
 
-  // ── API + verify routes ──
-  for (const { pattern, file, params } of ROUTES) {
-    const m = path.match(pattern);
-    if (!m) continue;
+  // ── API: resolve to the catch-all router, exactly like production ──
+  let apiPath: string | null = null;
+  const query: Record<string, string> = Object.fromEntries(url.searchParams);
 
-    const query: Record<string, string> = Object.fromEntries(url.searchParams);
-    params.forEach((name, i) => { query[name] = m[i + 1]; });
+  if (path.startsWith('/api/')) {
+    apiPath = path.slice('/api/'.length);
+  } else {
+    for (const rw of rewrites) {
+      const m = path.match(rw.pattern);
+      if (!m) continue;
+      rw.params.forEach((name, i) => { query[name] = m[i + 1]; });
+      apiPath = rw.apiPath;
+      break;
+    }
+  }
 
+  if (apiPath !== null) {
     const anyReq = req as any;
-    anyReq.query = query;
+    anyReq.query = { ...query, route: apiPath };
     anyReq.cookies = {};
     anyReq.body = ['POST', 'PATCH', 'PUT'].includes(req.method ?? '') ? await readBody(req) : undefined;
 
@@ -120,8 +100,7 @@ createServer(async (req, res) => {
     anyRes.send = (d: string | Buffer) => res.end(d);
 
     try {
-      const mod = await import(new URL(file, ROOT).href);
-      await mod.default(anyReq, anyRes);
+      await apiRouter(anyReq, anyRes);
     } catch (err) {
       console.error(`[${path}]`, err);
       if (!res.writableEnded) { res.statusCode = 500; anyRes.json({ error: 'Handler error', detail: String(err) }); }

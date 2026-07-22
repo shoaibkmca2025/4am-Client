@@ -1,9 +1,9 @@
-import type { ApiRequest, ApiResponse } from '../lib/server/http';
-import { allowMethods, clientIp, json } from '../lib/server/http';
-import { supabaseAdmin } from '../lib/server/supabaseAdmin';
-import { serialSchema } from '../lib/server/validation';
-import { verifyHash } from '../lib/server/crypto';
-import { rateLimit } from '../lib/server/ratelimit';
+import type { ApiRequest, ApiResponse } from '../../lib/server/http';
+import { allowMethods, clientIp, json } from '../../lib/server/http';
+import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
+import { serialSchema } from '../../lib/server/validation';
+import { verifyHash } from '../../lib/server/crypto';
+import { rateLimit } from '../../lib/server/ratelimit';
 
 // GET /api/verify?serial=4AM-2026-XXXXXX — public, no login.
 // Server-side HMAC validation means a fabricated serial can never present

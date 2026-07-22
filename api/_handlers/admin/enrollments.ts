@@ -1,10 +1,10 @@
-import type { ApiRequest, ApiResponse } from '../../lib/server/http';
-import { allowMethods, json } from '../../lib/server/http';
-import { requireStaff } from '../../lib/server/auth';
-import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
-import { enrollmentSchema } from '../../lib/server/validation';
-import { generateClaimKey, hashClaimKey } from '../../lib/server/crypto';
-import { writeAudit } from '../../lib/server/audit';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
+import { allowMethods, json } from '../../../lib/server/http';
+import { requireStaff } from '../../../lib/server/auth';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
+import { enrollmentSchema } from '../../../lib/server/validation';
+import { generateClaimKey, hashClaimKey } from '../../../lib/server/crypto';
+import { writeAudit } from '../../../lib/server/audit';
 
 // GET  /api/admin/enrollments?course_id=…  → roster + claim/cert status
 // POST /api/admin/enrollments              → add student, mint claim key

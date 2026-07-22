@@ -1,10 +1,10 @@
-import type { ApiRequest, ApiResponse } from '../lib/server/http';
-import { allowMethods, clientIp } from '../lib/server/http';
-import { supabaseAdmin } from '../lib/server/supabaseAdmin';
-import { serialSchema } from '../lib/server/validation';
-import { verifyHash } from '../lib/server/crypto';
-import { rateLimit } from '../lib/server/ratelimit';
-import { brandPage, esc } from '../lib/server/brandPage';
+import type { ApiRequest, ApiResponse } from '../../lib/server/http';
+import { allowMethods, clientIp } from '../../lib/server/http';
+import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
+import { serialSchema } from '../../lib/server/validation';
+import { verifyHash } from '../../lib/server/crypto';
+import { rateLimit } from '../../lib/server/ratelimit';
+import { brandPage, esc } from '../../lib/server/brandPage';
 
 // GET /verify/:serial (rewritten here by vercel.json)
 //

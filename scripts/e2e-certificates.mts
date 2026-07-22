@@ -13,13 +13,13 @@ loadEnvLocal();
 // Import handlers via file URLs (paths contain [id], safe in URLs)
 const ROOT = new URL('..', import.meta.url);
 const load = async (rel: string) => (await import(new URL(rel, ROOT).href)).default;
-const coursesApi = await load('api/admin/courses.ts');
-const enrollApi = await load('api/admin/enrollments.ts');
-const certApi = await load('api/admin/certificates.ts');
-const claimApi = await load('api/portal/claim.ts');
-const listApi = await load('api/portal/certificates/index.ts');
-const downloadApi = await load('api/portal/certificates/[id]/download.ts');
-const verifyApi = await load('api/verify.ts');
+const coursesApi = await load('api/_handlers/admin/courses.ts');
+const enrollApi = await load('api/_handlers/admin/enrollments.ts');
+const certApi = await load('api/_handlers/admin/certificates.ts');
+const claimApi = await load('api/_handlers/portal/claim.ts');
+const listApi = await load('api/_handlers/portal/certificates.ts');
+const downloadApi = await load('api/_handlers/portal/certificate-download.ts');
+const verifyApi = await load('api/_handlers/verify.ts');
 
 // ── mock req/res ────────────────────────────────────────────────
 interface Res { code: number; body: any }

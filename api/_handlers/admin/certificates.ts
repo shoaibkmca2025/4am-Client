@@ -1,12 +1,12 @@
 import QRCode from 'qrcode';
-import type { ApiRequest, ApiResponse } from '../../lib/server/http';
-import { allowMethods, json } from '../../lib/server/http';
-import { requireStaff } from '../../lib/server/auth';
-import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
-import { issueCertificateSchema, revokeCertificateSchema } from '../../lib/server/validation';
-import { generateCertificateSerial, verificationHash } from '../../lib/server/crypto';
-import { env } from '../../lib/server/env';
-import { writeAudit } from '../../lib/server/audit';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
+import { allowMethods, json } from '../../../lib/server/http';
+import { requireStaff } from '../../../lib/server/auth';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
+import { issueCertificateSchema, revokeCertificateSchema } from '../../../lib/server/validation';
+import { generateCertificateSerial, verificationHash } from '../../../lib/server/crypto';
+import { env } from '../../../lib/server/env';
+import { writeAudit } from '../../../lib/server/audit';
 import { z } from 'zod';
 
 const BUCKET = 'certificates';

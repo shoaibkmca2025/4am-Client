@@ -1,8 +1,8 @@
-import type { ApiRequest, ApiResponse } from '../lib/server/http';
-import { allowMethods, clientIp, json } from '../lib/server/http';
-import { supabaseAdmin } from '../lib/server/supabaseAdmin';
-import { newsletterSchema } from '../lib/server/validation';
-import { rateLimit } from '../lib/server/ratelimit';
+import type { ApiRequest, ApiResponse } from '../../lib/server/http';
+import { allowMethods, clientIp, json } from '../../lib/server/http';
+import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
+import { newsletterSchema } from '../../lib/server/validation';
+import { rateLimit } from '../../lib/server/ratelimit';
 
 // POST   /api/newsletter  → subscribe (idempotent; re-subscribes a lapsed email)
 // DELETE /api/newsletter  → unsubscribe

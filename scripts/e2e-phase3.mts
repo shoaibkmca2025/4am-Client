@@ -7,11 +7,11 @@ loadEnvLocal();
 
 const ROOT = new URL('..', import.meta.url);
 const load = async (rel: string) => (await import(new URL(rel, ROOT).href)).default;
-const adminPosts = await load('api/admin/posts.ts');
-const blogPage = await load('api/blog-page.ts');
-const bulkApi = await load('api/admin/enrollments-bulk.ts');
-const auditApi = await load('api/admin/audit.ts');
-const coursesApi = await load('api/admin/courses.ts');
+const adminPosts = await load('api/_handlers/admin/posts.ts');
+const blogPage = await load('api/_handlers/blog-page.ts');
+const bulkApi = await load('api/_handlers/admin/enrollments-bulk.ts');
+const auditApi = await load('api/_handlers/admin/audit.ts');
+const coursesApi = await load('api/_handlers/admin/courses.ts');
 
 interface Res { code: number; body: any }
 const call = async (

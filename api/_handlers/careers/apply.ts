@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import type { ApiRequest, ApiResponse } from '../../lib/server/http';
-import { allowMethods, clientIp, json } from '../../lib/server/http';
-import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
-import { rateLimit } from '../../lib/server/ratelimit';
-import { notifyChat } from '../../lib/server/notify';
-import { sendEmail } from '../../lib/server/email';
-import { env } from '../../lib/server/env';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
+import { allowMethods, clientIp, json } from '../../../lib/server/http';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
+import { rateLimit } from '../../../lib/server/ratelimit';
+import { notifyChat } from '../../../lib/server/notify';
+import { sendEmail } from '../../../lib/server/email';
+import { env } from '../../../lib/server/env';
 
 const MAX_RESUME_BYTES = 5 * 1024 * 1024; // 5 MB
 const ALLOWED = ['application/pdf', 'application/msword',

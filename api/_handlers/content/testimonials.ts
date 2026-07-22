@@ -1,6 +1,6 @@
-import type { ApiRequest, ApiResponse } from '../../lib/server/http';
-import { allowMethods, json } from '../../lib/server/http';
-import { supabaseAdmin } from '../../lib/server/supabaseAdmin';
+import type { ApiRequest, ApiResponse } from '../../../lib/server/http';
+import { allowMethods, json } from '../../../lib/server/http';
+import { supabaseAdmin } from '../../../lib/server/supabaseAdmin';
 
 // GET /api/content/testimonials — published testimonials for the marketing
 // page. Public, cached at the edge. Returns an empty array on any failure so

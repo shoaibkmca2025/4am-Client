@@ -8,10 +8,10 @@ loadEnvLocal();
 
 const ROOT = new URL('..', import.meta.url);
 const load = async (rel: string) => (await import(new URL(rel, ROOT).href)).default;
-const openingsApi = await load('api/admin/openings.ts');
-const applicationsApi = await load('api/admin/applications.ts');
-const applyApi = await load('api/careers/apply.ts');
-const careersPage = await load('api/careers-page.ts');
+const openingsApi = await load('api/_handlers/admin/openings.ts');
+const applicationsApi = await load('api/_handlers/admin/applications.ts');
+const applyApi = await load('api/_handlers/careers/apply.ts');
+const careersPage = await load('api/_handlers/careers-page.ts');
 
 interface Res { code: number; body: any }
 const call = async (
