@@ -91,18 +91,51 @@ const resolveRoute = (req: ApiRequest): string => {
   return (fromQuery || fromUrl).replace(/^\/+|\/+$/g, '');
 };
 
+/** Read + JSON-parse the request body when the runtime hasn't already. */
+const readBody = (req: ApiRequest): Promise<unknown> =>
+  new Promise((resolve) => {
+    const chunks: Buffer[] = [];
+    req.on('data', (c: Buffer) => chunks.push(c));
+    req.on('end', () => {
+      const raw = Buffer.concat(chunks).toString('utf8');
+      if (!raw) return resolve(undefined);
+      try { resolve(JSON.parse(raw)); } catch { resolve(raw); }
+    });
+    req.on('error', () => resolve(undefined));
+  });
+
 export default async function handler(req: ApiRequest, res: ApiResponse): Promise<void> {
-  const route = resolveRoute(req);
+  try {
+    // Normalise the request without assuming Vercel's helper layer populated
+    // req.query / req.body (it usually does, but not depending on it is what
+    // makes this resilient across runtimes).
+    if (!req.query || typeof req.query !== 'object') {
+      const qs = (req.url ?? '').split('?')[1] ?? '';
+      req.query = Object.fromEntries(new URLSearchParams(qs));
+    }
+    if (req.body === undefined && ['POST', 'PATCH', 'PUT', 'DELETE'].includes(req.method ?? '')) {
+      req.body = await readBody(req);
+    }
 
-  const exact = STATIC_ROUTES[route];
-  if (exact) return exact(req, res);
+    const route = resolveRoute(req);
 
-  for (const { pattern, params, handler: h } of DYNAMIC_ROUTES) {
-    const m = route.match(pattern);
-    if (!m) continue;
-    params.forEach((name, i) => { req.query[name] = m[i + 1]; });
-    return h(req, res);
+    const exact = STATIC_ROUTES[route];
+    if (exact) return await exact(req, res);
+
+    for (const { pattern, params, handler: h } of DYNAMIC_ROUTES) {
+      const m = route.match(pattern);
+      if (!m) continue;
+      params.forEach((name, i) => { req.query[name] = m[i + 1]; });
+      return await h(req, res);
+    }
+
+    return json(res, 404, { error: `Not found: ${route || '(empty)'}` });
+  } catch (err) {
+    // Never let an unhandled throw surface as FUNCTION_INVOCATION_FAILED —
+    // return a clean JSON 500 with the message so failures are diagnosable.
+    console.error('[api] handler error:', err);
+    if (!res.writableEnded) {
+      json(res, 500, { error: 'Server error.', detail: err instanceof Error ? err.message : String(err) });
+    }
   }
-
-  return json(res, 404, { error: `Not found: ${route || '(empty)'}` });
 }

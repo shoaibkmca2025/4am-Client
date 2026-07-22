@@ -10,14 +10,20 @@ export interface ApiRequest extends IncomingMessage {
 }
 
 export interface ApiResponse extends ServerResponse {
-  status: (code: number) => ApiResponse;
-  json: (data: unknown) => void;
-  send: (data: string | Buffer) => void;
-  redirect: (statusOrUrl: number | string, url?: string) => void;
+  status?: (code: number) => ApiResponse;
+  json?: (data: unknown) => void;
+  send?: (data: string | Buffer) => void;
+  redirect?: (statusOrUrl: number | string, url?: string) => void;
 }
 
+// Write JSON using RAW Node methods, not Vercel's res.status()/res.json()
+// sugar. Those helpers are not guaranteed to be present on every runtime
+// path, and depending on them made every JSON endpoint crash with
+// FUNCTION_INVOCATION_FAILED in production. Raw statusCode/end always work.
 export const json = (res: ApiResponse, code: number, data: unknown): void => {
-  res.status(code).json(data);
+  res.statusCode = code;
+  if (!res.getHeader('Content-Type')) res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.end(JSON.stringify(data));
 };
 
 /** 405 + Allow header unless the request method is in the allowlist. */
