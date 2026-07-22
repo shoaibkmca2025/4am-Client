@@ -108,27 +108,34 @@ const Contact: React.FC = () => {
     setStatus('submitting');
     setServerMessage('');
     try {
-      const response = await fetch("https://formsubmit.co/ajax/Info@4amglobalmedia.com", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      // Submits to our own backend: the enquiry is stored in Postgres first
+      // (source of truth), then the team is emailed. Replaces FormSubmit.co,
+      // which silently dropped every message while reporting HTTP 200.
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          ...form,
-          _subject: `New Inquiry from ${form.fullName}`,
-          _template: "table",
-          // AJAX submissions can't render a captcha challenge — must be off
-          _captcha: "false",
-          // Replying to the notification goes straight to the visitor
-          _replyto: form.workEmail,
+          name: form.fullName,
           email: form.workEmail,
+          phone: form.phone,
+          company: form.company,
+          service: form.interestedIn,
+          budget: form.budget,
+          message: form.message,
+          source: 'website-contact',
         }),
       });
-      // FormSubmit answers HTTP 200 even for rejected submissions and
-      // signals the real outcome in the body — response.ok alone showed
-      // "Message Sent" while nothing was delivered.
+      // Require a genuine JSON acknowledgement — not just response.ok.
+      // A misrouted /api call falls through to the SPA's index.html, which
+      // also answers 200; trusting the status alone would show "Message
+      // Sent" while the enquiry was silently dropped.
       const data = await response.json().catch(() => null);
-      const delivered = response.ok && data && String(data.success) === 'true';
-      if (!delivered && data?.message) setServerMessage(String(data.message));
-      setStatus(delivered ? 'success' : 'error');
+      if (!response.ok || data?.ok !== true) {
+        setServerMessage(String(data?.error ?? ''));
+        setStatus('error');
+        return;
+      }
+      setStatus('success');
     } catch {
       setStatus('error');
     }

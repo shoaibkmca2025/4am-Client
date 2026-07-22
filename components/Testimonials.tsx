@@ -4,7 +4,12 @@ import { gsap } from 'gsap';
 import RevealText from './RevealText';
 import DrawRule from './DrawRule';
 
-const testimonials = [
+interface Testimonial { id: string | number; quote: string; author: string; role: string }
+
+// Shown until an admin publishes testimonials (and whenever the API is
+// unreachable) — so this section renders identically to the original site
+// no matter what the backend is doing.
+const FALLBACK_TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
     quote: 'The 4AM team brought clarity to our growth strategy and execution. They operate like an extension of our internal team.',
@@ -28,6 +33,7 @@ const testimonials = [
 const Testimonials: React.FC = () => {
   const [index, setIndex]       = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(FALLBACK_TESTIMONIALS);
   const sectionRef  = useRef<HTMLElement>(null);
   const quoteRef    = useRef<HTMLParagraphElement>(null);
   const authorRef   = useRef<HTMLElement>(null);
@@ -69,6 +75,29 @@ const Testimonials: React.FC = () => {
       });
   }, []);
 
+  // ── Admin-managed testimonials ───────────────────────────────────────
+  // Swaps in published rows once they load. Any failure (or an empty set)
+  // silently keeps the built-in copy, so this section never regresses.
+  useEffect(() => {
+    let active = true;
+    fetch('/api/content/testimonials')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!active || !data?.testimonials?.length) return;
+        setTestimonials(
+          data.testimonials.map((t: { id: string; quote: string; client_name: string; company: string | null }) => ({
+            id: t.id,
+            quote: t.quote,
+            author: t.client_name,
+            role: t.company ?? '',
+          })),
+        );
+        setIndex(0);
+      })
+      .catch(() => { /* keep fallback */ });
+    return () => { active = false; };
+  }, []);
+
   // ── Auto-advance ─────────────────────────────────────────────────────
   useEffect(() => {
     if (isPaused) return;
@@ -76,7 +105,7 @@ const Testimonials: React.FC = () => {
       animateTo((index + 1) % testimonials.length);
     }, 6000);
     return () => clearInterval(id);
-  }, [isPaused, index, animateTo]);
+  }, [isPaused, index, animateTo, testimonials.length]);
 
   const handlePrev = useCallback(() => {
     animateTo(index === 0 ? testimonials.length - 1 : index - 1);

@@ -15,6 +15,9 @@ import ScrollProgress from './components/ScrollProgress';
 const landingChunk = import('./components/LandingPage');
 const LandingPage = lazy(() => landingChunk.catch(() => import('./components/LandingPage')));
 const ServicePage  = lazy(() => import('./components/ServicePage'));
+// Platform surfaces — code-split so marketing visitors never download them.
+const StudentPortal = lazy(() => import('./components/platform/StudentPortal'));
+const AdminPanel    = lazy(() => import('./components/platform/AdminPanel'));
 const AIChatbot    = lazy(() => import('./components/AIChatbot'));
 
 const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -160,6 +163,8 @@ function App() {
               <Routes>
                 <Route path="/"               element={<LandingPage />} />
                 <Route path="/services/:slug" element={<ServicePage />} />
+                <Route path="/portal"         element={<StudentPortal />} />
+                <Route path="/admin"          element={<AdminPanel />} />
                 <Route path="*"               element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>

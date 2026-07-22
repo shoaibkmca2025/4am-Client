@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -40,6 +40,26 @@ const colVariant = {
 const Footer: React.FC = () => {
   const ctaBtnRef = useRef<HTMLButtonElement>(null);
   const ctaSectionRef = useRef<HTMLDivElement>(null);
+
+  // Newsletter capture → /api/newsletter (footer-only UI state)
+  const [nlEmail, setNlEmail] = useState('');
+  const [nlStatus, setNlStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
+  const subscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(nlEmail.trim())) { setNlStatus('error'); return; }
+    setNlStatus('sending');
+    try {
+      const r = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: nlEmail.trim() }),
+      });
+      const d = await r.json().catch(() => null);
+      setNlStatus(r.ok && d?.ok ? 'done' : 'error');
+    } catch {
+      setNlStatus('error');
+    }
+  };
 
   // CTA heading zooms in from slightly below on scroll-enter
   const { scrollYProgress: ctaProgress } = useScroll({
@@ -192,6 +212,15 @@ const Footer: React.FC = () => {
                   </button>
                 </li>
               ))}
+              <li>
+                <a href="/blog" className="text-xs text-white/30 hover:text-white transition-colors font-medium hover-underline">Insights</a>
+              </li>
+              <li>
+                <a href="/careers" className="text-xs text-white/30 hover:text-white transition-colors font-medium hover-underline">Careers</a>
+              </li>
+              <li>
+                <a href="/portal" className="text-xs text-white/30 hover:text-white transition-colors font-medium hover-underline">Student Portal</a>
+              </li>
             </ul>
           </motion.div>
 
@@ -210,6 +239,43 @@ const Footer: React.FC = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
               <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/20">Available</span>
             </div>
+
+            {/* Newsletter — quiet, in the footer's own visual register */}
+            <form onSubmit={subscribe} noValidate className="mt-6">
+              <label htmlFor="nl-email" className="block text-[10px] font-bold tracking-[0.3em] uppercase text-white/20 mb-3">
+                Newsletter
+              </label>
+              {nlStatus === 'done' ? (
+                <p className="text-xs text-brand-lime/80 font-medium">You're subscribed.</p>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 border-b border-white/[0.08] focus-within:border-brand-primary/40 transition-colors duration-300 pb-2">
+                    <input
+                      id="nl-email"
+                      type="email"
+                      value={nlEmail}
+                      onChange={(e) => setNlEmail(e.currentTarget.value)}
+                      placeholder="you@company.com"
+                      autoComplete="email"
+                      className="w-full bg-transparent text-xs text-white/70 placeholder:text-white/20 focus:outline-none font-medium"
+                    />
+                    <button
+                      type="submit"
+                      disabled={nlStatus === 'sending'}
+                      aria-label="Subscribe to the newsletter"
+                      className="shrink-0 text-white/30 hover:text-brand-secondary transition-colors duration-300 disabled:opacity-40"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                  {nlStatus === 'error' && (
+                    <p className="mt-2 text-[10px] text-red-400/80 font-medium">Please enter a valid email.</p>
+                  )}
+                </>
+              )}
+            </form>
           </motion.div>
         </motion.div>
       </div>
