@@ -1,129 +1,50 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { gsap } from 'gsap';
+import React, { useEffect, useState } from 'react';
+import { motion, MotionConfig } from 'framer-motion';
 import { PROJECTS } from '../constants';
 import RevealText from './RevealText';
 import type { Project } from '../types';
 
 const E: [number, number, number, number] = [0.16, 1, 0.3, 1];
-// Phones carry fewer cards — half the images to fetch/decode mid-scroll.
-const FEATURED = PROJECTS.slice(
-  0,
-  typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches ? 6 : 10,
-);
 
-const ProjectCard: React.FC<{ project: Project; ghost?: boolean }> = ({ project, ghost }) => (
-  <button
-    type="button"
-    onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
-    className="project-card group block text-left cursor-pointer shrink-0 w-[78vw] sm:w-[340px] md:w-[380px] mr-5 md:mr-6"
-    aria-label={`Open case study: ${project.title}`}
-    aria-hidden={ghost || undefined}
-    tabIndex={ghost ? -1 : undefined}
-  >
-    <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-white/[0.04] mb-4">
-      <img
-        src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/900/675`}
-        alt={project.title}
-        loading="lazy"
-        decoding="async"
-        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-      <span className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-3 py-1.5 rounded-full">
-        {project.industry ?? project.category}
-      </span>
-      <span className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-white flex items-center justify-center text-black opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-          <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </span>
-    </div>
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <h3 className="text-base font-bold text-white uppercase tracking-[0.04em] group-hover:text-brand-secondary transition-colors duration-300">
-          {project.title}
-        </h3>
-        <p className="text-white/55 text-xs mt-1.5 leading-relaxed max-w-[36ch]">{project.description}</p>
-      </div>
-      {project.result && (
-        <span className="shrink-0 text-[10px] font-bold tracking-[0.15em] uppercase text-brand-secondary/90 border border-brand-secondary/25 rounded-full px-3 py-1.5 whitespace-nowrap">
-          {project.result}
-        </span>
-      )}
-    </div>
-  </button>
-);
+// Five featured case studies fan out of the folder (offset -2 … +2).
+const FEATURED = PROJECTS.slice(0, 5);
+
+// The stage is authored at this pixel footprint (full open-fan width) and
+// then uniformly scaled to fit the viewport — so the geometry is identical
+// on every device and the fan never overflows on phones.
+const STAGE_W = 740;
+
+const projectImg = (p: Project) =>
+  `https://picsum.photos/seed/${encodeURIComponent(p.title)}/600/760`;
 
 const Projects: React.FC = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef   = useRef<HTMLDivElement>(null);
-  // Reduced motion: no auto-flow — the same strip becomes a manual
-  // horizontal scroller instead.
-  const [reduced] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  );
+  const [isOpen, setIsOpen] = useState(false);
+  const [hover, setHover] = useState(false);
+  const [scale, setScale] = useState(1);
+  const draggingRef = React.useRef(false);
 
-  // ── Infinite right-to-left project flow ────────────────────────────
-  // The track holds the card list twice; a wrapped x-tween glides it
-  // leftward forever. Hovering pauses the flow so cards are easy to click.
-  useLayoutEffect(() => {
-    if (reduced) return;
-    const track = trackRef.current;
-    if (!track) return;
-
-    let cleanup: (() => void) | undefined;
-    // Wait a frame so scrollWidth is measured after images/layout settle
-    const raf = requestAnimationFrame(() => {
-      const half = track.scrollWidth / 2;
-      if (half <= 0) return;
-
-      const tween = gsap.to(track, {
-        x: -half,
-        duration: 60,
-        ease: 'none',
-        repeat: -1,
-        modifiers: {
-          x: gsap.utils.unitize((raw: number) => -((-raw % half + half) % half)),
-        },
-      });
-
-      const pause  = () => { gsap.to(tween, { timeScale: 0, duration: 0.5, overwrite: true }); };
-      const resume = () => { gsap.to(tween, { timeScale: 1, duration: 0.5, overwrite: true }); };
-      track.addEventListener('mouseenter', pause);
-      track.addEventListener('mouseleave', resume);
-
-      // Sleep while the Work section is offscreen — no frame budget spent
-      // animating cards nobody can see.
-      let io: IntersectionObserver | undefined;
-      if ('IntersectionObserver' in window) {
-        io = new IntersectionObserver(
-          ([entry]) => { if (entry.isIntersecting) tween.play(); else tween.pause(); },
-          { rootMargin: '160px 0px' },
-        );
-        io.observe(track);
-      }
-
-      cleanup = () => {
-        track.removeEventListener('mouseenter', pause);
-        track.removeEventListener('mouseleave', resume);
-        io?.disconnect();
-        tween.kill();
-      };
-    });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      cleanup?.();
+  // Scale the whole stage down to fit narrow screens.
+  useEffect(() => {
+    const fit = () => {
+      const avail = Math.min(window.innerWidth - 40, STAGE_W);
+      setScale(Math.max(0.5, Math.min(1, avail / STAGE_W)));
     };
-  }, [reduced]);
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, []);
+
+  const openProject = (p: Project) => {
+    if (draggingRef.current) return; // it was a drag-to-close, not a tap
+    window.open(p.url, '_blank', 'noopener,noreferrer');
+  };
 
   return (
-    <section id="work" ref={sectionRef} className="relative py-16 md:py-24 bg-transparent overflow-hidden">
+    <section id="work" className="relative py-16 md:py-24 bg-transparent overflow-hidden">
       <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10">
 
         {/* ── Header ── */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 md:mb-14">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 md:mb-10">
           <div>
             <motion.span
               initial={{ opacity: 0, y: 10 }}
@@ -148,36 +69,121 @@ const Projects: React.FC = () => {
             transition={{ duration: 0.7, ease: E, delay: 0.2 }}
             className="text-white/60 text-base leading-relaxed font-medium md:max-w-xs md:text-right md:pb-2"
           >
-            Real clients, real results — every project ships with a number we're proud of.
+            Real clients, real results — open the folder to explore our work.
           </motion.p>
         </div>
-      </div>
 
-      {/* ── Flowing project strip (right → left, pauses on hover) ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 36 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.9, ease: E }}
-        className="relative z-10"
-      >
-        {/* Edge fades so cards dissolve at the viewport borders */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-28 bg-gradient-to-r from-black/70 to-transparent z-10" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-28 bg-gradient-to-l from-black/70 to-transparent z-10" aria-hidden="true" />
+        {/* ── Interactive folder gallery ──
+             Motion is re-enabled here (the app disables framer transforms on
+             touch for perf, but this small interactive piece needs them). */}
+        <MotionConfig reducedMotion="never">
+          <div className="relative w-full min-h-[520px] flex flex-col items-center justify-center select-none">
+            <div
+              className="relative flex justify-center pointer-events-none"
+              style={{ width: STAGE_W, height: 520, transform: `scale(${scale})`, transformOrigin: 'center' }}
+            >
 
-        <div className={reduced ? 'overflow-x-auto no-scrollbar' : 'overflow-hidden'}>
-          <div ref={trackRef} className="flex will-change-transform">
-            {FEATURED.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-            {/* Second copy makes the loop seamless */}
-            {FEATURED.map((project) => (
-              <ProjectCard key={`ghost-${project.id}`} project={project} ghost />
-            ))}
+              {/* Folder back pocket */}
+              <motion.div
+                className="absolute bottom-6 w-80 h-56 drop-shadow-2xl"
+                animate={{ opacity: isOpen ? 0 : 1, scale: isOpen ? 0.9 : 1 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="absolute top-0 left-0 w-32 h-10 bg-gradient-to-t from-[#1e1e1e] to-[#2a2a2a] rounded-t-xl border-t border-l border-r border-white/10" />
+                <div className="absolute top-8 left-0 right-0 bottom-0 bg-gradient-to-b from-[#1e1e1e] to-[#0a0a0a] rounded-b-xl rounded-tr-xl border border-white/10 shadow-[inset_0_0_40px_rgba(0,0,0,0.8)]" />
+                <div className="absolute top-10 left-2 right-2 bottom-2 bg-black rounded-lg shadow-inner" />
+              </motion.div>
+
+              {/* Project cards */}
+              <div className="absolute bottom-10 z-10 flex justify-center">
+                {FEATURED.map((project, i) => {
+                  const offset = i - 2;
+                  const stackY = hover ? offset * -10 - 40 : offset * -5;
+                  const stackX = hover ? offset * 34 : offset * 3;
+                  const stackRotate = hover ? offset * 8 : offset * 3;
+                  const stackScale = 1 - Math.abs(offset) * 0.03;
+
+                  return (
+                    <motion.div
+                      key={project.id}
+                      drag={isOpen}
+                      dragSnapToOrigin
+                      onDragStart={() => { draggingRef.current = true; }}
+                      onDragEnd={(_e, info) => {
+                        if (info.offset.y > 100 && isOpen) { setIsOpen(false); setHover(false); }
+                        setTimeout(() => { draggingRef.current = false; }, 60);
+                      }}
+                      onClick={() => isOpen && openProject(project)}
+                      className={`absolute bottom-0 w-52 h-72 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden border border-white/20 origin-bottom ${
+                        isOpen ? 'cursor-pointer active:cursor-grabbing pointer-events-auto' : 'pointer-events-none'
+                      }`}
+                      animate={!isOpen
+                        ? { y: stackY, x: stackX, rotate: stackRotate, scale: stackScale, zIndex: i + 10 }
+                        : { y: -120, x: offset * 130, rotate: 0, scale: 1.05, zIndex: 50 }}
+                      whileHover={isOpen ? { y: -140, scale: 1.1, zIndex: 100 } : {}}
+                      whileDrag={isOpen ? { scale: 1.15, rotate: 4, zIndex: 150 } : {}}
+                      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                    >
+                      <img
+                        src={projectImg(project)}
+                        alt={project.title}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent pointer-events-none" />
+                      <span className="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/90 bg-black/70 px-2.5 py-1 rounded-full">
+                        {project.industry ?? project.category}
+                      </span>
+                      <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
+                        <h3 className="text-sm font-black uppercase tracking-[0.02em] text-white leading-tight">
+                          {project.title}
+                        </h3>
+                        {project.result && (
+                          <span className="mt-2 inline-block text-[9px] font-bold tracking-[0.15em] uppercase text-brand-secondary border border-brand-secondary/40 rounded-full px-2.5 py-1">
+                            {project.result}
+                          </span>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* Folder front flap — click to open */}
+              <motion.div
+                className="absolute bottom-0 w-[340px] h-44 drop-shadow-[0_-20px_40px_rgba(0,0,0,0.8)] cursor-pointer z-20 pointer-events-auto"
+                style={{ transformOrigin: 'bottom' }}
+                animate={{
+                  opacity: isOpen ? 0 : 1,
+                  rotateX: hover ? -25 : 0,
+                  y: hover ? 10 : 0,
+                  pointerEvents: isOpen ? 'none' : 'auto',
+                }}
+                transition={{ duration: 0.4 }}
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}
+                onClick={() => setIsOpen(true)}
+              >
+                <div className="w-full h-full bg-gradient-to-b from-[#2a2a2a] to-[#111] rounded-2xl border border-white/20 shadow-[inset_0_2px_10px_rgba(255,255,255,0.1)] relative overflow-hidden flex items-end justify-center pb-8">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                  <div className="px-5 py-2.5 bg-black rounded-lg border border-white/10 shadow-inner flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
+                    <span className="text-white/90 text-sm font-bold tracking-wide uppercase">Our Work</span>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Hint text — swaps between "click to open" and "drag to close" */}
+            <div className="absolute bottom-2 px-6 py-3 rounded-full border border-white/10 bg-white/[0.03] text-white/50 text-[10px] font-bold uppercase tracking-[0.25em] pointer-events-none">
+              {isOpen ? 'Drag any card down to close · tap to open project' : 'Click the folder to open'}
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </MotionConfig>
 
+      </div>
     </section>
   );
 };
