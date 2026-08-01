@@ -99,14 +99,10 @@ const LandingPage: React.FC = () => {
     return () => window.removeEventListener('pointermove', forward);
   }, [show3D]);
 
-  // Robot loading strategy — everything in PARALLEL, starting NOW:
-  //   1. The scene file (multi-MB, third-party CDN — the slowest link)
-  //      starts downloading immediately via <link rel="preload">.
-  //   2. The Spline runtime chunk is warmed with a dynamic import so it
-  //      fetches + background-compiles alongside the scene.
-  //   3. The component mounts at the first idle moment (≤1.2s), by which
-  //      time both downloads are usually already done or in flight.
-  // Desktop-only: phones never pay a byte of this.
+  // Robot mount strategy — the 3.8MB assets are already downloading (started
+  // from the app entry via preloadRobot, well before this runs). Here we just
+  // mount the component at the first idle moment, by which time the bytes are
+  // usually ready, so init is fast. Desktop-only: phones never pay a byte.
   useEffect(() => {
     const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
     if (
@@ -121,19 +117,6 @@ const LandingPage: React.FC = () => {
       nav.connection?.saveData
     ) return;
 
-    // 1) Scene file: fire the network request right away
-    const preload = document.createElement('link');
-    preload.rel = 'preload';
-    preload.as = 'fetch';
-    preload.crossOrigin = 'anonymous';
-    preload.href = SPLINE_SCENE;
-    preload.setAttribute('fetchpriority', 'high');
-    document.head.appendChild(preload);
-
-    // 2) Runtime chunk: fetch + compile in parallel (resolves the same
-    //    lazy chunk SplineScene imports, so mounting is instant later)
-    import('@splinetool/react-spline').catch(() => { /* retried on mount */ });
-
     const w = window as Window & {
       requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
       cancelIdleCallback?: (id: number) => void;
@@ -141,20 +124,22 @@ const LandingPage: React.FC = () => {
     let idleId: number | undefined;
     let timeoutId: number | undefined;
     const enable = () => {
-      // Cap devicePixelRatio before the Spline runtime initializes: on
-      // 1.5×/2× Windows displays this cuts WebGL pixels ~40-60% with no
-      // change to camera framing. (Our own canvas already caps itself.)
-      if (window.devicePixelRatio > 1.25) {
+      // Cap devicePixelRatio to 1 before the Spline runtime initializes: on
+      // 1.5×/2× displays this cuts WebGL pixel work ~55-75%, sharply reducing
+      // both the init cost (the load-time "lag") and the per-frame cost while
+      // scrolling. The robot is a soft backdrop element — the resolution drop
+      // is imperceptible, the smoothness gain is not.
+      if (window.devicePixelRatio > 1) {
         try {
           Object.defineProperty(window, 'devicePixelRatio', {
-            get: () => 1.25,
+            get: () => 1,
             configurable: true,
           });
         } catch { /* read-only in some browsers — full-res fallback */ }
       }
       setShow3D(true);
     };
-    // 3) Mount at the first breather — not after a long artificial wait
+    // Mount at the first breather — not after a long artificial wait
     if (w.requestIdleCallback) {
       idleId = w.requestIdleCallback(enable, { timeout: 1200 });
     } else {
@@ -361,6 +346,10 @@ const LandingPage: React.FC = () => {
           ref={robotWrapRef}
           className="fixed inset-0 pointer-events-none hidden lg:block opacity-0"
           aria-hidden="true"
+          // Isolate the robot's continuous WebGL repaints into their own
+          // compositor layer so they don't invalidate/redraw the rest of the
+          // page while scrolling.
+          style={{ contain: 'layout paint', isolation: 'isolate' }}
         >
           <div
             ref={robotRef}

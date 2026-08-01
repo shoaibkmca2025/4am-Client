@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
+import { preloadRobot } from './lib/preloadRobot';
+
+// Start warming the 3D robot assets from the very first moment (idle-gated,
+// desktop-only) so it appears sooner instead of only after LandingPage mounts.
+preloadRobot('/assets/robot.splinecode');
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
