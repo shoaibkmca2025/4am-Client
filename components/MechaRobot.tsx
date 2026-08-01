@@ -1,6 +1,7 @@
 import { Suspense, useEffect, useMemo, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, Environment, Lightformer, Center } from '@react-three/drei';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useGLTF, useAnimations, Environment, Lightformer } from '@react-three/drei';
+import { clone as skeletonClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import * as THREE from 'three';
 
 // Self-hosted Draco decoder (public/draco) — no external CDN dependency.
@@ -11,18 +12,24 @@ useGLTF.preload(MODEL, DRACO);
 interface Props { morphRef: React.MutableRefObject<number> }
 
 function Model({ morphRef }: Props) {
-  const { scene } = useGLTF(MODEL, DRACO);
+  const { scene, animations } = useGLTF(MODEL, DRACO);
+  const { viewport } = useThree();
   const group = useRef<THREE.Group>(null);
   const mouse = useRef({ x: 0, y: 0 });
 
-  // Scale to a consistent size; drei <Center> handles precise centring
-  // (robust against odd pivots / stray nodes in the exported scene).
-  const model = useMemo(() => {
-    const clone = scene.clone(true);
+  // Centre the geometry at the origin SYNCHRONOUSLY (useGLTF has already
+  // resolved, so all geometry/matrices exist here) and record its unscaled
+  // size. SkeletonUtils.clone (NOT scene.clone) is required — this model is a
+  // rig of skinned meshes, and a plain clone leaves them bound to the ORIGINAL
+  // skeleton, so group transforms (centre + fit-scale) would be ignored and
+  // the robot renders at its raw pose (feet at origin, head off-canvas).
+  const { object, size } = useMemo(() => {
+    const clone = skeletonClone(scene);
+    clone.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(clone);
-    const size = box.getSize(new THREE.Vector3());
-    const fit = 3.0 / (Math.max(size.x, size.y, size.z) || 1);
-    clone.scale.setScalar(fit);
+    const center = box.getCenter(new THREE.Vector3());
+    clone.position.sub(center); // pivot -> geometric centre
+    const s = box.getSize(new THREE.Vector3());
     clone.traverse((o) => {
       const m = o as THREE.Mesh;
       if (m.isMesh && m.material) {
@@ -31,8 +38,30 @@ function Model({ morphRef }: Props) {
         mat.needsUpdate = true;
       }
     });
-    return clone;
+    return { object: clone, size: s };
   }, [scene]);
+
+  // Aspect-aware fit: scale so the FULL robot always fits and fills the frame,
+  // whatever the container's size/aspect (recomputes on resize via viewport).
+  // Height fills 92% (prominent); width capped at 80% to leave room for the
+  // ±30° cursor look-around without clipping the arms.
+  const fitScale = useMemo(() => {
+    const byH = (viewport.height * 0.92) / (size.y || 1);
+    const byW = (viewport.width * 0.8) / (size.x || 1);
+    return Math.min(byH, byW);
+  }, [viewport.width, viewport.height, size]);
+
+  // Play the model's built-in "Motion" clip so the mech is alive (a subtle
+  // idle) instead of frozen in its stiff T-pose. Bound to `object`'s skeleton,
+  // which SkeletonUtils.clone preserved by node name. Slowed for a calm hero.
+  const { actions, names } = useAnimations(animations, group);
+  useEffect(() => {
+    const key = names[0];
+    const action = key ? actions[key] : null;
+    if (!action) return;
+    action.reset().setEffectiveTimeScale(0.5).fadeIn(0.6).play();
+    return () => { action.fadeOut(0.3); };
+  }, [actions, names]);
 
   // Track the cursor globally (works regardless of pointer-events on the layer).
   useEffect(() => {
@@ -58,10 +87,8 @@ function Model({ morphRef }: Props) {
   });
 
   return (
-    <group ref={group}>
-      <Center>
-        <primitive object={model} />
-      </Center>
+    <group ref={group} scale={fitScale}>
+      <primitive object={object} />
     </group>
   );
 }
