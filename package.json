@@ -23,6 +23,7 @@
     "@splinetool/react-spline": "^4.1.0",
     "@splinetool/runtime": "^1.12.98",
     "@supabase/supabase-js": "^2.110.8",
+    "animejs": "^4.5.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "gsap": "^3.15.0",
@@ -39,6 +40,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/animejs": "^3.1.13",
     "@types/node": "^20.11.0",
     "@types/pg": "^8.20.0",
     "@types/qrcode": "^1.5.6",
