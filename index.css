@@ -456,8 +456,8 @@ a[role="button"]:active {
   }
 }
 
-/* Scroll guarantee on touch devices: no canvas (Spline sets its own
-   touch-action:none for orbit controls) may ever swallow a vertical pan.
+/* Scroll guarantee on touch devices: no canvas (WebGL/R3F canvases set their
+   own touch-action:none) may ever swallow a vertical pan.
    Nothing on this site needs touch-drag on a canvas. */
 @media (pointer: coarse) {
   canvas {

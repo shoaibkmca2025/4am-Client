@@ -1,12 +1,8 @@
-// Warms the heavy 3D-robot assets (Spline runtime ~2MB + scene ~1.3MB) as
-// early as possible on capable desktops — BUT on idle, so it never competes
-// with first paint. Previously this only started inside the lazy-loaded
-// LandingPage's effect (after the main bundle AND the landing chunk had
-// downloaded, parsed and mounted), which is why the robot appeared so late.
-// Firing it from the app entry starts the download ~1–1.5s sooner.
-//
-// This only warms the browser cache; the robot still MOUNTS in LandingPage.
-export const preloadRobot = (sceneUrl: string): void => {
+// Warms the 3D-robot assets (the ~6.9MB Draco/WebP mecha model + the
+// three/fiber/drei runtime chunk) as early as possible on capable desktops
+// — but on idle, so it never competes with first paint. This only warms the
+// browser cache; the robot still MOUNTS in LandingPage.
+export const preloadRobot = (modelUrl: string): void => {
   if (typeof window === 'undefined') return;
   const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
   if (
@@ -18,17 +14,17 @@ export const preloadRobot = (sceneUrl: string): void => {
   ) return;
 
   const start = () => {
-    // Scene file — highest priority so bytes are in flight immediately.
+    // Model file — highest priority so bytes are in flight immediately.
     const link = document.createElement('link');
     link.rel = 'preload';
     link.as = 'fetch';
     link.crossOrigin = 'anonymous';
-    link.href = sceneUrl;
+    link.href = modelUrl;
     link.setAttribute('fetchpriority', 'high');
     document.head.appendChild(link);
-    // Runtime chunk — fetch + compile in parallel (same lazy chunk the
-    // SplineScene component imports later, so its mount is near-instant).
-    import('@splinetool/react-spline').catch(() => { /* retried on mount */ });
+    // Runtime chunk — importing the component warms three/fiber/drei AND runs
+    // its top-level useGLTF.preload(), so the model + decoder start too.
+    import('../components/MechaRobot').catch(() => { /* retried on mount */ });
   };
 
   const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };

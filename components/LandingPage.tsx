@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
@@ -17,7 +17,7 @@ import Marquee from './Marquee';
 import ScrollCanvasBackground, { ACCENT_EVENT } from './ScrollCanvasBackground';
 import SectionNav from './SectionNav';
 import ScrollCTA from './ScrollCTA';
-import { SplineScene } from './ui/splite';
+const MechaRobot = React.lazy(() => import('./MechaRobot'));
 import { scrollToSection } from '../utils/scroll';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -35,10 +35,6 @@ const CLIENTS = [
 
 type OrbKey = 'orange' | 'violet' | 'cyan';
 
-// Self-hosted (public/assets): rides our own CDN edge after deployment —
-// no third-party DNS/TLS handshake, cached alongside the site.
-const SPLINE_SCENE = '/assets/robot.splinecode';
-
 const LandingPage: React.FC = () => {
   const location = useLocation();
   const mainRef  = useRef<HTMLDivElement>(null);
@@ -52,52 +48,9 @@ const LandingPage: React.FC = () => {
   const morphProgress = useRef(0);
   const [show3D, setShow3D] = useState(false);
 
-  // NOTE: no stop()/play() scroll-freezing here — Spline's play() replays
-  // the scene's camera intro, which showed up as a zoom pulse every time
-  // scrolling paused. The scene runs continuously so head-tracking and
-  // the idle pose stay stable in backdrop mode.
-
-  // Head-tracking everywhere: section containers sit above the robot
-  // layer and swallow pointer events, so we mirror every window mouse
-  // move to the robot's canvas as a synthetic event. Clicks/hovers on
-  // real UI are untouched — we only forward the movement signal.
-  useEffect(() => {
-    if (!show3D) return;
-    let canvas: HTMLCanvasElement | null = null;
-    const forward = (e: PointerEvent) => {
-      if (!canvas || !canvas.isConnected) {
-        canvas = robotWrapRef.current?.querySelector('canvas') ?? null;
-      }
-      if (!canvas || e.target === canvas) return;
-      // In backdrop mode the rig fills the screen — raw edge-of-screen
-      // coordinates made the whole body bend/contort toward the cursor.
-      // Damp the relayed position toward head level as the morph
-      // progresses: full tracking in the hero, a gentle head-turn only
-      // once the robot is the backdrop.
-      const p = morphProgress.current;
-      const cx = window.innerWidth / 2;
-      const cy = window.innerHeight * 0.38;
-      // At full backdrop: horizontal sway only (±25%), vertical LOCKED at
-      // head level — with no vertical delta the rig can never bend over.
-      const x = cx + (e.clientX - cx) * (1 - 0.75 * p);
-      let y = cy + (e.clientY - cy) * (1 - p);
-      if (p > 0.5) y = Math.min(y, window.innerHeight * 0.55);
-      canvas.dispatchEvent(new PointerEvent('pointermove', {
-        clientX: x,
-        clientY: y,
-        pointerId: e.pointerId,
-        pointerType: 'mouse',
-        bubbles: false,
-      }));
-      canvas.dispatchEvent(new MouseEvent('mousemove', {
-        clientX: x,
-        clientY: y,
-        bubbles: false,
-      }));
-    };
-    window.addEventListener('pointermove', forward, { passive: true });
-    return () => window.removeEventListener('pointermove', forward);
-  }, [show3D]);
+  // Cursor tracking now lives inside MechaRobot (R3F reads the mouse and
+  // rotates the model directly in its render loop, damped by morphProgress),
+  // so no synthetic-event forwarding is needed anymore.
 
   // Robot mount strategy — the 3.8MB assets are already downloading (started
   // from the app entry via preloadRobot, well before this runs). Here we just
@@ -108,8 +61,8 @@ const LandingPage: React.FC = () => {
     if (
       window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
       window.matchMedia('(max-width: 1024px)').matches ||
-      // Touch devices in "desktop site" mode pass the width check, but
-      // Spline's canvas sets touch-action:none — a finger dragging on the
+      // Touch devices in "desktop site" mode pass the width check, but the
+      // WebGL canvas sets touch-action:none — a finger dragging on the
       // robot (which backdrops every section) can't scroll the page. The
       // robot is strictly for real fine-pointer desktops.
       window.matchMedia('(pointer: coarse)').matches ||
@@ -123,22 +76,9 @@ const LandingPage: React.FC = () => {
     };
     let idleId: number | undefined;
     let timeoutId: number | undefined;
-    const enable = () => {
-      // Cap devicePixelRatio to 1 before the Spline runtime initializes: on
-      // 1.5×/2× displays this cuts WebGL pixel work ~55-75%, sharply reducing
-      // both the init cost (the load-time "lag") and the per-frame cost while
-      // scrolling. The robot is a soft backdrop element — the resolution drop
-      // is imperceptible, the smoothness gain is not.
-      if (window.devicePixelRatio > 1) {
-        try {
-          Object.defineProperty(window, 'devicePixelRatio', {
-            get: () => 1,
-            configurable: true,
-          });
-        } catch { /* read-only in some browsers — full-res fallback */ }
-      }
-      setShow3D(true);
-    };
+    // R3F caps its own pixel ratio via the Canvas `dpr` prop, so no global
+    // devicePixelRatio override is needed here.
+    const enable = () => setShow3D(true);
     // Mount at the first breather — not after a long artificial wait
     if (w.requestIdleCallback) {
       idleId = w.requestIdleCallback(enable, { timeout: 1200 });
@@ -179,21 +119,11 @@ const LandingPage: React.FC = () => {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             morphProgress.current = self.progress;
-            // Past the hero, direct canvas hits would bypass the damped
-            // relay — route ALL cursor motion through the forwarder.
-            if (robotRef.current) {
-              robotRef.current.style.pointerEvents = self.progress > 0.05 ? 'none' : 'auto';
-            }
           },
         },
       })
         .to(robot, { x: '0vw', y: '0vh', scale: 1.45, ease: 'none' }, 0)
         .to(robot, { opacity: 0.15, ease: 'none' }, 0.15);
-
-      // The robot keeps pointer events in backdrop mode too, so its
-      // head follows the cursor everywhere. Real UI (buttons, links,
-      // cards) lives in positioned containers that paint above this
-      // layer, so clicks on content are unaffected.
 
       // Gentle ambient drift once it's a backdrop (composited transform)
       gsap.to(wrap, {
@@ -354,12 +284,10 @@ const LandingPage: React.FC = () => {
           <div
             ref={robotRef}
             className="absolute left-1/2 top-1/2 w-[44vw] max-w-[720px] h-[62vh] xl:h-[66vh] min-h-[440px] will-change-transform"
-            style={{ pointerEvents: 'auto' }}
           >
-            <SplineScene
-              scene={SPLINE_SCENE}
-              className="w-full h-full"
-            />
+            <Suspense fallback={null}>
+              <MechaRobot morphRef={morphProgress} />
+            </Suspense>
           </div>
         </div>
       )}

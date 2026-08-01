@@ -7,7 +7,7 @@ import { preloadRobot } from './lib/preloadRobot';
 
 // Start warming the 3D robot assets from the very first moment (idle-gated,
 // desktop-only) so it appears sooner instead of only after LandingPage mounts.
-preloadRobot('/assets/robot.splinecode');
+preloadRobot('/models/mecha.glb');
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

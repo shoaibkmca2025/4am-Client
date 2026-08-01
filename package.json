@@ -19,9 +19,8 @@
   },
   "dependencies": {
     "@google/genai": "^1.35.0",
+    "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.16.8",
-    "@splinetool/react-spline": "^4.1.0",
-    "@splinetool/runtime": "^1.12.98",
     "@supabase/supabase-js": "^2.110.8",
     "animejs": "^4.5.0",
     "clsx": "^2.1.1",
@@ -40,6 +39,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@gltf-transform/core": "^4.4.2",
+    "@gltf-transform/extensions": "^4.4.2",
+    "@gltf-transform/functions": "^4.4.2",
     "@types/animejs": "^3.1.13",
     "@types/node": "^20.11.0",
     "@types/pg": "^8.20.0",
@@ -51,11 +53,13 @@
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.24",
+    "draco3dgltf": "^1.5.7",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "pg": "^8.22.0",
     "postcss": "^8.4.33",
+    "sharp": "^0.35.3",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.12"
