@@ -41,30 +41,27 @@ function Model({ morphRef }: Props) {
     return { object: clone, size: s };
   }, [scene]);
 
-  // Aspect-aware fit: scale so the FULL robot fills the frame at any
-  // viewport/aspect (recomputes on resize). The robot is frozen on an
-  // arms-DOWN stance (not the wide T-pose bind size we measure), so height
-  // drives the size; the width guard assumes the posed silhouette is ~55% of
-  // the arms-out width, keeping room for the cursor look-around.
+  // Aspect-aware fit: scale so the FULL robot always fits and fills the frame,
+  // whatever the container's size/aspect (recomputes on resize via viewport).
+  // Height fills 92% (prominent); width capped at 80% to leave room for the
+  // ±30° cursor look-around without clipping the arms.
   const fitScale = useMemo(() => {
-    const byH = (viewport.height * 0.93) / (size.y || 1);
-    const byW = (viewport.width * 1.0) / ((size.x * 0.55) || 1);
+    const byH = (viewport.height * 0.92) / (size.y || 1);
+    const byW = (viewport.width * 0.8) / (size.x || 1);
     return Math.min(byH, byW);
   }, [viewport.width, viewport.height, size]);
 
-  // Freeze the model's built-in clip on a natural standing stance (instead of
-  // looping the walk cycle) — this pulls the mech out of its stiff bind T-pose
-  // and holds a good pose, while the cursor still turns the whole body/head.
-  const { actions, names, mixer } = useAnimations(animations, group);
+  // Play the model's built-in "Motion" clip so the mech is alive (a subtle
+  // idle) instead of frozen in its stiff T-pose. Bound to `object`'s skeleton,
+  // which SkeletonUtils.clone preserved by node name. Slowed for a calm hero.
+  const { actions, names } = useAnimations(animations, group);
   useEffect(() => {
     const key = names[0];
     const action = key ? actions[key] : null;
     if (!action) return;
-    action.reset().play(); // time 0 = the clip's clean, arms-down standing pose
-    mixer.update(0);        // apply that pose to the skeleton
-    action.paused = true;   // ...and hold it — no walking
-    return () => { action.stop(); };
-  }, [actions, names, mixer]);
+    action.reset().setEffectiveTimeScale(0.5).fadeIn(0.6).play();
+    return () => { action.fadeOut(0.3); };
+  }, [actions, names]);
 
   // Track the cursor globally (works regardless of pointer-events on the layer).
   useEffect(() => {
@@ -81,16 +78,12 @@ function Model({ morphRef }: Props) {
     if (!g) return;
     // 0 = hero (full look-around), 1 = backdrop (gentle, damped).
     const p = morphRef.current;
-    // Body/head turn toward the cursor — the primary interaction now that the
-    // walk is frozen. Larger amplitude so the movement reads clearly.
-    const yaw = mouse.current.x * 0.7 * (1 - 0.6 * p);
-    const pitch = mouse.current.y * 0.3 * (1 - 0.7 * p);
-    g.rotation.y += (yaw - g.rotation.y) * 0.06;
-    g.rotation.x += (-pitch - g.rotation.x) * 0.06;
-    // Idle float (a gentle hover, not a walk). Small upward bias: the frozen
-    // arms-down stance sits lower than the T-pose we centre on, so lift it to
-    // balance the head/feet margins in the frame.
-    g.position.y = 0.15 + Math.sin(state.clock.elapsedTime * 0.8) * 0.045;
+    const yaw = mouse.current.x * 0.55 * (1 - 0.6 * p);
+    const pitch = mouse.current.y * 0.22 * (1 - 0.7 * p);
+    g.rotation.y += (yaw - g.rotation.y) * 0.05;
+    g.rotation.x += (-pitch - g.rotation.x) * 0.05;
+    // Idle float
+    g.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.08;
   });
 
   return (
