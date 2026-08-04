@@ -59,19 +59,24 @@ const FEATURED_IN = [
 // beside the text (never behind it). `side` = target world-x fed to the
 // sculpture (+ = right / - = left, opposite the text column); `o` = opacity
 // (dimmed on the full-width content sections where there is no empty half).
+// `side` is a SCREEN-space target: how far toward a frame edge the object's
+// centre should sit (~0.42 ≈ 42% from centre toward the edge; + = right).
+// The render loop converts this to world-x for the current camera and clamps
+// it so the object's edge never leaves the frame — same apparent size, always
+// in view. Full-width content sections push a bit further and dim.
 const PLACE: Record<string, { side: number; o: number }> = {
-  home:        { side: 2.3,  o: 1 },    // text left  → object right
-  why:         { side: -2.3, o: 1 },    // text right → object left
-  focus:       { side: 2.3,  o: 1 },
-  services:    { side: -2.3, o: 1 },
-  software:    { side: 2.3,  o: 1 },
-  reach:       { side: -2.3, o: 1 },
-  method:      { side: 2.3,  o: 1 },
-  network:     { side: -2.3, o: 1 },
-  work:        { side: 3.1,  o: 0.16 }, // full-width content → recede, faint
-  about:       { side: 3.1,  o: 0.14 },
-  testimonials:{ side: 2.3,  o: 1 },
-  contact:     { side: -3.1, o: 0.26 }, // form on the right → object left, faint
+  home:        { side: 0.42,  o: 1 },    // text left  → object right
+  why:         { side: -0.42, o: 1 },    // text right → object left
+  focus:       { side: 0.42,  o: 1 },
+  services:    { side: -0.42, o: 1 },
+  software:    { side: 0.42,  o: 1 },
+  reach:       { side: -0.42, o: 1 },
+  method:      { side: 0.42,  o: 1 },
+  network:     { side: -0.42, o: 1 },
+  work:        { side: 0.58,  o: 0.16 },
+  about:       { side: 0.58,  o: 0.14 },
+  testimonials:{ side: 0.42,  o: 1 },
+  contact:     { side: -0.58, o: 0.26 },
 };
 
 // Rail order — must match the <section id> list below.

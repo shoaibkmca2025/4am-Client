@@ -358,14 +358,20 @@ export default function SculptureBackground() {
       sideCurrent += (sideTarget - sideCurrent) * 0.06;
       if (!sliding) sideCurrent = sideTarget;
       apply(current);
-      // Override the stage's horizontal placement with the section's target side
-      // so the object always sits in the text's empty half. Pushed a touch
-      // harder on wider screens; never fully centred where it'd overlap.
       const aspect = camera.aspect;
-      const push = 0.72 + 0.36 * Math.max(0, Math.min(1, (aspect - 1.1) / 0.7));
-      rig.position.x = sideCurrent * push;
       const back = 1 + Math.max(0, 1.6 - aspect) * 0.45;
-      camera.position.set(camPos.x + pointerX * 0.32, camPos.y - pointerY * 0.22, camPos.z * back);
+      const camZ = camPos.z * back;
+      // Place the object horizontally in SCREEN space, then clamp so its edge
+      // never leaves the frame — the object keeps its size and always stays in
+      // view, whatever the stage's camera distance. sideCurrent is a screen
+      // fraction (−1..1 ≈ edge to edge); halfW is the world half-width visible
+      // at the object's depth for this camera.
+      const halfW = Math.max(0.001, camZ * 0.3443 * aspect);
+      const objNdc = Math.min(0.9, 1.7 / halfW);        // object half-extent in screen units
+      const maxNx = Math.max(0.04, 1 - objNdc);          // keep the object edge inside the frame
+      const nx = Math.max(-maxNx, Math.min(maxNx, sideCurrent));
+      rig.position.x = camLook.x + nx * halfW;
+      camera.position.set(camPos.x + pointerX * 0.32, camPos.y - pointerY * 0.22, camZ);
       camera.lookAt(camLook);
       renderer.render(scene, camera);
     });
