@@ -318,10 +318,11 @@ export default function SculptureBackground() {
     }
     window.addEventListener('scroll', readScroll, { passive: true });
 
-    let pointerX = 0, pointerY = 0;
+    let pointerX = 0, pointerY = 0, pointerMovedAt = 0;
     const onPointer = (ev: PointerEvent) => {
       pointerX = (ev.clientX / window.innerWidth - 0.5) * 2;
       pointerY = (ev.clientY / window.innerHeight - 0.5) * 2;
+      pointerMovedAt = performance.now();
     };
     window.addEventListener('pointermove', onPointer, { passive: true });
 
@@ -336,19 +337,31 @@ export default function SculptureBackground() {
     current = target;
 
     let paused = false;
+    let warmup = 90; // render the opening frames so the object appears + settles
     const onVisibility = () => { paused = document.hidden; };
     document.addEventListener('visibilitychange', onVisibility);
 
     renderer.setAnimationLoop(() => {
       if (paused) return;
-      current += (target - current) * 0.085;
-      apply(current);
-      const aspect = camera.aspect;
-      // Override the stage's horizontal placement with the section's target side
-      // (smoothed), so the object always sits in the text's empty half. Pushed
-      // a touch harder on wider screens; never fully centred where it'd overlap.
       if (typeof w.__sculptSideX === 'number') sideTarget = w.__sculptSideX;
+      // Idle-skip: when nothing is moving (no scroll morph, no side-shift, no
+      // recent pointer motion), don't render at all — keeps the GPU quiet and
+      // scrolling smooth. The object is otherwise static between sections.
+      const scrolling = Math.abs(target - current) > 0.0006;
+      const sliding = Math.abs(sideTarget - sideCurrent) > 0.0006;
+      const pointering = performance.now() - pointerMovedAt < 450;
+      if (warmup > 0) warmup--;
+      else if (!scrolling && !sliding && !pointering) return;
+
+      current += (target - current) * 0.085;
+      if (!scrolling) current = target;
       sideCurrent += (sideTarget - sideCurrent) * 0.06;
+      if (!sliding) sideCurrent = sideTarget;
+      apply(current);
+      // Override the stage's horizontal placement with the section's target side
+      // so the object always sits in the text's empty half. Pushed a touch
+      // harder on wider screens; never fully centred where it'd overlap.
+      const aspect = camera.aspect;
       const push = 0.72 + 0.36 * Math.max(0, Math.min(1, (aspect - 1.1) / 0.7));
       rig.position.x = sideCurrent * push;
       const back = 1 + Math.max(0, 1.6 - aspect) * 0.45;

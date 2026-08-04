@@ -537,11 +537,12 @@ a[role="button"]:active {
 /* Fixed 3D canvas + vignette (behind editorial content) */
 #o-scene {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  /* The object is nudged to the empty half of each section (JS sets the
-     transform/opacity per active section) so it sits BESIDE the text, not
-     behind it. */
-  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s ease;
-  will-change: transform, opacity;
+  /* Opacity fades per active section; horizontal placement is handled inside
+     the WebGL scene. Its own compositor layer (contain) keeps the constant
+     canvas out of the page's scroll repaints. */
+  transition: opacity 0.6s ease;
+  will-change: opacity;
+  contain: layout paint style;
 }
 @media (prefers-reduced-motion: reduce) { #o-scene { transition: none; } }
 .o-vignette {
@@ -650,6 +651,30 @@ a[role="button"]:active {
   color: color-mix(in oklch, var(--color-text), var(--color-bg) 45%); transition: opacity .3s;
 }
 @media (max-width: 900px) { #o-rail { display: none; } }
+
+/* ── Phones only: the editorial full-screen sections become compact,
+   content-height blocks (no forced 100vh gaps, no address-bar jump).
+   Desktop/tablet keep the full-screen rhythm untouched. ──────────── */
+@media (max-width: 768px) {
+  .organic .o-section {
+    min-height: auto;
+    padding: 58px 22px;
+  }
+  .organic #home {
+    min-height: 84svh;      /* keep the hero impactful, address-bar safe */
+    padding-top: 104px;     /* clear the fixed navbar */
+    align-content: center;
+  }
+  .organic .o-col,
+  .organic .o-col.right { max-width: 100%; justify-self: stretch; }
+  .organic h1 { font-size: clamp(38px, 11.5vw, 56px); }
+  .organic h2 { font-size: clamp(28px, 8.5vw, 42px); }
+  .organic blockquote { font-size: clamp(26px, 8vw, 40px); }
+  .o-cue { display: none; }  /* no sculpture story to cue on phones */
+}
+@supports not (min-height: 84svh) {
+  @media (max-width: 768px) { .organic #home { min-height: 84vh; } }
+}
 
 /* ── Components (warm) ───────────────────────────────────────────── */
 .o-btn {
