@@ -43,7 +43,7 @@ const StudentPortal: React.FC = () => {
 
   useEffect(() => { if (session) load(); }, [session, load]);
 
-  if (loading) return <div className="bg-black min-h-screen pt-[70px] md:pt-[80px]"><Spinner /></div>;
+  if (loading) return <div className="bg-[#f5ead8] min-h-screen pt-[70px] md:pt-[80px]"><Spinner /></div>;
   if (!session) {
     return (
       <AuthGate
@@ -96,7 +96,7 @@ const StudentPortal: React.FC = () => {
         <SectionLabel>Claim a certificate</SectionLabel>
         <Card>
           <form onSubmit={claim} noValidate>
-            <p className="text-white/55 text-sm leading-relaxed mb-4">
+            <p className="text-[#201e1d]/65 text-sm leading-relaxed mb-4">
               Enter the one-time claim key you received from your instructor.
             </p>
             {claimError && <div className="mb-4"><Notice tone="error">{claimError}</Notice></div>}
@@ -108,7 +108,7 @@ const StudentPortal: React.FC = () => {
               onChange={(v) => setClaimKey(v.toUpperCase())}
               required
             />
-            <p className="mt-2 text-white/30 text-[11px] font-mono">Format: 4AM-XXXXX-XXXXX</p>
+            <p className="mt-2 text-[#201e1d]/50 text-[11px] font-mono">Format: 4AM-XXXXX-XXXXX</p>
             <div className="pt-6">
               <Button type="submit" loading={claiming} disabled={!claimKey.trim()}>Claim certificate</Button>
             </div>
@@ -134,11 +134,11 @@ const StudentPortal: React.FC = () => {
               <Card key={row.id}>
                 <div className="flex items-start justify-between gap-4 mb-5">
                   <div>
-                    <h3 className="text-lg font-black uppercase tracking-[-0.01em] text-white">
+                    <h3 className="text-lg font-black uppercase tracking-[-0.01em] text-[#201e1d]">
                       {course?.title ?? 'Course'}
                     </h3>
                     {(course?.venue || course?.college) && (
-                      <p className="text-white/40 text-xs mt-1.5">
+                      <p className="text-[#201e1d]/55 text-xs mt-1.5">
                         {[course?.college, course?.venue].filter(Boolean).join(' · ')}
                       </p>
                     )}
@@ -152,12 +152,12 @@ const StudentPortal: React.FC = () => {
                   <>
                     <dl className="grid grid-cols-2 gap-4 text-sm mb-6">
                       <div>
-                        <dt className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/35 mb-1">Serial</dt>
-                        <dd className="font-mono text-white/80 text-xs break-all">{cert.certificate_serial}</dd>
+                        <dt className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#201e1d]/50 mb-1">Serial</dt>
+                        <dd className="font-mono text-[#201e1d]/80 text-xs break-all">{cert.certificate_serial}</dd>
                       </div>
                       <div>
-                        <dt className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/35 mb-1">Issued</dt>
-                        <dd className="text-white/80">{fmt(cert.issue_date) ?? '—'}</dd>
+                        <dt className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#201e1d]/50 mb-1">Issued</dt>
+                        <dd className="text-[#201e1d]/80">{fmt(cert.issue_date) ?? '—'}</dd>
                       </div>
                     </dl>
                     <div className="flex flex-wrap gap-3">
@@ -172,7 +172,7 @@ const StudentPortal: React.FC = () => {
                         href={`/verify/${cert.certificate_serial}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase border border-white/[0.14] text-white/70 hover:border-white/40 hover:text-white transition-all duration-300"
+                        className="inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase border border-[#201e1d]/15 text-[#201e1d]/70 hover:border-[#201e1d]/30 hover:text-[#201e1d] transition-all duration-300"
                       >
                         Public link
                       </a>
@@ -184,7 +184,7 @@ const StudentPortal: React.FC = () => {
                     )}
                   </>
                 ) : (
-                  <p className="text-white/45 text-sm">
+                  <p className="text-[#201e1d]/60 text-sm">
                     Your enrollment is confirmed. The certificate will appear here once it has been issued.
                   </p>
                 )}

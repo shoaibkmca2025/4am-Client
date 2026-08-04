@@ -42,10 +42,9 @@ const SmoothScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
     // ── Desktop: Lenis smooth wheel ──────────────────────────────────
     const lenis = new Lenis({
-      // Slightly longer glide + softer lerp for a silkier feel.
-      duration: 1.25,
-      easing: (t: number) => 1 - Math.pow(1 - t, 4), // easeOutQuart
-      lerp: 0.075,
+      // Frame-rate-independent smoothing (consistent on 60Hz and 120Hz).
+      // `lerp` alone (no duration/easing) gives a silky, input-tracking glide.
+      lerp: 0.08,
       wheelMultiplier: 1,
       smoothWheel: true,
       syncTouch: false,

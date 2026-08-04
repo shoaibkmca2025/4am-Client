@@ -118,7 +118,7 @@ const Navbar: React.FC = () => {
     <header
       ref={headerRef}
       className={`fixed top-0 left-0 right-0 z-[9990] transition-all duration-500 ${
-        scrolled ? 'bg-black/95' : 'bg-transparent'
+        scrolled ? 'bg-[#f5ead8]/90 backdrop-blur-md border-b border-[#201e1d]/10' : 'bg-transparent'
       }`}
     >
       <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
@@ -126,11 +126,16 @@ const Navbar: React.FC = () => {
 
           {/* Logo */}
           <div ref={logoRef}>
-            <Link to="/" onClick={handleLogoClick} className="flex items-center shrink-0 group" aria-label="4AM Global Media — home">
+            <Link
+              to="/"
+              onClick={handleLogoClick}
+              className="flex items-center shrink-0 group"
+              aria-label="4AM Global Media — home"
+            >
               <img
-                src="/assets/logo-4am-nav.png"
+                src="/logo-mark.png"
                 alt="4AM Global Media"
-                className="h-10 md:h-12 w-auto group-hover:opacity-80 transition-opacity duration-300"
+                className="h-9 md:h-11 w-auto rounded-lg bg-[#1d1d1d] px-2.5 py-1.5 shadow-[0_2px_12px_rgba(32,30,29,0.18)] group-hover:opacity-90 transition-opacity duration-300"
               />
             </Link>
           </div>
@@ -151,7 +156,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4">
             <button
               ref={ctaRef}
-              className="flex items-center justify-center px-5 py-2 max-md:px-3.5 max-md:py-1.5 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary text-black text-[11px] max-md:text-[10px] font-black tracking-[0.15em] uppercase hover:shadow-[0_0_20px_rgba(255,106,61,0.45)] hover:brightness-110 active:scale-95 transition-all duration-200"
+              className="flex items-center justify-center px-5 py-2 max-md:px-3.5 max-md:py-1.5 rounded-full bg-[#c67139] text-[#f5ead8] text-[11px] max-md:text-[10px] font-semibold tracking-[0.12em] uppercase hover:bg-[#b2622d] active:scale-95 transition-all duration-200"
               onClick={() => handleNavClick('contact')}
             >
               Let's Talk
@@ -164,9 +169,9 @@ const Navbar: React.FC = () => {
               aria-label="Toggle menu"
               aria-expanded={isOpen}
             >
-              <span className={`block w-6 h-[1.5px] bg-white origin-center transition-all duration-300 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
-              <span className={`block h-[1.5px] bg-white transition-all duration-300 ${isOpen ? 'w-0 opacity-0' : 'w-6'}`} />
-              <span className={`block w-6 h-[1.5px] bg-white origin-center transition-all duration-300 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
+              <span className={`block w-6 h-[1.5px] bg-[#201e1d] origin-center transition-all duration-300 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+              <span className={`block h-[1.5px] bg-[#201e1d] transition-all duration-300 ${isOpen ? 'w-0 opacity-0' : 'w-6'}`} />
+              <span className={`block w-6 h-[1.5px] bg-[#201e1d] origin-center transition-all duration-300 ease-[cubic-bezier(0.7,0,0.3,1)] ${isOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
             </button>
           </div>
         </div>
@@ -175,12 +180,13 @@ const Navbar: React.FC = () => {
       {/* Mobile full-screen overlay — GSAP clip-path wipe */}
       <div
         ref={menuOverlay}
-        className="fixed inset-0 bg-black z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none"
+        className="fixed inset-0 bg-[#f5ead8] z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none"
         style={{ clipPath: 'inset(0 0 100% 0)' }}
       >
         {/* Background giant text */}
         <span
-          className="absolute text-[40vw] font-black text-white/[0.03] uppercase leading-none select-none pointer-events-none"
+          className="absolute text-[40vw] text-[#201e1d]/[0.05] leading-none select-none pointer-events-none"
+          style={{ fontFamily: 'Caprasimo, Georgia, serif' }}
           aria-hidden="true"
         >
           4AM
@@ -192,9 +198,10 @@ const Navbar: React.FC = () => {
               key={link.label}
               ref={(el) => { if (el) menuLinks.current[i] = el; }}
               onClick={() => handleNavClick(link.sectionId)}
-              className="group flex items-baseline gap-4 text-[10vw] sm:text-6xl font-black tracking-[-0.02em] text-white uppercase hover:text-brand-primary transition-colors duration-300 leading-none"
+              className="group flex items-baseline gap-4 text-[9vw] sm:text-5xl tracking-[-0.01em] text-[#201e1d] hover:text-[#c67139] transition-colors duration-300 leading-none"
+              style={{ fontFamily: 'Caprasimo, Georgia, serif' }}
             >
-              <span className="text-xs sm:text-sm font-bold tracking-[0.2em] text-brand-primary/50 group-hover:text-brand-primary transition-colors duration-300">
+              <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] text-[#c67139]/60 group-hover:text-[#c67139] transition-colors duration-300" style={{ fontFamily: 'Figtree, sans-serif' }}>
                 0{i + 1}
               </span>
               {link.label}
@@ -203,9 +210,9 @@ const Navbar: React.FC = () => {
         </nav>
 
         {/* Bottom bar */}
-        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between text-[10px] font-bold tracking-[0.25em] uppercase text-white/20">
+        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between text-[10px] font-semibold tracking-[0.25em] uppercase text-[#201e1d]/40">
           <span>4AM Global Media</span>
-          <a href="mailto:Info@4amglobalmedia.com" className="hover:text-white/60 transition-colors">
+          <a href="mailto:Info@4amglobalmedia.com" className="hover:text-[#c67139] transition-colors">
             Info@4amglobalmedia.com
           </a>
         </div>
@@ -247,14 +254,14 @@ const NavButton: React.FC<{ label: string; active?: boolean; onClick: () => void
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       aria-current={active ? 'true' : undefined}
-      className={`relative text-[11px] font-bold tracking-[0.2em] transition-colors duration-300 uppercase py-1 ${
-        active ? 'text-brand-secondary' : 'text-white/60 hover:text-white'
+      className={`relative text-[11px] font-semibold tracking-[0.2em] transition-colors duration-300 uppercase py-1 ${
+        active ? 'text-[#c67139]' : 'text-[#201e1d]/60 hover:text-[#201e1d]'
       }`}
     >
       {label}
       <span
         ref={lineRef}
-        className={`absolute bottom-0 left-0 w-full h-px scale-x-0 ${active ? 'bg-brand-primary' : 'bg-white'}`}
+        className={`absolute bottom-0 left-0 w-full h-px scale-x-0 ${active ? 'bg-[#c67139]' : 'bg-[#201e1d]'}`}
       />
     </button>
   );

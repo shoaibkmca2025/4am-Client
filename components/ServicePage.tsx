@@ -200,7 +200,7 @@ const ServicePage: React.FC = () => {
   const relatedProjects = PROJECTS.slice(0, 4);
 
   return (
-    <div ref={pageRef} className="bg-black min-h-screen text-white">
+    <div ref={pageRef} className="organic bg-[#f5ead8] min-h-screen text-[#201e1d]">
 
       {/* ── Hero ── */}
       <section className="relative min-h-[75vh] flex items-end overflow-hidden pt-[70px] md:pt-[80px]">
@@ -211,29 +211,29 @@ const ServicePage: React.FC = () => {
             loading="eager"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#f5ead8] via-[#f5ead8]/75 to-[#f5ead8]/25" />
         </div>
 
         <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10 py-16 md:py-24">
           <div className="sp-hero-text max-w-3xl">
-            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/40 block mb-6">
+            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#201e1d]/55 block mb-6">
               Our Services
             </span>
             <RevealText
               as="h1"
-              className="block text-section-title text-white mb-6"
+              className="block text-section-title text-[#201e1d] mb-6"
               start="top 90%"
             >
               {service.title.toUpperCase()}
             </RevealText>
-            <p className="text-xl text-white/55 max-w-2xl leading-relaxed font-medium mb-10">
+            <p className="text-xl text-[#201e1d]/70 max-w-2xl leading-relaxed font-medium mb-10">
               {service.longDescription || service.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => navigate('/', { state: { scrollTo: 'contact' } })}
                 data-ripple
-                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-black font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/85 active:scale-95 transition-all duration-200"
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#c67139] text-[#f5ead8] font-bold text-xs tracking-[0.2em] uppercase hover:bg-[#b2622d] active:scale-95 transition-all duration-200"
               >
                 Book Consultation
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -242,7 +242,7 @@ const ServicePage: React.FC = () => {
               </button>
               <a
                 href="#process"
-                className="inline-flex items-center justify-center px-8 py-4 border border-white/20 text-white font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/8 transition-all duration-200"
+                className="inline-flex items-center justify-center px-8 py-4 border border-[#201e1d]/20 text-[#201e1d] font-bold text-xs tracking-[0.2em] uppercase hover:bg-[#201e1d]/5 transition-all duration-200"
               >
                 See Our Process
               </a>
@@ -252,16 +252,16 @@ const ServicePage: React.FC = () => {
       </section>
 
       {service.partners?.length ? (
-        <section className="py-20 md:py-28 bg-black border-t border-white/[0.07]">
+        <section className="py-20 md:py-28 bg-[#f5ead8] border-t border-[#201e1d]/10">
           <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
             <div className="mb-12">
-              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Marketplace Partners</span>
-              <RevealText as="h2" className="block text-section-title text-white">PLATFORMS</RevealText>
-              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>WE ONBOARD</RevealText>
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#201e1d]/50 block mb-4">Marketplace Partners</span>
+              <RevealText as="h2" className="block text-section-title text-[#201e1d]">PLATFORMS</RevealText>
+              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(198,113,57,0.5)' }} delay={0.1}>WE ONBOARD</RevealText>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px bg-white/[0.05]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px bg-[#201e1d]/10">
               {service.partners.map((partner) => (
-                <div key={partner} className="bg-black px-5 py-4 min-h-16 flex items-center justify-center text-center text-xs md:text-sm font-bold uppercase tracking-[0.08em] text-white/65 hover:text-white hover:bg-white/[0.025] transition-colors duration-300">
+                <div key={partner} className="bg-[#f5ead8] px-5 py-4 min-h-16 flex items-center justify-center text-center text-xs md:text-sm font-bold uppercase tracking-[0.08em] text-[#201e1d]/70 hover:text-[#201e1d] hover:bg-[#ebddc5] transition-colors duration-300">
                   {partner}
                 </div>
               ))}
@@ -271,19 +271,19 @@ const ServicePage: React.FC = () => {
       ) : null}
 
       {/* ── Features ── */}
-      <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+      <section className="py-24 md:py-32 bg-[#f5ead8] border-t border-[#201e1d]/10">
         <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
           <div className="mb-16">
-            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">What We Offer</span>
-            <RevealText as="h2" className="block text-section-title text-white">COMPREHENSIVE</RevealText>
-            <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>SOLUTIONS</RevealText>
+            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#201e1d]/50 block mb-4">What We Offer</span>
+            <RevealText as="h2" className="block text-section-title text-[#201e1d]">COMPREHENSIVE</RevealText>
+            <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(198,113,57,0.5)' }} delay={0.1}>SOLUTIONS</RevealText>
           </div>
-          <div className="grid md:grid-cols-2 gap-px bg-white/[0.04]">
+          <div className="grid md:grid-cols-2 gap-px bg-[#201e1d]/10">
             {service.features.map((feature, i) => (
-              <div key={i} className="sp-feature bg-black p-8 md:p-10 hover:bg-white/[0.025] transition-colors duration-500 group">
-                <span className="text-sm font-bold tracking-[0.15em] text-white/15 block mb-4">0{i + 1}</span>
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 uppercase tracking-tight group-hover:text-white/80 transition-colors duration-300">{feature}</h3>
-                <p className="text-white/35 text-sm leading-relaxed font-medium">
+              <div key={i} className="sp-feature bg-[#f5ead8] p-8 md:p-10 hover:bg-[#ebddc5] transition-colors duration-500 group">
+                <span className="text-sm font-bold tracking-[0.15em] text-[#201e1d]/35 block mb-4">0{i + 1}</span>
+                <h3 className="text-xl md:text-2xl font-bold text-[#201e1d] mb-3 uppercase tracking-tight group-hover:text-[#201e1d]/80 transition-colors duration-300">{feature}</h3>
+                <p className="text-[#201e1d]/55 text-sm leading-relaxed font-medium">
                   Professional {feature.toLowerCase()} tailored to elevate your brand presence.
                 </p>
               </div>
@@ -293,37 +293,37 @@ const ServicePage: React.FC = () => {
       </section>
 
       {/* ── Impact / Stats ── */}
-      <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+      <section className="py-24 md:py-32 bg-[#f5ead8] border-t border-[#201e1d]/10">
         <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
-              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Results</span>
-              <RevealText as="h2" className="block text-section-title text-white mb-2">REAL</RevealText>
-              <RevealText as="h2" className="block text-section-title text-transparent mb-8" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>IMPACT</RevealText>
-              <p className="text-white/45 text-lg leading-relaxed font-medium max-w-md mb-12">
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#201e1d]/50 block mb-4">Results</span>
+              <RevealText as="h2" className="block text-section-title text-[#201e1d] mb-2">REAL</RevealText>
+              <RevealText as="h2" className="block text-section-title text-transparent mb-8" style={{ WebkitTextStroke: '2px rgba(198,113,57,0.5)' }} delay={0.1}>IMPACT</RevealText>
+              <p className="text-[#201e1d]/60 text-lg leading-relaxed font-medium max-w-md mb-12">
                 We deliver measurable outcomes. Every action contributes to your bottom line.
               </p>
-              <div className="grid grid-cols-2 gap-8 border-t border-white/[0.07] pt-10">
+              <div className="grid grid-cols-2 gap-8 border-t border-[#201e1d]/10 pt-10">
                 <div>
-                  <div className="sp-stat-num text-5xl md:text-6xl font-black text-white tracking-[-0.03em]" data-val="240" data-suffix="%">0%</div>
-                  <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/25 mt-2">Avg Traffic Increase</div>
+                  <div className="sp-stat-num text-5xl md:text-6xl font-black text-[#201e1d] tracking-[-0.03em]" data-val="240" data-suffix="%">0%</div>
+                  <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#201e1d]/45 mt-2">Avg Traffic Increase</div>
                 </div>
                 <div>
-                  <div className="sp-stat-num text-5xl md:text-6xl font-black text-white tracking-[-0.03em]" data-val="3.4" data-suffix="x">0x</div>
-                  <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/25 mt-2">Revenue Growth</div>
+                  <div className="sp-stat-num text-5xl md:text-6xl font-black text-[#201e1d] tracking-[-0.03em]" data-val="3.4" data-suffix="x">0x</div>
+                  <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#201e1d]/45 mt-2">Revenue Growth</div>
                 </div>
               </div>
             </div>
-            <div className="grid sm:grid-cols-2 gap-px bg-white/[0.04]">
+            <div className="grid sm:grid-cols-2 gap-px bg-[#201e1d]/10">
               {service.benefits.map((benefit, i) => (
-                <div key={i} className="sp-benefit bg-black p-8 hover:bg-white/[0.025] transition-colors duration-500 group">
-                  <div className="mb-4 w-9 h-9 rounded-full border border-white/[0.08] flex items-center justify-center group-hover:border-white/20 transition-colors duration-300">
+                <div key={i} className="sp-benefit bg-[#f5ead8] p-8 hover:bg-[#ebddc5] transition-colors duration-500 group">
+                  <div className="mb-4 w-9 h-9 rounded-full border border-[#201e1d]/12 flex items-center justify-center group-hover:border-[#201e1d]/20 transition-colors duration-300">
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                      <path d="M4 8l3 3 5-6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M4 8l3 3 5-6" stroke="#c67139" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </div>
-                  <h3 className="text-base font-bold text-white mb-2 uppercase tracking-tight">{benefit}</h3>
-                  <p className="text-white/25 text-xs leading-relaxed">Proven strategies delivering {benefit.toLowerCase()}.</p>
+                  <h3 className="text-base font-bold text-[#201e1d] mb-2 uppercase tracking-tight">{benefit}</h3>
+                  <p className="text-[#201e1d]/45 text-xs leading-relaxed">Proven strategies delivering {benefit.toLowerCase()}.</p>
                 </div>
               ))}
             </div>
@@ -332,16 +332,16 @@ const ServicePage: React.FC = () => {
       </section>
 
       {service.industries?.length ? (
-        <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+        <section className="py-24 md:py-32 bg-[#f5ead8] border-t border-[#201e1d]/10">
           <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
             <div className="mb-12">
-              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Industries We Serve</span>
-              <RevealText as="h2" className="block text-section-title text-white">BUILT FOR</RevealText>
-              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>YOUR CATEGORY</RevealText>
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#201e1d]/50 block mb-4">Industries We Serve</span>
+              <RevealText as="h2" className="block text-section-title text-[#201e1d]">BUILT FOR</RevealText>
+              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(198,113,57,0.5)' }} delay={0.1}>YOUR CATEGORY</RevealText>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-px bg-white/[0.05]">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-px bg-[#201e1d]/10">
               {service.industries.map((industry) => (
-                <div key={industry} className="bg-black p-5 min-h-20 flex items-center text-sm font-bold uppercase tracking-[0.06em] text-white/55 hover:text-white hover:bg-white/[0.025] transition-colors duration-300">
+                <div key={industry} className="bg-[#f5ead8] p-5 min-h-20 flex items-center text-sm font-bold uppercase tracking-[0.06em] text-[#201e1d]/70 hover:text-[#201e1d] hover:bg-[#ebddc5] transition-colors duration-300">
                   {industry}
                 </div>
               ))}
@@ -351,22 +351,22 @@ const ServicePage: React.FC = () => {
       ) : null}
 
       {/* ── Process ── */}
-      <section id="process" className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+      <section id="process" className="py-24 md:py-32 bg-[#f5ead8] border-t border-[#201e1d]/10">
         <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10">
           <div className="mb-16">
-            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Our Process</span>
-            <RevealText as="h2" className="block text-section-title text-white">HOW WE</RevealText>
-            <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>WORK</RevealText>
+            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#201e1d]/50 block mb-4">Our Process</span>
+            <RevealText as="h2" className="block text-section-title text-[#201e1d]">HOW WE</RevealText>
+            <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(198,113,57,0.5)' }} delay={0.1}>WORK</RevealText>
           </div>
-          <div className="divide-y divide-white/[0.07] border-t border-white/[0.07]">
+          <div className="divide-y divide-white/[0.07] border-t border-[#201e1d]/10">
             {service.process.map((step, i) => (
-              <div key={i} className="sp-step py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-12 group hover:bg-white/[0.01] transition-colors duration-300 px-2">
-                <span className="text-5xl md:text-7xl font-black text-white/[0.08] shrink-0 w-20 group-hover:text-white/[0.12] transition-colors duration-400">{i + 1}</span>
+              <div key={i} className="sp-step py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-12 group hover:bg-[#ebddc5] transition-colors duration-300 px-2">
+                <span className="text-5xl md:text-7xl font-black text-[#201e1d]/12 shrink-0 w-20 group-hover:text-[#201e1d]/15 transition-colors duration-400">{i + 1}</span>
                 <div className="flex-1">
-                  <h3 className="text-xl md:text-2xl font-bold text-white uppercase tracking-tight mb-3 group-hover:text-white/80 transition-colors duration-300">{step.title}</h3>
-                  <p className="text-white/35 text-base leading-relaxed font-medium max-w-lg">{step.description}</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-[#201e1d] uppercase tracking-tight mb-3 group-hover:text-[#201e1d]/80 transition-colors duration-300">{step.title}</h3>
+                  <p className="text-[#201e1d]/55 text-base leading-relaxed font-medium max-w-lg">{step.description}</p>
                 </div>
-                <div className="w-9 h-9 rounded-full border border-white/[0.06] flex items-center justify-center text-white/20 group-hover:border-white/20 group-hover:text-white/40 transition-all duration-300 shrink-0">
+                <div className="w-9 h-9 rounded-full border border-[#201e1d]/10 flex items-center justify-center text-[#201e1d]/40 group-hover:border-[#201e1d]/20 group-hover:text-[#201e1d]/55 transition-all duration-300 shrink-0">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                     <path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -378,24 +378,24 @@ const ServicePage: React.FC = () => {
       </section>
 
       {service.faqs?.length ? (
-        <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+        <section className="py-24 md:py-32 bg-[#f5ead8] border-t border-[#201e1d]/10">
           <div className="w-full max-w-[1000px] mx-auto px-6 md:px-10">
             <div className="mb-12">
-              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Frequently Asked Questions</span>
-              <RevealText as="h2" className="block text-section-title text-white">CLEAR</RevealText>
-              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>ANSWERS</RevealText>
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#201e1d]/50 block mb-4">Frequently Asked Questions</span>
+              <RevealText as="h2" className="block text-section-title text-[#201e1d]">CLEAR</RevealText>
+              <RevealText as="h2" className="block text-section-title text-transparent" style={{ WebkitTextStroke: '2px rgba(198,113,57,0.5)' }} delay={0.1}>ANSWERS</RevealText>
             </div>
-            <div className="border-t border-white/[0.07]">
+            <div className="border-t border-[#201e1d]/10">
               {service.faqs.map((faq, i) => (
-                <details key={faq.question} className="group border-b border-white/[0.07] py-7" open={i === 0}>
+                <details key={faq.question} className="group border-b border-[#201e1d]/10 py-7" open={i === 0}>
                   <summary className="flex cursor-pointer list-none items-start justify-between gap-6 [&::-webkit-details-marker]:hidden">
                     <span className="flex gap-5">
-                      <span className="mt-1 text-xs font-bold tracking-[0.2em] text-white/20">{String(i + 1).padStart(2, '0')}</span>
-                      <span className="text-lg md:text-xl font-bold uppercase tracking-tight text-white">{faq.question}</span>
+                      <span className="mt-1 text-xs font-bold tracking-[0.2em] text-[#201e1d]/40">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="text-lg md:text-xl font-bold uppercase tracking-tight text-[#201e1d]">{faq.question}</span>
                     </span>
-                    <span className="mt-1 text-2xl leading-none text-white/30 transition-transform duration-300 group-open:rotate-45">+</span>
+                    <span className="mt-1 text-2xl leading-none text-[#201e1d]/50 transition-transform duration-300 group-open:rotate-45">+</span>
                   </summary>
-                  <p className="ml-12 mt-5 max-w-2xl text-sm md:text-base leading-relaxed text-white/45 font-medium">
+                  <p className="ml-12 mt-5 max-w-2xl text-sm md:text-base leading-relaxed text-[#201e1d]/60 font-medium">
                     {faq.answer}
                   </p>
                 </details>
@@ -406,16 +406,16 @@ const ServicePage: React.FC = () => {
       ) : null}
 
       {/* ── Related Work ── */}
-      <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+      <section className="py-24 md:py-32 bg-[#f5ead8] border-t border-[#201e1d]/10">
         <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-white/30 block mb-4">Related</span>
-              <RevealText as="h2" className="block text-section-title text-white">CASE STUDIES</RevealText>
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#201e1d]/50 block mb-4">Related</span>
+              <RevealText as="h2" className="block text-section-title text-[#201e1d]">CASE STUDIES</RevealText>
             </div>
             <button
               onClick={() => navigate('/', { state: { scrollTo: 'work' } })}
-              className="hidden md:flex items-center gap-2 text-white text-xs font-bold uppercase tracking-[0.2em] hover:text-white/50 transition-colors duration-300 hover-underline"
+              className="hidden md:flex items-center gap-2 text-[#201e1d] text-xs font-bold uppercase tracking-[0.2em] hover:text-[#201e1d]/65 transition-colors duration-300 hover-underline"
             >
               View all
             </button>
@@ -427,7 +427,7 @@ const ServicePage: React.FC = () => {
                 className="sp-rel-card group cursor-pointer"
                 onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
               >
-                <div className="aspect-[4/5] overflow-hidden bg-white/[0.03] mb-4">
+                <div className="aspect-[4/5] overflow-hidden bg-[#ebddc5] mb-4">
                   <img
                     src={`https://picsum.photos/seed/${encodeURIComponent(project.title)}/600/750`}
                     alt={project.title}
@@ -436,9 +436,9 @@ const ServicePage: React.FC = () => {
                     style={{ transformOrigin: 'center center' }}
                   />
                 </div>
-                <h3 className="text-sm font-bold text-white uppercase tracking-tight group-hover:text-white/50 transition-colors duration-300">{project.title}</h3>
+                <h3 className="text-sm font-bold text-[#201e1d] uppercase tracking-tight group-hover:text-[#201e1d]/65 transition-colors duration-300">{project.title}</h3>
                 {project.result && (
-                  <span className="text-[10px] font-bold text-white/25 tracking-wider uppercase mt-1 block">{project.result}</span>
+                  <span className="text-[10px] font-bold text-[#201e1d]/45 tracking-wider uppercase mt-1 block">{project.result}</span>
                 )}
               </div>
             ))}
@@ -447,18 +447,18 @@ const ServicePage: React.FC = () => {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 md:py-32 bg-black border-t border-white/[0.07]">
+      <section className="py-24 md:py-32 bg-[#f5ead8] border-t border-[#201e1d]/10">
         <div className="sp-cta w-full max-w-[900px] mx-auto px-6 md:px-10 text-center">
-          <RevealText as="h2" className="block text-display text-white mb-2">READY TO</RevealText>
-          <RevealText as="h2" className="block text-display text-transparent mb-10" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.15)' }} delay={0.1}>TRANSFORM?</RevealText>
-          <p className="text-white/35 text-lg mb-14 max-w-lg mx-auto font-medium leading-relaxed">
+          <RevealText as="h2" className="block text-display text-[#201e1d] mb-2">READY TO</RevealText>
+          <RevealText as="h2" className="block text-display text-transparent mb-10" style={{ WebkitTextStroke: '2px rgba(198,113,57,0.5)' }} delay={0.1}>TRANSFORM?</RevealText>
+          <p className="text-[#201e1d]/55 text-lg mb-14 max-w-lg mx-auto font-medium leading-relaxed">
             {service.cta ?? `Partner with us to build a ${service.title.toLowerCase()} strategy that scales and compounds.`}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => navigate('/', { state: { scrollTo: 'contact' } })}
               data-ripple
-              className="px-10 py-5 bg-white text-black font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/85 active:scale-95 transition-all duration-200 inline-flex items-center justify-center gap-3"
+              className="px-10 py-5 bg-[#c67139] text-[#f5ead8] font-bold text-xs tracking-[0.2em] uppercase hover:bg-[#b2622d] active:scale-95 transition-all duration-200 inline-flex items-center justify-center gap-3"
             >
               Start Your Project
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -467,7 +467,7 @@ const ServicePage: React.FC = () => {
             </button>
             <a
               href="tel:8826406545"
-              className="px-10 py-5 border border-white/20 text-white font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/[0.06] transition-all duration-200 inline-flex items-center justify-center"
+              className="px-10 py-5 border border-[#201e1d]/20 text-[#201e1d] font-bold text-xs tracking-[0.2em] uppercase hover:bg-[#201e1d]/10 transition-all duration-200 inline-flex items-center justify-center"
             >
               Schedule a Call
             </a>

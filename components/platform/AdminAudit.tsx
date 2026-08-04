@@ -20,9 +20,9 @@ const FILTERS: Array<[string, string]> = [
 // Colour by risk: destructive actions stand out.
 const toneFor = (action: string): string => {
   if (/revoke|delete/.test(action)) return 'text-red-400';
-  if (/issue|create|bulk_import/.test(action)) return 'text-brand-lime';
-  if (/claim|download/.test(action)) return 'text-brand-cyan';
-  return 'text-brand-secondary';
+  if (/issue|create|bulk_import/.test(action)) return 'text-[#56633f]';
+  if (/claim|download/.test(action)) return 'text-[#3d6a63]';
+  return 'text-[#8c491a]';
 };
 
 const AdminAudit: React.FC = () => {
@@ -54,8 +54,8 @@ const AdminAudit: React.FC = () => {
             onClick={() => setFilter(value)}
             className={`rounded-full border px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase transition-colors duration-300 ${
               filter === value
-                ? 'border-brand-primary/50 bg-brand-primary/[0.08] text-brand-secondary'
-                : 'border-white/[0.1] bg-white/[0.02] text-white/50 hover:text-white/80'
+                ? 'border-brand-primary/50 bg-brand-primary/[0.08] text-[#8c491a]'
+                : 'border-[#201e1d]/12 bg-[#ebddc5] text-[#201e1d]/60 hover:text-[#201e1d]/80'
             }`}
           >
             {label}
@@ -71,23 +71,23 @@ const AdminAudit: React.FC = () => {
         </EmptyState>
       ) : (
         <Card className="p-0 overflow-hidden">
-          <div className="divide-y divide-white/[0.06]">
+          <div className="divide-y divide-[#201e1d]/10">
             {entries.map((e) => (
               <div key={e.id} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-3.5 md:px-6">
                 <span className={`font-mono text-xs font-bold ${toneFor(e.action)}`}>{e.action}</span>
-                <span className="text-white/45 text-xs">{e.actor}</span>
+                <span className="text-[#201e1d]/60 text-xs">{e.actor}</span>
                 {typeof e.meta?.serial === 'string' && (
-                  <span className="font-mono text-[11px] text-white/35">{e.meta.serial}</span>
+                  <span className="font-mono text-[11px] text-[#201e1d]/50">{e.meta.serial}</span>
                 )}
                 {typeof e.meta?.slug === 'string' && (
-                  <span className="font-mono text-[11px] text-white/35">/{e.meta.slug}</span>
+                  <span className="font-mono text-[11px] text-[#201e1d]/50">/{e.meta.slug}</span>
                 )}
                 {typeof e.meta?.created === 'number' && (
-                  <span className="text-[11px] text-white/35">
+                  <span className="text-[11px] text-[#201e1d]/50">
                     {e.meta.created} added{typeof e.meta.skipped === 'number' && e.meta.skipped > 0 ? `, ${e.meta.skipped} skipped` : ''}
                   </span>
                 )}
-                <span className="ml-auto text-white/25 text-[11px] tabular-nums">
+                <span className="ml-auto text-[#201e1d]/45 text-[11px] tabular-nums">
                   {new Date(e.created_at).toLocaleString('en-IN', {
                     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
                   })}

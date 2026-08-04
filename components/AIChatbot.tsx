@@ -81,31 +81,31 @@ const AIChatbot: React.FC = () => {
   return (
     <div className="fixed bottom-5 right-5 z-[9999] md:bottom-8 md:right-8 font-sans">
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-[calc(100vw-40px)] max-w-[380px] md:w-[420px] max-h-[600px] flex flex-col bg-black border border-white/10 overflow-hidden">
+        <div className="absolute bottom-20 right-0 w-[calc(100vw-40px)] max-w-[380px] md:w-[420px] max-h-[600px] flex flex-col bg-[#f5ead8] border border-[#201e1d]/12 rounded-2xl shadow-[0_12px_40px_rgba(46,43,37,0.28)] overflow-hidden">
           {/* Header */}
-          <div className="p-5 bg-white text-black flex items-center justify-between">
+          <div className="p-5 bg-[#c67139] text-[#f5ead8] flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
-                <Bot className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 rounded-full bg-[#f5ead8] flex items-center justify-center">
+                <Bot className="w-5 h-5 text-[#c67139]" />
               </div>
               <div>
-                <h3 className="font-bold text-sm uppercase tracking-[0.1em]">4AM Assistant</h3>
-                <p className="text-[10px] text-black/50 font-bold uppercase tracking-wider">Powered by AI</p>
+                <h3 className="font-semibold text-sm uppercase tracking-[0.1em]">4AM Assistant</h3>
+                <p className="text-[10px] text-[#f5ead8]/70 font-semibold uppercase tracking-wider">Powered by AI</p>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-black/10 transition-colors">
+            <button onClick={() => setIsOpen(false)} className="p-2 rounded-full hover:bg-[#f5ead8]/15 transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Chat Body */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 space-y-4 min-h-[260px] max-h-[380px] bg-black">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 space-y-4 min-h-[260px] max-h-[380px] bg-[#f5ead8]">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-4 text-sm leading-relaxed ${
+                <div className={`max-w-[85%] p-4 text-sm leading-relaxed rounded-2xl ${
                   msg.role === 'user'
-                    ? 'bg-white text-black'
-                    : 'bg-white/5 border border-white/10 text-white'
+                    ? 'bg-[#c67139] text-[#f5ead8]'
+                    : 'bg-[#ebddc5] border border-[#201e1d]/10 text-[#201e1d]'
                 }`}>
                   {msg.text}
                 </div>
@@ -113,30 +113,30 @@ const AIChatbot: React.FC = () => {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white/5 border border-white/10 p-4 flex gap-2 items-center">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div className="bg-[#ebddc5] border border-[#201e1d]/10 rounded-2xl p-4 flex gap-2 items-center">
+                  <div className="w-1.5 h-1.5 bg-[#c67139] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-1.5 h-1.5 bg-[#c67139] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-1.5 h-1.5 bg-[#c67139] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             )}
           </div>
 
           {/* Input */}
-          <form onSubmit={handleSendMessage} className="p-4 bg-black border-t border-white/10">
+          <form onSubmit={handleSendMessage} className="p-4 bg-[#ebddc5] border-t border-[#201e1d]/10">
             <div className="flex items-center gap-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
+                className="flex-1 bg-[#f5ead8] border border-[#201e1d]/12 rounded-full px-4 py-3 text-sm text-[#201e1d] placeholder-[#201e1d]/35 focus:outline-none focus:border-[#c67139] transition-all"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="p-3 bg-white text-black hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                className="p-3 rounded-full bg-[#c67139] text-[#f5ead8] hover:bg-[#b2622d] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               >
                 <Send className="w-5 h-5" />
               </button>
@@ -148,9 +148,7 @@ const AIChatbot: React.FC = () => {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 md:w-16 md:h-16 flex items-center justify-center transition-all duration-300 relative z-[200] ${
-          isOpen ? 'bg-white text-black' : 'bg-white text-black hover:-translate-y-1'
-        }`}
+        className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-300 relative z-[200] bg-[#c67139] text-[#f5ead8] shadow-[0_6px_20px_rgba(198,113,57,0.4)] hover:bg-[#b2622d] hover:-translate-y-1"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
       </button>

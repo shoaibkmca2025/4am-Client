@@ -22,7 +22,7 @@ const AdminPanel    = lazy(() => import('./components/platform/AdminPanel'));
 const AIChatbot    = lazy(() => import('./components/AIChatbot'));
 
 const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="min-h-screen overflow-x-hidden text-white bg-black">
+  <div className="min-h-screen overflow-x-hidden text-[#201e1d] bg-[#f5ead8]">
     <div className="flex flex-col min-h-screen">
       <main className="flex-1 flex flex-col overflow-x-hidden relative">
         {children}
@@ -77,12 +77,12 @@ const ScrollToTopBtn: React.FC = () => {
         viewBox="0 0 56 56"
         aria-hidden="true"
       >
-        <circle cx="28" cy="28" r={radius} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1.5" />
+        <circle cx="28" cy="28" r={radius} fill="none" stroke="rgba(32,30,29,0.12)" strokeWidth="1.5" />
         <circle
           ref={ringRef}
           cx="28" cy="28" r={radius}
           fill="none"
-          stroke="#FF6A3D"
+          stroke="#c67139"
           strokeWidth="1.5"
           strokeDasharray={circ}
           strokeDashoffset={circ}
@@ -90,7 +90,7 @@ const ScrollToTopBtn: React.FC = () => {
         />
       </svg>
       <button
-        className="relative w-11 h-11 rounded-full border border-white/[0.12] bg-black/90 flex items-center justify-center text-white/50 hover:bg-white hover:text-black hover:border-white transition-colors duration-300"
+        className="relative w-11 h-11 rounded-full border border-[#201e1d]/15 bg-[#ebddc5]/95 backdrop-blur flex items-center justify-center text-[#201e1d]/55 hover:bg-[#c67139] hover:text-[#f5ead8] hover:border-[#c67139] transition-colors duration-300"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Back to top"
       >
@@ -166,7 +166,7 @@ function App() {
           <LayoutWrapper>
             <Suspense
               fallback={
-                <div className="min-h-[60vh] flex items-center justify-center text-sm text-white/30 bg-black">
+                <div className="min-h-[60vh] flex items-center justify-center text-sm text-[#201e1d]/40 bg-[#f5ead8]">
                   Loading…
                 </div>
               }

@@ -82,7 +82,7 @@ const AuthGate: React.FC<{ eyebrow: string; title: string; titleAccent?: string;
           <button
             type="button"
             onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); setInfo(''); }}
-            className="mt-6 text-white/40 text-[10px] font-bold uppercase tracking-[0.25em] hover:text-white transition-colors"
+            className="mt-6 text-[#201e1d]/55 text-[10px] font-bold uppercase tracking-[0.25em] hover:text-[#201e1d] transition-colors"
           >
             {mode === 'signin' ? 'Need an account? Register →' : 'Already registered? Sign in →'}
           </button>

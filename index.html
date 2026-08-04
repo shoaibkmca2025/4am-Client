@@ -8,7 +8,7 @@
   <meta name="description"
     content="4AM Global Media provides digital marketing and software development services including web and mobile app solutions to help businesses grow online." />
   <meta name="robots" content="index,follow,max-image-preview:large" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#f5ead8" />
   <link rel="canonical" href="https://4amglobalmedia.com/" />
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -45,18 +45,19 @@
   <!-- Case-study images: resolve DNS early (3D scene is self-hosted) -->
   <link rel="dns-prefetch" href="https://picsum.photos">
   <!-- Non-blocking font load: first paint (boot splash) never waits on
-       Google Fonts; text swaps from the system fallback when ready. -->
+       Google Fonts; text swaps from the system fallback when ready.
+       Caprasimo = editorial display, Figtree = body, Inter = fallback/legacy. -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700&family=Inter:wght@400;500;600;700;900&display=swap"
     rel="stylesheet" media="print" onload="this.media='all'">
   <noscript>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700&family=Inter:wght@400;500;600;700;900&display=swap"
       rel="stylesheet">
   </noscript>
   <style>
     html {
-      background-color: #000000;
+      background-color: #f5ead8;
     }
 
     body {
@@ -86,8 +87,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 1.25rem;
-      background: #000;
+      gap: 1.5rem;
+      background: #1d1d1d;
       z-index: 2147483647;
       transition: opacity 0.4s ease;
     }
@@ -97,7 +98,7 @@
     }
     #boot-splash .bs-mark {
       display: block;
-      width: min(56vw, 250px);
+      width: min(62vw, 280px);
       height: auto;
       animation: bs-pulse 1.15s ease-in-out infinite;
     }
@@ -114,7 +115,7 @@
       width: 40%;
       height: 100%;
       border-radius: 2px;
-      background: linear-gradient(90deg, #FF6A3D, #FFC56A);
+      background: linear-gradient(90deg, #c67139, #e8a24a);
       animation: bs-slide 1.05s ease-in-out infinite;
     }
     @keyframes bs-pulse {
@@ -133,12 +134,13 @@
 </head>
 
 <body
-  class="bg-black text-white selection:bg-white/20 selection:text-white font-sans leading-relaxed">
+  class="text-[#201e1d] selection:bg-[#c67139]/25 selection:text-[#201e1d] font-sans leading-relaxed"
+  style="background-color:#f5ead8">
   <div id="root"></div>
   <!-- Instant branded splash: overlays #root until React has painted its
-       first frame, then app.tsx fades + removes it (no black flash). -->
+       first frame, then app.tsx fades + removes it (no cream flash). -->
   <div id="boot-splash" aria-hidden="true">
-    <img class="bs-mark" src="/assets/logo-4am-load.png" alt="" width="253" height="143">
+    <img class="bs-mark" src="/logo-full.png" alt="4AM Global Media" width="1423" height="1423">
     <div class="bs-bar"></div>
   </div>
   <script>

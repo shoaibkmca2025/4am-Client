@@ -79,11 +79,11 @@ const AdminTestimonials: React.FC = () => {
                 value={quote}
                 onChange={(e) => setQuote(e.currentTarget.value)}
                 placeholder=" "
-                className="peer w-full bg-transparent border-b border-white/[0.08] px-0 pt-6 pb-3 text-white text-base md:text-sm placeholder-transparent focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium resize-none"
+                className="peer w-full bg-transparent border-b border-[#201e1d]/10 px-0 pt-6 pb-3 text-[#201e1d] text-base md:text-sm placeholder-transparent focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium resize-none"
               />
               <label
                 htmlFor="t-quote"
-                className="absolute left-0 top-0 text-[9px] font-bold tracking-[0.2em] uppercase text-white/50 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:font-medium peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-white/40 peer-focus:top-0 peer-focus:text-[9px] peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.2em] peer-focus:text-brand-secondary"
+                className="absolute left-0 top-0 text-[9px] font-bold tracking-[0.2em] uppercase text-[#201e1d]/60 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:font-medium peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-[#201e1d]/55 peer-focus:top-0 peer-focus:text-[9px] peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.2em] peer-focus:text-[#8c491a]"
               >
                 Quote *
               </label>
@@ -113,16 +113,16 @@ const AdminTestimonials: React.FC = () => {
               <Card key={t.id} className="p-5 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
                   <div>
-                    <div className="font-bold text-white text-sm">{t.client_name}</div>
-                    {t.company && <div className="text-white/40 text-xs mt-0.5">{t.company}</div>}
+                    <div className="font-bold text-[#201e1d] text-sm">{t.client_name}</div>
+                    {t.company && <div className="text-[#201e1d]/55 text-xs mt-0.5">{t.company}</div>}
                   </div>
                   <Badge tone={t.is_published ? 'valid' : 'neutral'}>{t.is_published ? 'Live' : 'Draft'}</Badge>
                 </div>
-                <p className="text-white/65 text-sm leading-relaxed italic">“{t.quote}”</p>
+                <p className="text-[#201e1d]/70 text-sm leading-relaxed italic">“{t.quote}”</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
                     onClick={() => togglePublish(t)}
-                    className="rounded-full border border-white/[0.12] px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-white/50 hover:border-white/40 hover:text-white transition-colors duration-300"
+                    className="rounded-full border border-[#201e1d]/12 px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-[#201e1d]/60 hover:border-[#201e1d]/30 hover:text-[#201e1d] transition-colors duration-300"
                   >
                     {t.is_published ? 'Unpublish' : 'Publish'}
                   </button>

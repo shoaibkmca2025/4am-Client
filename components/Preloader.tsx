@@ -73,31 +73,31 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
   }, [onComplete]);
 
   return (
-    <div ref={rootRef} className="fixed inset-0 z-[10000] bg-black flex items-center justify-center">
+    <div ref={rootRef} className="fixed inset-0 z-[10000] bg-[#1d1d1d] flex items-center justify-center">
       <div ref={textRef} className="text-center select-none px-8 w-[80vw] max-w-[420px]">
         <img
-          src="/assets/logo-4am-load.png"
+          src="/logo-full.png"
           alt="4AM Global Media"
-          width={253}
-          height={143}
-          className="mx-auto w-[56vw] max-w-[250px] h-auto"
+          width={1423}
+          height={1423}
+          className="mx-auto w-[62vw] max-w-[280px] h-auto"
         />
-        <div className="mt-6 flex items-center gap-4">
-          <div className="h-px flex-1 bg-white/10 overflow-hidden relative">
+        <div className="mt-4 flex items-center gap-4">
+          <div className="h-px flex-1 bg-white/12 overflow-hidden relative">
             <div
               ref={barRef}
-              className="absolute inset-0 bg-white origin-left"
+              className="absolute inset-0 bg-gradient-to-r from-[#c67139] to-[#e8a24a] origin-left"
               style={{ transform: 'scaleX(0)' }}
             />
           </div>
           <span
             ref={pctRef}
-            className="text-[11px] font-bold tracking-[0.18em] text-white/35 tabular-nums w-10 text-right"
+            className="text-[11px] font-semibold tracking-[0.18em] text-white/45 tabular-nums w-10 text-right"
           >
             0%
           </span>
         </div>
-        <p className="mt-3 text-[9px] font-bold tracking-[0.45em] uppercase text-white/18">
+        <p className="mt-3 text-[9px] font-semibold tracking-[0.45em] uppercase text-white/35">
           Loading Experience
         </p>
       </div>

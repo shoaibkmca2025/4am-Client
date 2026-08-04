@@ -94,7 +94,7 @@ const AdminPosts: React.FC = () => {
               value={effectiveSlug}
               onChange={(v) => { setSlugTouched(true); setSlug(slugify(v)); }}
             />
-            <p className="mt-1 mb-2 text-white/30 text-[11px] font-mono break-all">
+            <p className="mt-1 mb-2 text-[#201e1d]/50 text-[11px] font-mono break-all">
               /blog/{effectiveSlug || '…'}
             </p>
             <Field id="p-excerpt" label="Excerpt (shown in listings)" value={excerpt} onChange={setExcerpt} />
@@ -107,20 +107,20 @@ const AdminPosts: React.FC = () => {
                 value={content}
                 onChange={(e) => setContent(e.currentTarget.value)}
                 placeholder=" "
-                className="peer w-full bg-transparent border-b border-white/[0.08] px-0 pt-6 pb-3 text-white text-base md:text-sm placeholder-transparent focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium resize-y font-mono"
+                className="peer w-full bg-transparent border-b border-[#201e1d]/10 px-0 pt-6 pb-3 text-[#201e1d] text-base md:text-sm placeholder-transparent focus:outline-none focus:border-brand-primary/40 transition-all duration-300 font-medium resize-y font-mono"
               />
               <label
                 htmlFor="p-content"
-                className="absolute left-0 top-0 text-[9px] font-bold tracking-[0.2em] uppercase text-white/50 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:font-medium peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-white/40 peer-focus:top-0 peer-focus:text-[9px] peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.2em] peer-focus:text-brand-secondary"
+                className="absolute left-0 top-0 text-[9px] font-bold tracking-[0.2em] uppercase text-[#201e1d]/60 transition-all duration-300 pointer-events-none peer-placeholder-shown:top-6 peer-placeholder-shown:text-sm peer-placeholder-shown:font-medium peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-[#201e1d]/55 peer-focus:top-0 peer-focus:text-[9px] peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.2em] peer-focus:text-[#8c491a]"
               >
                 Content
               </label>
             </div>
-            <p className="mt-2 text-white/30 text-[11px] leading-relaxed">
-              Supports <code className="text-white/50">## Heading</code>,{' '}
-              <code className="text-white/50">**bold**</code>, <code className="text-white/50">*italic*</code>,{' '}
-              <code className="text-white/50">[link](url)</code>, <code className="text-white/50">`code`</code> and{' '}
-              <code className="text-white/50">- bullets</code>.
+            <p className="mt-2 text-[#201e1d]/50 text-[11px] leading-relaxed">
+              Supports <code className="text-[#201e1d]/60">## Heading</code>,{' '}
+              <code className="text-[#201e1d]/60">**bold**</code>, <code className="text-[#201e1d]/60">*italic*</code>,{' '}
+              <code className="text-[#201e1d]/60">[link](url)</code>, <code className="text-[#201e1d]/60">`code`</code> and{' '}
+              <code className="text-[#201e1d]/60">- bullets</code>.
             </p>
 
             <div className="pt-6">
@@ -146,9 +146,9 @@ const AdminPosts: React.FC = () => {
               <Card key={p.id} className="p-5 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <div className="font-bold text-white text-sm">{p.title}</div>
-                    <div className="text-white/35 text-[11px] mt-1 font-mono break-all">/blog/{p.slug}</div>
-                    {p.excerpt && <p className="text-white/50 text-xs mt-2 max-w-xl">{p.excerpt}</p>}
+                    <div className="font-bold text-[#201e1d] text-sm">{p.title}</div>
+                    <div className="text-[#201e1d]/50 text-[11px] mt-1 font-mono break-all">/blog/{p.slug}</div>
+                    {p.excerpt && <p className="text-[#201e1d]/60 text-xs mt-2 max-w-xl">{p.excerpt}</p>}
                   </div>
                   <Badge tone={p.status === 'published' ? 'valid' : 'neutral'}>
                     {p.status === 'published' ? 'Live' : 'Draft'}
@@ -157,7 +157,7 @@ const AdminPosts: React.FC = () => {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
                     onClick={() => togglePublish(p)}
-                    className="rounded-full border border-white/[0.12] px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-white/50 hover:border-white/40 hover:text-white transition-colors duration-300"
+                    className="rounded-full border border-[#201e1d]/12 px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-[#201e1d]/60 hover:border-[#201e1d]/30 hover:text-[#201e1d] transition-colors duration-300"
                   >
                     {p.status === 'published' ? 'Unpublish' : 'Publish'}
                   </button>
@@ -166,7 +166,7 @@ const AdminPosts: React.FC = () => {
                       href={`/blog/${p.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="rounded-full border border-white/[0.12] px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-white/50 hover:border-white/40 hover:text-white transition-colors duration-300"
+                      className="rounded-full border border-[#201e1d]/12 px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-[#201e1d]/60 hover:border-[#201e1d]/30 hover:text-[#201e1d] transition-colors duration-300"
                     >
                       View
                     </a>

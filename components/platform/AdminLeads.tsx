@@ -48,8 +48,8 @@ const AdminLeads: React.FC = () => {
             onClick={() => setFilter(s)}
             className={`rounded-full border px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase transition-colors duration-300 ${
               filter === s
-                ? 'border-brand-primary/50 bg-brand-primary/[0.08] text-brand-secondary'
-                : 'border-white/[0.1] bg-white/[0.02] text-white/50 hover:text-white/80'
+                ? 'border-brand-primary/50 bg-brand-primary/[0.08] text-[#8c491a]'
+                : 'border-[#201e1d]/12 bg-[#ebddc5] text-[#201e1d]/60 hover:text-[#201e1d]/80'
             }`}
           >
             {s}
@@ -69,13 +69,13 @@ const AdminLeads: React.FC = () => {
             <Card key={l.id} className="p-5 md:p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0">
-                  <div className="font-bold text-white text-sm">{l.name}</div>
-                  <div className="text-white/45 text-xs mt-1 break-all">
-                    <a href={`mailto:${l.email}`} className="hover:text-white transition-colors">{l.email}</a>
-                    {l.phone && <> · <a href={`tel:${l.phone}`} className="hover:text-white transition-colors">{l.phone}</a></>}
+                  <div className="font-bold text-[#201e1d] text-sm">{l.name}</div>
+                  <div className="text-[#201e1d]/60 text-xs mt-1 break-all">
+                    <a href={`mailto:${l.email}`} className="hover:text-[#201e1d] transition-colors">{l.email}</a>
+                    {l.phone && <> · <a href={`tel:${l.phone}`} className="hover:text-[#201e1d] transition-colors">{l.phone}</a></>}
                   </div>
                   {(l.company || l.service || l.budget) && (
-                    <div className="text-white/35 text-[11px] mt-1.5">
+                    <div className="text-[#201e1d]/50 text-[11px] mt-1.5">
                       {[l.company, l.service, l.budget].filter(Boolean).join(' · ')}
                     </div>
                   )}
@@ -84,20 +84,20 @@ const AdminLeads: React.FC = () => {
                   <Badge tone={l.status === 'new' ? 'pending' : l.status === 'contacted' ? 'neutral' : 'valid'}>
                     {l.status}
                   </Badge>
-                  <span className="text-white/25 text-[11px]">
+                  <span className="text-[#201e1d]/45 text-[11px]">
                     {new Date(l.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                   </span>
                 </div>
               </div>
 
-              <p className="mt-4 text-white/65 text-sm leading-relaxed whitespace-pre-wrap">{l.message}</p>
+              <p className="mt-4 text-[#201e1d]/70 text-sm leading-relaxed whitespace-pre-wrap">{l.message}</p>
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {STATUSES.filter((s) => s !== l.status).map((s) => (
                   <button
                     key={s}
                     onClick={() => setStatus(l.id, s)}
-                    className="rounded-full border border-white/[0.12] px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-white/50 hover:border-white/40 hover:text-white transition-colors duration-300"
+                    className="rounded-full border border-[#201e1d]/12 px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-[#201e1d]/60 hover:border-[#201e1d]/30 hover:text-[#201e1d] transition-colors duration-300"
                   >
                     Mark {s}
                   </button>

@@ -108,11 +108,11 @@ const MagneticCursor: React.FC = () => {
       <div
         ref={ringRef}
         aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-10 w-10 rounded-full border border-white/50 opacity-0 flex items-center justify-center"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] h-10 w-10 rounded-full border border-[#201e1d]/45 opacity-0 flex items-center justify-center"
       >
         <span
           ref={labelRef}
-          className="text-[7px] font-black tracking-[0.18em] uppercase text-white select-none"
+          className="text-[7px] font-bold tracking-[0.18em] uppercase text-[#201e1d] select-none"
         >
           VIEW
         </span>
@@ -122,7 +122,7 @@ const MagneticCursor: React.FC = () => {
       <div
         ref={dotRef}
         aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-1.5 w-1.5 rounded-full bg-white opacity-0"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] h-1.5 w-1.5 rounded-full bg-[#c67139] opacity-0"
       />
     </>
   );

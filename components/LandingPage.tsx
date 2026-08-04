@@ -1,368 +1,617 @@
-import React, { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Hero from './Hero';
-import Services from './Services';
-import Projects from './Projects';
-import Contact from './Contact';
-import Testimonials from './Testimonials';
-import StatsSection from './Stats';
-import ProcessSection from './ProcessSection';
-import CodeShowcase from './CodeShowcase';
-import GrowthChart from './GrowthChart';
-import Founder from './Founder';
-import Marquee from './Marquee';
-import ScrollCanvasBackground, { ACCENT_EVENT } from './ScrollCanvasBackground';
-import SectionNav from './SectionNav';
-import ScrollCTA from './ScrollCTA';
-const MechaRobot = React.lazy(() => import('./MechaRobot'));
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { SERVICES, PROJECTS } from '../constants';
 import { scrollToSection } from '../utils/scroll';
-
-gsap.registerPlugin(ScrollTrigger);
+const SculptureBackground = React.lazy(() => import('./SculptureBackground'));
 
 const HOME_PAGE_TITLE = 'A Creative Network made for today & tomorrow | 4AM Global Media';
 const HOME_PAGE_DESCRIPTION =
   '4AM Global Media provides digital marketing and software development services including web and mobile app solutions to help businesses grow online.';
 
-// Marketplace platforms we onboard brands onto — shown in the scrolling strip
-const CLIENTS = [
+// Marketplaces we onboard brands onto (real list from the onboarding service).
+const MARKETPLACES = [
   'Amazon', 'Flipkart', 'Blinkit', 'Zepto', 'Swiggy Instamart',
   'BigBasket', 'JioMart', 'Meesho', 'Myntra', 'Ajio',
   'Nykaa', 'FirstCry', 'ONDC', 'Shopify', 'WooCommerce',
 ];
 
-type OrbKey = 'orange' | 'violet' | 'cyan';
+// Featured case studies — the six projects that carry a measured result.
+const FEATURED_WORK = PROJECTS.filter((p) => p.result).slice(0, 6);
 
+// Leadership — condensed from the full Founder profiles.
+const LEADERS = [
+  {
+    name: 'Vaibhav Pasi',
+    role: 'Co-Founder',
+    photo: '/assets/vaibhav-pasi.jpg',
+    tags: ['Digital Marketing', 'AI Consulting', 'Product Onboarding'],
+    bio: 'Technology entrepreneur and growth strategist leading 4AM’s vision — pairing creativity, engineering and business intelligence to scale brands across web, software and the marketplaces.',
+    accent: 'accent' as const,
+  },
+  {
+    name: 'Shoaib Khatik',
+    role: 'Co-Founder',
+    photo: '/assets/shoaib-khatik-web.jpg',
+    tags: ['Full-Stack', 'MERN · Python', 'AI Solutions'],
+    bio: 'Leads the technology vision and product engineering — building scalable, user-focused digital products with Python, the MERN stack, React Native and cloud technologies.',
+    accent: 'accent-2' as const,
+  },
+  {
+    name: 'Abhishek Prasad',
+    role: 'Chief Technology Officer',
+    photo: '/assets/abhishek-prasad-web.jpg',
+    tags: ['Android', 'Java & .NET', 'Product Engineering'],
+    bio: 'Owns the technical roadmap and engineering excellence — high-performance mobile and enterprise apps, clean architecture, secure APIs and cloud-ready systems.',
+    accent: 'accent' as const,
+  },
+];
+
+const FEATURED_IN = [
+  { name: 'Dailyhunt',              href: 'https://m.dailyhunt.in/news/india/english/punjabbytes-epaper-dhb7faabc774324241990251ac4336f653/-newsid-dhb7faabc774324241990251ac4336f653_9e048369b0044e30a55581dd34c09d1f' },
+  { name: 'Smart Bharat News',      href: 'https://www.smartbharatnews.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'National Outlook Daily', href: 'https://www.nationaloutlookdaily.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'Bharat Biz Wire',        href: 'https://www.bharatbizwire.top/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'The Republic News',      href: 'https://www.therepublicnews.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+  { name: 'Times News Express',     href: 'http://www.timesnewsexpress.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
+];
+
+// Where the sculpture should sit per section so it lands in the EMPTY half
+// beside the text (never behind it). `side` = target world-x fed to the
+// sculpture (+ = right / - = left, opposite the text column); `o` = opacity
+// (dimmed on the full-width content sections where there is no empty half).
+const PLACE: Record<string, { side: number; o: number }> = {
+  home:        { side: 2.3,  o: 1 },    // text left  → object right
+  why:         { side: -2.3, o: 1 },    // text right → object left
+  focus:       { side: 2.3,  o: 1 },
+  services:    { side: -2.3, o: 1 },
+  software:    { side: 2.3,  o: 1 },
+  reach:       { side: -2.3, o: 1 },
+  method:      { side: 2.3,  o: 1 },
+  network:     { side: -2.3, o: 1 },
+  work:        { side: 3.1,  o: 0.16 }, // full-width content → recede, faint
+  about:       { side: 3.1,  o: 0.14 },
+  testimonials:{ side: 2.3,  o: 1 },
+  contact:     { side: -3.1, o: 0.26 }, // form on the right → object left, faint
+};
+
+// Rail order — must match the <section id> list below.
+const RAIL: { id: string; label: string }[] = [
+  { id: 'home', label: 'Intro' },
+  { id: 'why', label: 'Why 4AM' },
+  { id: 'focus', label: 'Focus' },
+  { id: 'services', label: 'Capability' },
+  { id: 'software', label: 'Software' },
+  { id: 'reach', label: 'Reach' },
+  { id: 'method', label: 'Method' },
+  { id: 'network', label: 'Network' },
+  { id: 'work', label: 'Work' },
+  { id: 'about', label: 'Leadership' },
+  { id: 'testimonials', label: 'Voices' },
+  { id: 'contact', label: 'Contact' },
+];
+
+/* ── Right-edge dot rail ─────────────────────────────────────────── */
+const DotRail: React.FC = () => {
+  const [active, setActive] = useState('home');
+  useEffect(() => {
+    const observed = RAIL.map((r) => document.getElementById(r.id)).filter(Boolean) as HTMLElement[];
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); });
+      },
+      { rootMargin: '-50% 0px -50% 0px', threshold: 0 },
+    );
+    observed.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div id="o-rail" aria-hidden="true">
+      {RAIL.map((r) => (
+        <button
+          key={r.id}
+          type="button"
+          aria-label={r.label}
+          aria-current={active === r.id ? 'true' : 'false'}
+          onClick={() => scrollToSection(r.id)}
+        />
+      ))}
+    </div>
+  );
+};
+
+/* ── Scroll cue (bottom-left, fades after first scroll) ──────────── */
+const ScrollCue: React.FC = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onScroll = () => { if (ref.current) ref.current.style.opacity = window.scrollY > 60 ? '0' : '1'; };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return <div className="o-cue" ref={ref}>Scroll</div>;
+};
+
+/* ── Contact form — preserves the working /api/leads integration ─── */
+type FormErrors = Partial<Record<keyof FormState, string>>;
+interface FormState {
+  fullName: string; workEmail: string; phone: string; company: string;
+  interestedIn: string; budget: string; message: string;
+}
+const isIndianVisitor = (): boolean => {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta') return true;
+  } catch { /* older browsers: fall through to locale */ }
+  return (navigator.languages ?? [navigator.language]).some((l) => /-IN$/i.test(l));
+};
+const BUDGETS_USD = ['Under $500', '$500 – $1,500', '$1,500 – $5,000', '$5,000 – $15,000', '$15,000+'];
+const BUDGETS_INR = ['Under ₹40,000', '₹40,000 – ₹1,25,000', '₹1,25,000 – ₹4,00,000', '₹4,00,000 – ₹12,00,000', '₹12,00,000+'];
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const NAME_REGEX = /^[a-zA-Z\s'.-]{2,}$/;
+const PHONE_DIGITS_REGEX = /\d/g;
+const validate = (form: FormState): FormErrors => {
+  const errors: FormErrors = {};
+  if (!form.fullName.trim()) errors.fullName = 'Name is required';
+  else if (!NAME_REGEX.test(form.fullName.trim())) errors.fullName = 'Enter a valid name';
+  if (!form.workEmail.trim()) errors.workEmail = 'Email is required';
+  else if (!EMAIL_REGEX.test(form.workEmail.trim())) errors.workEmail = 'Enter a valid email';
+  if (form.phone.trim()) {
+    const digits = form.phone.match(PHONE_DIGITS_REGEX);
+    if (!digits || digits.length < 7 || digits.length > 15) errors.phone = 'Enter a valid phone number';
+  }
+  if (!form.interestedIn) errors.interestedIn = 'Please select a service';
+  if (!form.budget) errors.budget = 'Please select a budget range';
+  if (!form.message.trim()) errors.message = 'Message is required';
+  else if (form.message.trim().length < 10) errors.message = 'Min 10 characters';
+  return errors;
+};
+
+const ContactForm: React.FC = () => {
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [serverMessage, setServerMessage] = useState('');
+  const [form, setForm] = useState<FormState>({
+    fullName: '', workEmail: '', phone: '', company: '', interestedIn: '', budget: '', message: '',
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [budgetOptions] = useState<string[]>(() => (isIndianVisitor() ? BUDGETS_INR : BUDGETS_USD));
+
+  const updateField = (field: keyof FormState, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors((prev) => { const next = { ...prev }; delete next[field]; return next; });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const validationErrors = validate(form);
+    if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return; }
+    setErrors({});
+    setStatus('submitting');
+    setServerMessage('');
+    try {
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: form.fullName, email: form.workEmail, phone: form.phone, company: form.company,
+          service: form.interestedIn, budget: form.budget, message: form.message, source: 'website-contact',
+        }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || data?.ok !== true) {
+        setServerMessage(String(data?.error ?? ''));
+        setStatus('error');
+        return;
+      }
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (status === 'success') {
+    return (
+      <div className="o-card" style={{ alignItems: 'center', textAlign: 'center', padding: '48px 28px' }}>
+        <div style={{ width: 52, height: 52, borderRadius: '50%', border: '1px solid var(--color-divider)', display: 'grid', placeItems: 'center', marginBottom: 8 }}>
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-6" stroke="var(--color-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </div>
+        <h3 className="o-card-title">Message sent</h3>
+        <p className="text-muted" style={{ maxWidth: '30ch', margin: 0 }}>We’ll review your request and reply within 24 hours.</p>
+        <button
+          type="button"
+          className="o-btn o-btn-ghost"
+          onClick={() => { setForm({ fullName: '', workEmail: '', phone: '', company: '', interestedIn: '', budget: '', message: '' }); setStatus('idle'); }}
+        >
+          Send another →
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} noValidate className="o-form">
+      {status === 'error' && (
+        <div className="o-form-error" role="alert">
+          {serverMessage || 'Something went wrong. Please try again — or email us directly at Info@4amglobalmedia.com.'}
+        </div>
+      )}
+      <div className="o-form-grid">
+        <div className="o-field">
+          <label htmlFor="cf-name">Full name *</label>
+          <input id="cf-name" className="o-input" type="text" autoComplete="name" placeholder="Jane Cooper"
+            value={form.fullName} onChange={(e) => updateField('fullName', e.currentTarget.value)} />
+          {errors.fullName && <span className="o-field-err">{errors.fullName}</span>}
+        </div>
+        <div className="o-field">
+          <label htmlFor="cf-email">Work email *</label>
+          <input id="cf-email" className="o-input" type="email" autoComplete="email" placeholder="jane@company.com"
+            value={form.workEmail} onChange={(e) => updateField('workEmail', e.currentTarget.value)} />
+          {errors.workEmail && <span className="o-field-err">{errors.workEmail}</span>}
+        </div>
+        <div className="o-field">
+          <label htmlFor="cf-phone">Phone</label>
+          <input id="cf-phone" className="o-input" type="tel" autoComplete="tel" placeholder="Optional"
+            value={form.phone} onChange={(e) => updateField('phone', e.currentTarget.value)} />
+          {errors.phone && <span className="o-field-err">{errors.phone}</span>}
+        </div>
+        <div className="o-field">
+          <label htmlFor="cf-company">Company</label>
+          <input id="cf-company" className="o-input" type="text" autoComplete="organization" placeholder="Optional"
+            value={form.company} onChange={(e) => updateField('company', e.currentTarget.value)} />
+        </div>
+        <div className="o-field">
+          <label htmlFor="cf-interest">Interested in *</label>
+          <select id="cf-interest" className="o-input" value={form.interestedIn} onChange={(e) => updateField('interestedIn', e.currentTarget.value)}>
+            <option value="">Select a service…</option>
+            <option value="web-development">Web Development</option>
+            <option value="social-media">Social Media</option>
+            <option value="seo">SEO</option>
+            <option value="paid-ads">Paid Ads</option>
+            <option value="branding">Branding</option>
+            <option value="content-creation">Content Creation</option>
+            <option value="marketplace-product-onboarding">Marketplace Product Onboarding</option>
+            <option value="other">Other</option>
+          </select>
+          {errors.interestedIn && <span className="o-field-err">{errors.interestedIn}</span>}
+        </div>
+        <div className="o-field">
+          <label htmlFor="cf-budget">Budget range *</label>
+          <select id="cf-budget" className="o-input" value={form.budget} onChange={(e) => updateField('budget', e.currentTarget.value)}>
+            <option value="">Select a budget…</option>
+            {budgetOptions.map((label) => <option key={label} value={label}>{label}</option>)}
+          </select>
+          {errors.budget && <span className="o-field-err">{errors.budget}</span>}
+        </div>
+      </div>
+      <div className="o-field" style={{ marginTop: 16 }}>
+        <label htmlFor="cf-message">Tell us about your project *</label>
+        <textarea id="cf-message" className="o-input" rows={4} placeholder="What are you trying to move?"
+          value={form.message} onChange={(e) => updateField('message', e.currentTarget.value)} />
+        {errors.message && <span className="o-field-err">{errors.message}</span>}
+      </div>
+      <div className="row" style={{ marginTop: 22 }}>
+        <button type="submit" className="o-btn o-btn-primary" disabled={status === 'submitting'}>
+          {status === 'submitting' ? 'Sending…' : 'Send message'}
+          {status !== 'submitting' && (
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          )}
+        </button>
+        <a className="o-btn o-btn-secondary" href="mailto:Info@4amglobalmedia.com">Or email us</a>
+      </div>
+    </form>
+  );
+};
+
+/* ── Page ────────────────────────────────────────────────────────── */
 const LandingPage: React.FC = () => {
   const location = useLocation();
-  const mainRef  = useRef<HTMLDivElement>(null);
-  const bgRef    = useRef<HTMLDivElement>(null);
-  const orbRefs  = useRef<Record<OrbKey, HTMLDivElement | null>>({ orange: null, violet: null, cyan: null });
-  const heroZoneRef  = useRef<HTMLDivElement>(null);
-  const robotWrapRef = useRef<HTMLDivElement>(null);
-  const robotRef     = useRef<HTMLDivElement>(null);
-  // 0 = robot in hero position, 1 = fully morphed into the page backdrop.
-  // The cursor forwarder reads this to soften tracking as the robot grows.
-  const morphProgress = useRef(0);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [show3D, setShow3D] = useState(false);
 
-  // Cursor tracking now lives inside MechaRobot (R3F reads the mouse and
-  // rotates the model directly in its render loop, damped by morphProgress),
-  // so no synthetic-event forwarding is needed anymore.
-
-  // Robot mount strategy — the 3.8MB assets are already downloading (started
-  // from the app entry via preloadRobot, well before this runs). Here we just
-  // mount the component at the first idle moment, by which time the bytes are
-  // usually ready, so init is fast. Desktop-only: phones never pay a byte.
+  // Desktop / idle gate for the WebGL sculpture — never on phones,
+  // reduced-motion, save-data or weak CPUs (matches the app's perf policy).
   useEffect(() => {
     const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
     if (
       window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
       window.matchMedia('(max-width: 1024px)').matches ||
-      // Touch devices in "desktop site" mode pass the width check, but the
-      // WebGL canvas sets touch-action:none — a finger dragging on the
-      // robot (which backdrops every section) can't scroll the page. The
-      // robot is strictly for real fine-pointer desktops.
       window.matchMedia('(pointer: coarse)').matches ||
       (navigator.hardwareConcurrency || 8) < 4 ||
       nav.connection?.saveData
     ) return;
-
     const w = window as Window & {
       requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
       cancelIdleCallback?: (id: number) => void;
     };
-    let idleId: number | undefined;
-    let timeoutId: number | undefined;
-    // R3F caps its own pixel ratio via the Canvas `dpr` prop, so no global
-    // devicePixelRatio override is needed here.
+    let idleId: number | undefined; let timeoutId: number | undefined;
     const enable = () => setShow3D(true);
-    // Mount at the first breather — not after a long artificial wait
-    if (w.requestIdleCallback) {
-      idleId = w.requestIdleCallback(enable, { timeout: 1200 });
-    } else {
-      timeoutId = window.setTimeout(enable, 800);
-    }
+    if (w.requestIdleCallback) idleId = w.requestIdleCallback(enable, { timeout: 1200 });
+    else timeoutId = window.setTimeout(enable, 800);
     return () => {
       if (idleId !== undefined && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
       if (timeoutId !== undefined) clearTimeout(timeoutId);
     };
   }, []);
 
-  // ── Robot: hero companion → page backdrop ──────────────────────────
-  // Starts positioned exactly over the hero's right column. As the hero
-  // scrolls away, a scrub morphs it to screen center, scales it up and
-  // dims it — it then lives fixed behind every section's content.
-  useLayoutEffect(() => {
-    if (!show3D) return;
-    const wrap = robotWrapRef.current;
-    const robot = robotRef.current;
-    const heroZone = heroZoneRef.current;
-    if (!wrap || !robot || !heroZone) return;
-
-    const ctx = gsap.context(() => {
-      // Hero position: centered on the right column (~25vw right of center)
-      gsap.set(robot, { xPercent: -50, yPercent: -50, x: '25vw', y: '1vh' });
-
-      // Entrance (matches the old hero fade-in)
-      gsap.fromTo(wrap, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.1, ease: 'power2.out', delay: 0.25 });
-
-      // Morph to backdrop as the hero leaves the viewport
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: heroZone,
-          start: 'bottom 92%',
-          end: 'bottom 30%',
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            morphProgress.current = self.progress;
-          },
-        },
-      })
-        .to(robot, { x: '0vw', y: '0vh', scale: 1.45, ease: 'none' }, 0)
-        .to(robot, { opacity: 0.15, ease: 'none' }, 0.15);
-
-      // Gentle ambient drift once it's a backdrop (composited transform)
-      gsap.to(wrap, {
-        y: '1.2vh',
-        duration: 7,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-      });
-    });
-
-    return () => ctx.revert();
-  }, [show3D]);
-
+  // Route-state driven scroll (Navbar/Footer navigate('/', { state:{scrollTo} }))
   useEffect(() => {
     const state = location.state as { scrollTo?: string } | null;
-    if (!state || !state.scrollTo) return;
-    setTimeout(() => { scrollToSection(state.scrollTo!); }, 100);
+    if (!state?.scrollTo) return;
+    setTimeout(() => scrollToSection(state.scrollTo!), 120);
   }, [location.state]);
 
   useEffect(() => {
     document.title = HOME_PAGE_TITLE;
-    const descriptionTag = document.querySelector('meta[name="description"]');
-    if (descriptionTag) descriptionTag.setAttribute('content', HOME_PAGE_DESCRIPTION);
+    const tag = document.querySelector('meta[name="description"]');
+    if (tag) tag.setAttribute('content', HOME_PAGE_DESCRIPTION);
   }, []);
 
-  // ── Scroll color grading ────────────────────────────────────────────
-  // Each [data-grade] zone tweens the FIXED viewport underlay's tint and
-  // fades the ambient orbs to the mix in [data-orbs] as the zone crosses
-  // mid-viewport. The underlay keeps repaints viewport-sized.
-  useLayoutEffect(() => {
-    const root = mainRef.current;
-    if (!root) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // Touch-first devices count as mobile even at desktop widths
-    // ("desktop site" mode on Android) — same repaint constraints apply.
-    const isMobile =
-      window.matchMedia('(max-width: 768px)').matches ||
-      window.matchMedia('(pointer: coarse)').matches;
+  // Move the sculpture into the empty half of the active section so it sits
+  // beside the text, and dim it on the full-width content sections. Re-runs
+  // once the canvas mounts (show3D) — observing fires an initial callback,
+  // so the opening placement is set without waiting for a scroll.
+  useEffect(() => {
+    if (!show3D) return;
+    const sections = RAIL.map((r) => document.getElementById(r.id)).filter(Boolean) as HTMLElement[];
+    const apply = (id: string) => {
+      const pl = PLACE[id] ?? { side: 0, o: 1 };
+      (window as unknown as { __sculptSideX?: number }).__sculptSideX = pl.side;
+      const canvas = document.getElementById('o-scene');
+      if (canvas) canvas.style.opacity = String(pl.o);
+    };
+    const io = new IntersectionObserver(
+      (entries) => { entries.forEach((e) => { if (e.isIntersecting) apply(e.target.id); }); },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 },
+    );
+    sections.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [show3D]);
 
-    if (reduced) {
-      const orange = orbRefs.current.orange;
-      if (orange) gsap.set(orange, { opacity: 0.08 });
+  // Calm scroll reveal for [.reveal] elements
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const els = Array.from(root.querySelectorAll<HTMLElement>('.reveal'));
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      els.forEach((el) => el.classList.add('is-in'));
       return;
     }
-
-    const ctx = gsap.context(() => {
-      const zones = gsap.utils.toArray<HTMLElement>('[data-grade]', root);
-
-      zones.forEach((zone) => {
-        const bg = zone.dataset.grade!;
-        const targets: Record<OrbKey, number> = { orange: 0, violet: 0, cyan: 0 };
-        (zone.dataset.orbs ?? '').split(',').forEach((pair) => {
-          const [key, val] = pair.split(':');
-          const k = key?.trim() as OrbKey;
-          if (k && k in targets) targets[k] = parseFloat(val) || 0;
-        });
-
-        const accent = zone.dataset.accent;
-        const apply = () => {
-          if (bgRef.current) {
-            // Phones: snap the tint in one repaint — a 1.1s background tween
-            // repaints the whole viewport every frame and stutters touch scroll.
-            if (isMobile) gsap.set(bgRef.current, { backgroundColor: bg });
-            else gsap.to(bgRef.current, { backgroundColor: bg, duration: 1.1, ease: 'power2.out', overwrite: 'auto' });
-          }
-          if (!isMobile) {
-            (Object.keys(targets) as OrbKey[]).forEach((k) => {
-              const orb = orbRefs.current[k];
-              if (orb) gsap.to(orb, { opacity: targets[k], duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
-            });
-          }
-          if (accent) window.dispatchEvent(new CustomEvent(ACCENT_EVENT, { detail: accent }));
-        };
-
-        ScrollTrigger.create({
-          trigger: zone,
-          start: 'top 55%',
-          end: 'bottom 55%',
-          onEnter: apply,
-          onEnterBack: apply,
-        });
-      });
-
-      // Slow ambient drift (desktop only — large moving layers cost on phones)
-      if (!isMobile) {
-        (Object.keys(orbRefs.current) as OrbKey[]).forEach((k, i) => {
-          const orb = orbRefs.current[k];
-          if (!orb) return;
-          gsap.to(orb, {
-            x: i % 2 === 0 ? '6vw' : '-6vw',
-            y: '4vh',
-            duration: 9 + i * 3,
-            ease: 'sine.inOut',
-            yoyo: true,
-            repeat: -1,
-          });
-        });
-      }
-    }, root);
-
-    return () => ctx.revert();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
   }, []);
 
   return (
-    <div ref={mainRef} className="relative z-[2] bg-black">
-
-      {/* ── Fixed viewport underlay — color grading tweens THIS, not the
-           full-height root (viewport-sized repaints only) ── */}
-      <div
-        ref={bgRef}
-        className="fixed inset-0 pointer-events-none"
-        style={{ backgroundColor: '#050505' }}
-        aria-hidden="true"
-      />
-
-      {/* ── Scroll-reactive canvas background (particle network + grid) ── */}
-      <ScrollCanvasBackground />
-
-      {/* ── Right-edge section dot navigation (desktop) ── */}
-      <SectionNav />
-
-      {/* ── Scroll-triggered "book a call" popup (once per session) ── */}
-      <ScrollCTA />
-
-      {/* ── Fixed ambient color-grade orbs (behind all sections) ── */}
-      <div className="pointer-events-none" aria-hidden="true">
-        <div
-          ref={(el) => { orbRefs.current.orange = el; }}
-          className="glow-orb fixed -top-[15vh] -left-[12vw] w-[60vw] h-[60vw] opacity-0"
-          style={{ background: 'radial-gradient(circle, rgba(255,106,61,0.55) 0%, transparent 62%)' }}
-        />
-        <div
-          ref={(el) => { orbRefs.current.violet = el; }}
-          className="glow-orb fixed top-[20vh] -right-[18vw] w-[65vw] h-[65vw] opacity-0"
-          style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 62%)' }}
-        />
-        <div
-          ref={(el) => { orbRefs.current.cyan = el; }}
-          className="glow-orb fixed -bottom-[20vh] left-[10vw] w-[55vw] h-[55vw] opacity-0"
-          style={{ background: 'radial-gradient(circle, rgba(34,211,238,0.4) 0%, transparent 62%)' }}
-        />
-      </div>
-
-      {/* ── Robot: fixed layer — hero companion on load, then morphs into
-           the backdrop behind every section (desktop only, idle-loaded).
-           Painted before all sections, so their content covers it. ── */}
+    <div ref={rootRef} className="organic">
       {show3D && (
-        <div
-          ref={robotWrapRef}
-          className="fixed inset-0 pointer-events-none hidden lg:block opacity-0"
-          aria-hidden="true"
-          // Isolate the robot's continuous WebGL repaints into their own
-          // compositor layer so they don't invalidate/redraw the rest of the
-          // page while scrolling.
-          style={{ contain: 'layout paint', isolation: 'isolate' }}
-        >
-          <div
-            ref={robotRef}
-            className="absolute left-1/2 top-1/2 w-[44vw] max-w-[720px] h-[62vh] xl:h-[66vh] min-h-[440px] will-change-transform"
-          >
-            <Suspense fallback={null}>
-              <MechaRobot morphRef={morphProgress} />
-            </Suspense>
-          </div>
-        </div>
+        <React.Suspense fallback={null}>
+          <SculptureBackground />
+        </React.Suspense>
       )}
+      <div className="o-vignette" aria-hidden="true" />
+      <DotRail />
+      <ScrollCue />
 
-      {/* 1 ── Hero (unchanged text/entrance; robot floats in the fixed layer) */}
-      <div ref={heroZoneRef} data-grade="#050505" data-orbs="orange:0.10,violet:0.05" data-accent="#FF6A3D">
-        <Hero />
-      </div>
+      <main>
+        {/* 1 · Hero */}
+        <section id="home" className="o-section">
+          <div className="o-col">
+            <p className="kicker reveal"><span className="rule" />4AM Global Media</p>
+            <h1 className="reveal">A creative network made for today &amp; tomorrow.</h1>
+            <p className="lede reveal">
+              We power founders, operators and teams across the globe with strategy, design,
+              engineering and growth marketing that compounds.
+            </p>
+            <div className="row reveal">
+              <button className="o-btn o-btn-primary" onClick={() => scrollToSection('contact')}>Start a project</button>
+              <button className="o-btn o-btn-ghost" onClick={() => scrollToSection('services')}>See how we work →</button>
+            </div>
+          </div>
+        </section>
 
-      {/* 2 ── Clients strip */}
-      <motion.div
-        initial={{ opacity: 0, y: 28 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className="border-y border-white/[0.06] py-7 md:py-9"
-      >
-        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 mb-4">
-          <p className="text-[9px] md:text-[10px] font-bold tracking-[0.4em] uppercase text-white/60 text-center">
-            We launch brands on India's leading platforms
-          </p>
-        </div>
-        <Marquee
-          items={CLIENTS}
-          speed={55}
-          separator="·"
-          scrollVelocity={false}
-          className="text-[4.5vw] md:text-[1.8vw] font-black uppercase tracking-[0.08em] text-white/70"
-        />
-      </motion.div>
+        {/* 2 · Why 4AM */}
+        <section id="why" className="o-section">
+          <div className="o-col right">
+            <p className="kicker reveal"><span className="rule" />Why 4AM</p>
+            <h2 className="reveal">The hour before everyone else starts.</h2>
+            <p className="lede reveal">
+              4AM is the quiet edge of the day — the head start. It is how we work and what we sell:
+              momentum, before the market notices.
+            </p>
+          </div>
+        </section>
 
-      {/* 3 ── Impact stats */}
-      <div data-grade="#0A0604" data-orbs="orange:0.14" data-accent="#FF6A3D">
-        <StatsSection />
-      </div>
+        {/* 3 · Focus + stats */}
+        <section id="focus" className="o-section">
+          <div className="o-col">
+            <p className="kicker reveal"><span className="rule" />Focus</p>
+            <h2 className="reveal">We look closely, then we build.</h2>
+            <p className="lede reveal">
+              Every engagement opens with a diagnostic — audience, funnel, product surface — so the
+              work that follows is aimed, not decorative.
+            </p>
+            <div className="stats reveal">
+              <div><b>{PROJECTS.length}</b><small>Client sites shipped</small></div>
+              <div><b>{SERVICES.length}</b><small>Core services</small></div>
+              <div><b>{MARKETPLACES.length}</b><small>Marketplaces</small></div>
+            </div>
+          </div>
+        </section>
 
-      {/* 4 ── Services */}
-      <div data-grade="#0A0505" data-orbs="orange:0.14,violet:0.06" data-accent="#FF6A3D">
-        <Services />
-      </div>
+        {/* 4 · Capability (services) */}
+        <section id="services" className="o-section">
+          <div className="o-col right">
+            <p className="kicker reveal"><span className="rule" />Capability</p>
+            <h2 className="reveal">One team, taken apart.</h2>
+            <p className="lede reveal" style={{ marginBottom: 8 }}>
+              Seven capabilities, one team — tap any to see how we deliver it.
+            </p>
+            <div className="o-services reveal">
+              {SERVICES.map((s, i) => (
+                <Link key={s.slug} to={`/services/${s.slug}`} className="o-service" aria-label={`${s.title} — view service`}>
+                  <span className="o-service-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="o-service-title">{s.title}</span>
+                  <span className="o-service-arrow" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      {/* 5 ── Software development */}
-      <div data-grade="#06060E" data-orbs="violet:0.18,cyan:0.10" data-accent="#8B5CF6">
-        <CodeShowcase />
-      </div>
+        {/* 5 · Software */}
+        <section id="software" className="o-section">
+          <div className="o-col">
+            <p className="kicker reveal"><span className="rule" />Software</p>
+            <h2 className="reveal">Products that hold up under real traffic.</h2>
+            <p className="lede reveal">
+              Web platforms, mobile apps and the integrations behind them — designed, shipped and
+              maintained by the same people.
+            </p>
+            <div className="row reveal">
+              {['React', 'React Native', 'Node', 'Python', 'Cloud'].map((t) => (
+                <span key={t} className="o-tag o-tag-outline">{t}</span>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      {/* 6 ── Digital marketing */}
-      <div data-grade="#0A0703" data-orbs="orange:0.18,cyan:0.06" data-accent="#FFC56A">
-        <GrowthChart />
-      </div>
+        {/* 6 · Reach */}
+        <section id="reach" className="o-section">
+          <div className="o-col right">
+            <p className="kicker reveal"><span className="rule" />Reach</p>
+            <h2 className="reveal">Built to broadcast.</h2>
+            <p className="lede reveal">
+              Paid, organic, owned. We put your message where the attention already is and measure
+              every hop it makes.
+            </p>
+            <div className="row reveal">
+              {['Performance ads', 'SEO', 'Social', 'Content & film'].map((t) => (
+                <span key={t} className="o-tag o-tag-accent-2">{t}</span>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      {/* 7 ── Process */}
-      <div data-grade="#04080A" data-orbs="cyan:0.14,violet:0.08" data-accent="#22D3EE">
-        <ProcessSection />
-      </div>
+        {/* 7 · Method */}
+        <section id="method" className="o-section">
+          <div className="o-col">
+            <p className="kicker reveal"><span className="rule" />Method</p>
+            <h2 className="reveal">Straight through the middle of the problem.</h2>
+            <p className="lede reveal">
+              Short cycles, visible decisions, no theatre. You see the work while it is still cheap to change.
+            </p>
+            <ul className="ed-list reveal">
+              {['Diagnose', 'Design', 'Build', 'Launch & grow'].map((step, i) => (
+                <li key={step}><i>{String(i + 1).padStart(2, '0')}</i><span>{step}</span></li>
+              ))}
+            </ul>
+          </div>
+        </section>
 
-      {/* 8 ── Work */}
-      <div data-grade="#050505" data-orbs="orange:0.10" data-accent="#FF6A3D">
-        <Projects />
-      </div>
+        {/* 8 · Network + marketplaces */}
+        <section id="network" className="o-section">
+          <div className="o-col right">
+            <p className="kicker reveal"><span className="rule" />Network</p>
+            <h2 className="reveal">Specialists, on the day you need them.</h2>
+            <p className="lede reveal">
+              A distributed bench of engineers, strategists, editors and media buyers — and a
+              marketplace desk that launches brands across India’s leading platforms.
+            </p>
+            <div className="row reveal" style={{ gap: 8 }}>
+              {MARKETPLACES.map((m) => <span key={m} className="o-tag o-tag-neutral">{m}</span>)}
+            </div>
+          </div>
+        </section>
 
-      {/* 9 ── Testimonials */}
-      <div data-grade="#070409" data-orbs="violet:0.14,orange:0.06" data-accent="#8B5CF6">
-        <Testimonials />
-      </div>
+        {/* 9 · Work */}
+        <section id="work" className="o-section">
+          <div className="o-wide">
+            <p className="kicker reveal"><span className="rule" />Selected work</p>
+            <h2 className="reveal">Results we can point to.</h2>
+            <div className="o-cards reveal">
+              {FEATURED_WORK.map((p) => (
+                <a key={p.id} className="o-card" href={p.url} target="_blank" rel="noopener noreferrer">
+                  <span className="o-card-kicker">{p.industry ?? p.category}</span>
+                  <span className="o-card-title">{p.title}</span>
+                  {p.result && <span className="o-card-result">{p.result}</span>}
+                  <span className="o-card-link">Visit site →</span>
+                </a>
+              ))}
+            </div>
+            <p className="lede reveal" style={{ marginTop: 26, marginBottom: 0 }}>
+              …and {PROJECTS.length - FEATURED_WORK.length}+ more client sites shipped worldwide.
+            </p>
+          </div>
+        </section>
 
-      {/* 10 ── Founder */}
-      <div data-grade="#0A0703" data-orbs="orange:0.14,violet:0.06" data-accent="#FFC56A">
-        <Founder />
-      </div>
+        {/* 10 · Leadership */}
+        <section id="about" className="o-section">
+          <div className="o-wide">
+            <p className="kicker reveal"><span className="rule" />Leadership</p>
+            <h2 className="reveal">The people behind 4AM.</h2>
+            <div className="o-cards reveal">
+              {LEADERS.map((l) => (
+                <article key={l.name} className="o-card o-leader">
+                  <div className="o-leader-photo">
+                    <img src={l.photo} alt={l.name} loading="lazy" />
+                  </div>
+                  <span className={`o-card-kicker ${l.accent === 'accent-2' ? 'is-sage' : ''}`}>{l.role}</span>
+                  <span className="o-card-title">{l.name}</span>
+                  <p className="text-muted" style={{ fontSize: 14, margin: '4px 0 8px' }}>{l.bio}</p>
+                  <div className="row" style={{ gap: 6 }}>
+                    {l.tags.map((t) => (
+                      <span key={t} className={`o-tag ${l.accent === 'accent-2' ? 'o-tag-accent-2' : 'o-tag-accent'}`}>{t}</span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="o-featured reveal">
+              <span className="o-featured-label">As featured in</span>
+              <div className="row" style={{ gap: 8 }}>
+                {FEATURED_IN.map((o) => (
+                  <a key={o.name} className="o-tag o-tag-neutral" href={o.href} target="_blank" rel="noopener noreferrer">{o.name}</a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* 11 ── Contact */}
-      <div data-grade="#0A0502" data-orbs="orange:0.16" data-accent="#FF6A3D">
-        <Contact />
-      </div>
+        {/* 11 · Quote */}
+        <section id="testimonials" className="o-section">
+          <div className="o-col">
+            <blockquote className="reveal">
+              “The 4AM team brought clarity to our growth strategy and execution. They operate like an
+              extension of our internal team.”
+            </blockquote>
+            <cite className="reveal">Head of Marketing · SaaS brand</cite>
+          </div>
+        </section>
+
+        {/* 12 · Contact */}
+        <section id="contact" className="o-section">
+          <div className="o-wide o-contact">
+            <div className="o-contact-intro">
+              <p className="kicker reveal"><span className="rule" />Contact</p>
+              <h2 className="reveal">It is early. Let’s begin.</h2>
+              <p className="lede reveal">Tell us what you are trying to move, and we will tell you what it takes.</p>
+              <dl className="o-contact-meta reveal">
+                <div><dt>Email</dt><dd><a href="mailto:Info@4amglobalmedia.com">Info@4amglobalmedia.com</a></dd></div>
+                <div><dt>Phone</dt><dd><a href="tel:8826406545">8826406545</a></dd></div>
+                <div><dt>Location</dt><dd>Global / Remote Team</dd></div>
+              </dl>
+            </div>
+            <div className="o-contact-form reveal">
+              <ContactForm />
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };

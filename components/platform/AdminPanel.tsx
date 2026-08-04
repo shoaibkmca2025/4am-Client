@@ -30,11 +30,11 @@ const MetricStrip: React.FC<{ m: Metrics | null }> = ({ m }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-10">
       {(m ? items : Array.from({ length: 6 }, () => ['', ''] as [string, string])).map(([label, value], i) => (
-        <div key={label || i} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-4">
+        <div key={label || i} className="rounded-2xl border border-[#201e1d]/10 bg-[#ebddc5] px-5 py-4">
           <div className="text-2xl md:text-3xl font-black tracking-[-0.02em] text-gradient-brand tabular-nums">
             {value === '' ? '—' : value}
           </div>
-          <div className="mt-1 text-[9px] font-bold tracking-[0.2em] uppercase text-white/35">
+          <div className="mt-1 text-[9px] font-bold tracking-[0.2em] uppercase text-[#201e1d]/50">
             {label || ' '}
           </div>
         </div>
@@ -123,7 +123,7 @@ const AdminPanel: React.FC = () => {
   }, [session, role, loadCourses, loadMetrics]);
   useEffect(() => { if (selected) loadRoster(selected); }, [selected, loadRoster]);
 
-  if (loading) return <div className="bg-black min-h-screen pt-[70px] md:pt-[80px]"><Spinner /></div>;
+  if (loading) return <div className="bg-[#f5ead8] min-h-screen pt-[70px] md:pt-[80px]"><Spinner /></div>;
   if (!session) {
     return <AuthGate eyebrow="Admin" title="4AM" titleAccent="ADMIN" intro="Sign in with your staff account to manage courses and certificates." />;
   }
@@ -133,7 +133,7 @@ const AdminPanel: React.FC = () => {
         actions={<Button variant="line" onClick={signOut}>Sign out</Button>}>
         <Notice tone="error">
           This account does not have staff access. If you are a student, go to the{' '}
-          <a href="/portal" className="underline hover:text-white">student portal</a>.
+          <a href="/portal" className="underline hover:text-[#201e1d]">student portal</a>.
         </Notice>
       </PageShell>
     );
@@ -249,7 +249,7 @@ const AdminPanel: React.FC = () => {
       <MetricStrip m={metrics} />
 
       {/* Section tabs */}
-      <div className="flex flex-wrap items-center gap-2 mb-8 border-b border-white/[0.07] pb-4">
+      <div className="flex flex-wrap items-center gap-2 mb-8 border-b border-[#201e1d]/10 pb-4">
         {([
           ['certificates', 'Courses & certificates'],
           ['leads', metrics?.leadsNew ? `Enquiries (${metrics.leadsNew} new)` : 'Enquiries'],
@@ -263,8 +263,8 @@ const AdminPanel: React.FC = () => {
             onClick={() => setTab(id)}
             className={`rounded-full px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors duration-300 ${
               tab === id
-                ? 'bg-gradient-to-r from-brand-primary to-brand-secondary text-black'
-                : 'border border-white/[0.1] text-white/50 hover:text-white/80'
+                ? 'bg-gradient-to-r from-[#c67139] to-[#b2622d] text-[#f5ead8]'
+                : 'border border-[#201e1d]/12 text-[#201e1d]/60 hover:text-[#201e1d]/80'
             }`}
           >
             {label}
@@ -285,10 +285,10 @@ const AdminPanel: React.FC = () => {
       {revealedKey && (
         <div className="mb-8">
           <Card className="border-brand-secondary/40 bg-brand-secondary/[0.04]">
-            <SectionLabel className="text-brand-secondary/80">Claim key — shown once</SectionLabel>
-            <p className="text-white/70 text-sm mb-4">
-              Give this key to <strong className="text-white">{revealedKey.student}</strong>. It is stored only as a
-              hash and <strong className="text-white">cannot be shown again</strong>.
+            <SectionLabel className="text-[#8c491a]">Claim key — shown once</SectionLabel>
+            <p className="text-[#201e1d]/70 text-sm mb-4">
+              Give this key to <strong className="text-[#201e1d]">{revealedKey.student}</strong>. It is stored only as a
+              hash and <strong className="text-[#201e1d]">cannot be shown again</strong>.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <code className="font-mono text-2xl md:text-3xl font-black tracking-[0.08em] text-gradient-brand">
@@ -307,7 +307,7 @@ const AdminPanel: React.FC = () => {
           <SectionLabel>Courses</SectionLabel>
           {courses === null ? <Spinner /> : (
             <div className="space-y-2 mb-8">
-              {courses.length === 0 && <p className="text-white/40 text-sm">No courses yet.</p>}
+              {courses.length === 0 && <p className="text-[#201e1d]/55 text-sm">No courses yet.</p>}
               {courses.map((c) => (
                 <button
                   key={c.id}
@@ -315,11 +315,11 @@ const AdminPanel: React.FC = () => {
                   className={`w-full text-left rounded-xl border px-5 py-4 transition-colors duration-300 ${
                     selected === c.id
                       ? 'border-brand-primary/50 bg-brand-primary/[0.06]'
-                      : 'border-white/[0.08] bg-white/[0.02] hover:border-white/20'
+                      : 'border-[#201e1d]/10 bg-[#ebddc5] hover:border-[#201e1d]/20'
                   }`}
                 >
-                  <div className="font-bold text-white text-sm uppercase tracking-[0.02em]">{c.title}</div>
-                  <div className="text-white/40 text-xs mt-1">
+                  <div className="font-bold text-[#201e1d] text-sm uppercase tracking-[0.02em]">{c.title}</div>
+                  <div className="text-[#201e1d]/55 text-xs mt-1">
                     {c.enrollments?.[0]?.count ?? 0} student{(c.enrollments?.[0]?.count ?? 0) === 1 ? '' : 's'} · {c.status}
                   </div>
                 </button>
@@ -356,7 +356,7 @@ const AdminPanel: React.FC = () => {
                     <Button type="submit" loading={adding} disabled={!sName.trim() || !sEmail.trim()}>
                       Add student & generate key
                     </Button>
-                    <label className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.15em] uppercase text-white/45 cursor-pointer hover:text-white/70 transition-colors">
+                    <label className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.15em] uppercase text-[#201e1d]/60 cursor-pointer hover:text-[#201e1d]/70 transition-colors">
                       or import CSV
                       <input
                         type="file"
@@ -367,38 +367,38 @@ const AdminPanel: React.FC = () => {
                           if (f) bulkImport(f);
                           e.currentTarget.value = '';
                         }}
-                        className="text-[10px] file:mr-2 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-[10px] file:font-bold file:uppercase file:tracking-[0.15em] file:text-white hover:file:bg-white/20 file:cursor-pointer"
+                        className="text-[10px] file:mr-2 file:rounded-full file:border-0 file:bg-[#201e1d]/10 file:px-3 file:py-1.5 file:text-[10px] file:font-bold file:uppercase file:tracking-[0.15em] file:text-[#201e1d] hover:file:bg-[#201e1d]/15 file:cursor-pointer"
                       />
                       {importing && 'Importing…'}
                     </label>
                   </div>
                 </form>
-                <p className="mt-4 text-white/30 text-[11px]">
-                  CSV columns: <code className="text-white/50">name, email</code> — header row optional, max 500 rows.
+                <p className="mt-4 text-[#201e1d]/50 text-[11px]">
+                  CSV columns: <code className="text-[#201e1d]/60">name, email</code> — header row optional, max 500 rows.
                 </p>
               </Card>
 
               {/* Bulk import result — every key shown once, then gone */}
               {bulkResult && (
                 <Card className="mb-6 border-brand-secondary/40 bg-brand-secondary/[0.04]">
-                  <SectionLabel className="text-brand-secondary/80">
+                  <SectionLabel className="text-[#8c491a]">
                     Imported {bulkResult.created.length} student{bulkResult.created.length === 1 ? '' : 's'} — keys shown once
                   </SectionLabel>
-                  <div className="max-h-72 overflow-y-auto rounded-xl border border-white/[0.08]">
+                  <div className="max-h-72 overflow-y-auto rounded-xl border border-[#201e1d]/10">
                     <table className="w-full text-left text-xs">
-                      <tbody className="divide-y divide-white/[0.06]">
+                      <tbody className="divide-y divide-[#201e1d]/10">
                         {bulkResult.created.map((r) => (
                           <tr key={r.email}>
-                            <td className="px-4 py-2.5 text-white/80">{r.name}</td>
-                            <td className="px-4 py-2.5 text-white/40 break-all">{r.email}</td>
-                            <td className="px-4 py-2.5 font-mono font-bold text-brand-secondary whitespace-nowrap">{r.claimKey}</td>
+                            <td className="px-4 py-2.5 text-[#201e1d]/80">{r.name}</td>
+                            <td className="px-4 py-2.5 text-[#201e1d]/55 break-all">{r.email}</td>
+                            <td className="px-4 py-2.5 font-mono font-bold text-[#8c491a] whitespace-nowrap">{r.claimKey}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                   {bulkResult.skipped.length > 0 && (
-                    <p className="mt-3 text-white/45 text-[11px]">
+                    <p className="mt-3 text-[#201e1d]/60 text-[11px]">
                       Skipped {bulkResult.skipped.length}: {bulkResult.skipped.slice(0, 5).map((s) => `row ${s.row} (${s.reason})`).join(', ')}
                       {bulkResult.skipped.length > 5 && '…'}
                     </p>
@@ -420,10 +420,10 @@ const AdminPanel: React.FC = () => {
                       <Card key={r.id} className="p-5 md:p-6">
                         <div className="flex flex-wrap items-start justify-between gap-4">
                           <div className="min-w-0">
-                            <div className="font-bold text-white text-sm">{r.student_name}</div>
-                            <div className="text-white/40 text-xs mt-0.5 break-all">{r.student_email}</div>
+                            <div className="font-bold text-[#201e1d] text-sm">{r.student_name}</div>
+                            <div className="text-[#201e1d]/55 text-xs mt-0.5 break-all">{r.student_email}</div>
                             {cert && (
-                              <div className="font-mono text-[11px] text-white/50 mt-2 break-all">
+                              <div className="font-mono text-[11px] text-[#201e1d]/60 mt-2 break-all">
                                 {cert.certificate_serial}
                               </div>
                             )}
@@ -443,7 +443,7 @@ const AdminPanel: React.FC = () => {
                         <div className="mt-4 flex flex-wrap gap-3">
                           {!cert ? (
                             issuingFor === r.id ? (
-                              <label className="inline-flex items-center gap-3 text-xs text-white/60">
+                              <label className="inline-flex items-center gap-3 text-xs text-[#201e1d]/65">
                                 <input
                                   type="file"
                                   accept="application/pdf,image/png,image/jpeg"
@@ -452,7 +452,7 @@ const AdminPanel: React.FC = () => {
                                     const f = e.currentTarget.files?.[0];
                                     if (f) issueCertificate(r.id, f);
                                   }}
-                                  className="text-xs file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-4 file:py-2 file:text-[10px] file:font-bold file:uppercase file:tracking-[0.15em] file:text-white hover:file:bg-white/20"
+                                  className="text-xs file:mr-3 file:rounded-full file:border-0 file:bg-[#201e1d]/10 file:px-4 file:py-2 file:text-[10px] file:font-bold file:uppercase file:tracking-[0.15em] file:text-[#201e1d] hover:file:bg-[#201e1d]/15"
                                 />
                                 {uploading && 'Uploading…'}
                               </label>
@@ -466,7 +466,7 @@ const AdminPanel: React.FC = () => {
                               <a
                                 href={`/verify/${cert.certificate_serial}`}
                                 target="_blank" rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase border border-white/[0.14] text-white/70 hover:border-white/40 hover:text-white transition-all duration-300"
+                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase border border-[#201e1d]/15 text-[#201e1d]/70 hover:border-[#201e1d]/30 hover:text-[#201e1d] transition-all duration-300"
                               >
                                 Verify page
                               </a>

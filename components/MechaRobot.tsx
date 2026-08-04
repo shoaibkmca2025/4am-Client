@@ -11,6 +11,13 @@ useGLTF.preload(MODEL, DRACO);
 
 interface Props { morphRef: React.MutableRefObject<number> }
 
+// Hero framing: HERO_FILL > 1 means the mech is taller than the view (so only
+// the upper body shows — a big close-up); HERO_SHIFT_FRAC drops it so that
+// upper body is framed. Both unwind to the full-body fit as it morphs to the
+// backdrop. Height-driven so the crop is consistent across viewport aspects.
+const HERO_FILL = 1.7;
+const HERO_SHIFT_FRAC = 0.5;
+
 function Model({ morphRef }: Props) {
   const { scene, animations } = useGLTF(MODEL, DRACO);
   const { viewport } = useThree();
@@ -82,12 +89,23 @@ function Model({ morphRef }: Props) {
     const pitch = mouse.current.y * 0.22 * (1 - 0.7 * p);
     g.rotation.y += (yaw - g.rotation.y) * 0.05;
     g.rotation.x += (-pitch - g.rotation.x) * 0.05;
-    // Idle float
-    g.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.08;
+
+    // Hero (p=0): zoomed-in on the upper body — a big "half robot" close-up.
+    // Backdrop (p=1): eases back to the full-body fit as it moves to centre.
+    // Hero scale is height-driven (not fitScale, which is width-limited on
+    // square canvases) so the crop is a consistent upper-half everywhere.
+    const heroScale = (viewport.height * HERO_FILL) / (size.y || 1);
+    const s = THREE.MathUtils.lerp(heroScale, fitScale, p);
+    g.scale.setScalar(s);
+    // Shift the model DOWN in the hero so the head/torso fill the frame and the
+    // legs fall below it (cropped); unwinds to centred as it reveals the full body.
+    const scaledHalf = size.y * 0.5 * s;
+    const shift = -scaledHalf * HERO_SHIFT_FRAC * (1 - p);
+    g.position.y = shift + Math.sin(state.clock.elapsedTime * 0.8) * 0.08;
   });
 
   return (
-    <group ref={group} scale={fitScale}>
+    <group ref={group}>
       <primitive object={object} />
     </group>
   );
