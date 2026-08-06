@@ -663,6 +663,81 @@ a[role="button"]:active {
   background: var(--color-accent); color: var(--color-bg); border-color: var(--color-accent);
 }
 
+/* ── Services accordion — full-width expandable capability rows.
+   Hover a closed row: it slides right + the title tints; the "+" flips to
+   "×" and the panel opens (grid 0fr→1fr auto-height) to reveal a summary,
+   capability pills, a thumbnail and a "View service" link. ──────────── */
+.organic .svc-header {
+  display: flex; flex-wrap: wrap; gap: clamp(20px, 4vw, 60px);
+  align-items: flex-end; justify-content: space-between; margin-bottom: clamp(22px, 3vw, 42px);
+}
+.organic .svc-h { margin: 0; }
+.organic .svc-intro { max-width: 46ch; margin: 0; padding-bottom: 4px; }
+
+.organic .svc-accordion { border-top: 1px solid var(--color-divider); }
+.organic .svc-row { border-bottom: 1px solid var(--color-divider); }
+.organic .svc-head {
+  width: 100%; display: grid; grid-template-columns: clamp(40px, 5vw, 92px) 1fr auto;
+  align-items: center; gap: clamp(12px, 2.4vw, 34px);
+  padding: clamp(20px, 2.5vw, 36px) 4px; border: 0; background: none; color: var(--color-text);
+  font: inherit; text-align: left; cursor: pointer;
+  transition: transform .55s cubic-bezier(.16, 1, .3, 1);
+}
+.organic .svc-num {
+  font-family: var(--font-heading); color: var(--color-accent);
+  font-size: clamp(13px, 1.15vw, 18px); line-height: 1; opacity: .55; transition: opacity .4s ease;
+}
+.organic .svc-row.is-open .svc-num { opacity: 1; }
+.organic .svc-title {
+  font-family: var(--font-heading); font-weight: 400;
+  font-size: clamp(28px, 4vw, 64px); line-height: .96; letter-spacing: -.01em;
+  transition: color .3s ease;
+}
+.organic .svc-row.is-open .svc-title { color: var(--color-accent-700); }
+
+/* + / × toggle */
+.organic .svc-plus {
+  position: relative; display: block; flex: none;
+  width: clamp(20px, 1.9vw, 30px); height: clamp(20px, 1.9vw, 30px); color: currentColor;
+}
+.organic .svc-plus i { position: absolute; display: block; background: currentColor; }
+.organic .svc-plus-h { top: 50%; left: 0; width: 100%; height: 2px; margin-top: -1px; }
+.organic .svc-plus-v { left: 50%; top: 0; width: 2px; height: 100%; margin-left: -1px; transition: transform .45s cubic-bezier(.16, 1, .3, 1); }
+
+/* expanding panel — animates auto height via grid rows */
+.organic .svc-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .55s cubic-bezier(.16, 1, .3, 1); }
+.organic .svc-row.is-open .svc-panel { grid-template-rows: 1fr; }
+.organic .svc-panel-inner { min-height: 0; overflow: hidden; }
+.organic .svc-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 272px), 1fr));
+  gap: clamp(20px, 3vw, 54px); padding: 2px 4px clamp(28px, 3vw, 50px);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .5s ease .08s, transform .55s cubic-bezier(.16, 1, .3, 1) .08s;
+}
+.organic .svc-row.is-open .svc-grid { opacity: 1; transform: none; }
+
+.organic .svc-desc { margin: 0; font-size: clamp(14px, 1.05vw, 17px); line-height: 1.6; color: color-mix(in srgb, var(--color-text) 62%, transparent); }
+.organic .svc-caps { display: grid; gap: 12px; align-content: start; }
+.organic .svc-caps-label { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.organic .svc-caps-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.organic .svc-cap { padding: 7px 13px; border: 1px solid var(--color-divider); border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+
+.organic .svc-media { display: grid; gap: 16px; align-content: start; justify-items: start; }
+.organic .svc-thumb { width: 100%; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden; background: var(--color-surface); }
+.organic .svc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s cubic-bezier(.16, 1, .3, 1); }
+.organic .svc-thumb:hover img { transform: scale(1.05); }
+.organic .svc-view {
+  display: inline-flex; align-items: center; gap: 10px; padding: 13px 24px; border-radius: 999px;
+  background: var(--color-accent); color: var(--color-bg); text-decoration: none;
+  font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  transition: background .2s;
+}
+.organic .svc-view:hover { background: var(--color-accent-600); color: var(--color-bg); opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .organic .svc-head, .organic .svc-plus-v, .organic .svc-panel, .organic .svc-grid { transition: none; }
+}
+
 .organic blockquote {
   margin: 0; font-family: var(--font-heading); font-weight: 400;
   font-size: clamp(28px, 3.4vw, 52px); line-height: 1.1; text-wrap: pretty;
@@ -709,6 +784,9 @@ a[role="button"]:active {
   .organic h1 { font-size: clamp(38px, 11.5vw, 56px); }
   .organic h2 { font-size: clamp(28px, 8.5vw, 42px); }
   .organic blockquote { font-size: clamp(26px, 8vw, 40px); }
+  .organic .svc-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .organic .svc-head { grid-template-columns: 30px 1fr auto; gap: 12px; padding: 18px 2px; }
+  .organic .svc-title { font-size: clamp(24px, 8vw, 38px); }
   .o-cue { display: none; }  /* no sculpture story to cue on phones */
 }
 @supports not (min-height: 84svh) {

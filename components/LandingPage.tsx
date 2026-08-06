@@ -68,7 +68,7 @@ const PLACE: Record<string, { side: number; o: number }> = {
   home:        { side: 0.42,  o: 1 },    // text left  → object right
   why:         { side: -0.42, o: 1 },    // text right → object left
   focus:       { side: 0.42,  o: 1 },
-  services:    { side: -0.42, o: 1 },
+  services:    { side: 0.55, o: 0.14 },  // full-width accordion → recede
   software:    { side: 0.42,  o: 1 },
   reach:       { side: -0.42, o: 1 },
   method:      { side: 0.42,  o: 1 },
@@ -134,6 +134,62 @@ const ScrollCue: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   return <div className="o-cue" ref={ref}>Scroll</div>;
+};
+
+/* ── Services — expandable capability rows (accordion) ───────────── */
+const ServicesAccordion: React.FC = () => {
+  const [open, setOpen] = useState<number | null>(null);
+  const [hover, setHover] = useState<number | null>(null);
+  return (
+    <div className="svc-accordion reveal">
+      {SERVICES.map((s, i) => {
+        const isOpen = open === i;
+        const lift = hover === i && !isOpen;      // slide + tint only while closed
+        const caps = (s.features ?? []).slice(0, 4);
+        return (
+          <div key={s.slug} className={`svc-row${isOpen ? ' is-open' : ''}`}>
+            <button
+              type="button"
+              className="svc-head"
+              aria-expanded={isOpen}
+              onClick={() => setOpen(isOpen ? null : i)}
+              onMouseEnter={() => setHover(i)}
+              onMouseLeave={() => setHover(null)}
+              style={{ transform: lift ? 'translateX(14px)' : 'translateX(0)' }}
+            >
+              <span className="svc-num">{String(i + 1).padStart(2, '0')}</span>
+              <span className="svc-title" style={lift ? { color: 'var(--color-accent)' } : undefined}>{s.title}</span>
+              <span className="svc-plus" aria-hidden="true">
+                <i className="svc-plus-h" />
+                <i className="svc-plus-v" style={{ transform: `scaleY(${isOpen ? 0 : 1})` }} />
+              </span>
+            </button>
+            <div className="svc-panel" data-open={isOpen ? 'true' : 'false'}>
+              <div className="svc-panel-inner">
+                <div className="svc-grid">
+                  <p className="svc-desc">{s.description}</p>
+                  {caps.length > 0 && (
+                    <div className="svc-caps">
+                      <span className="svc-caps-label">Capabilities</span>
+                      <div className="svc-caps-tags">
+                        {caps.map((c) => <span key={c} className="svc-cap">{c}</span>)}
+                      </div>
+                    </div>
+                  )}
+                  <div className="svc-media">
+                    <div className="svc-thumb"><img src={s.image} alt={s.title} loading="lazy" /></div>
+                    <Link to={`/services/${s.slug}`} className="svc-view">
+                      View service <span aria-hidden="true">→</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 
 /* ── Contact form — preserves the working /api/leads integration ─── */
@@ -502,27 +558,20 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* 4 · Capability (services) */}
+        {/* 4 · Services — expandable capability rows */}
         <section id="services" className="o-section">
-          <div className="o-col right">
-            <p className="kicker reveal"><span className="rule" />Capability</p>
-            <h2 className="reveal">One team, taken apart.</h2>
-            <p className="lede reveal" style={{ marginBottom: 8 }}>
-              Seven capabilities, one team — tap any to see how we deliver it.
-            </p>
-            <div className="o-services" data-stagger>
-              {SERVICES.map((s, i) => (
-                <Link key={s.slug} to={`/services/${s.slug}`} className="o-service reveal-item" aria-label={`${s.title} — view service`}>
-                  <span className="o-service-num">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="o-service-title">{s.title}</span>
-                  <span className="o-service-arrow" aria-hidden="true">
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                      <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                </Link>
-              ))}
+          <div className="o-wide">
+            <div className="svc-header">
+              <div>
+                <p className="kicker reveal"><span className="rule" />Capability</p>
+                <h2 className="reveal svc-h">Our services.</h2>
+              </div>
+              <p className="lede reveal svc-intro">
+                Comprehensive solutions to scale your business — one accountable team across every
+                discipline. Open any capability to see how we deliver it.
+              </p>
             </div>
+            <ServicesAccordion />
           </div>
         </section>
 
