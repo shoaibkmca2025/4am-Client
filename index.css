@@ -428,6 +428,21 @@ a[role="button"]:active {
   color: transparent;
 }
 
+/* 4AM logo colour-grade — the logo's deep-blue globe sweeping into its
+   gold/terracotta "4" glow. Used on the hero headline; the sweep drifts
+   slowly so the headline feels alive. */
+.text-gradient-4am {
+  background-image: linear-gradient(135deg, #1d3b7d 0%, #33549e 26%, #b35f2b 60%, #d5923f 100%);
+  background-size: 220% 220%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: grad4am 9s ease-in-out infinite;
+}
+@keyframes grad4am { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@media (prefers-reduced-motion: reduce) { .text-gradient-4am { animation: none; } }
+
 /* Per-character gradient for GSAP-animated hero words. background-clip:
    text does not paint through transformed child spans, so the gradient
    must live on each character itself (vertical so chars match up). */
@@ -522,10 +537,30 @@ a[role="button"]:active {
 }
 
 /* Calm scroll reveal — content lifts in once, respects reduced motion. */
-.organic .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s cubic-bezier(0.16,1,0.3,1), transform .9s cubic-bezier(0.16,1,0.3,1); }
-.organic .reveal.is-in { opacity: 1; transform: none; }
+.organic .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s cubic-bezier(0.16,1,0.3,1), transform .9s cubic-bezier(0.16,1,0.3,1), filter .9s ease; }
+.organic .reveal.is-in { opacity: 1; transform: none; filter: none; }
+
+/* Big headings settle into focus (blur → sharp). */
+.organic h1.reveal, .organic h2.reveal { filter: blur(9px); }
+.organic h1.reveal.is-in, .organic h2.reveal.is-in { filter: blur(0); }
+
+/* The kicker's little rule draws in when its line reveals. */
+.organic .kicker .rule { transform: scaleX(0); transform-origin: left center; transition: transform .8s .12s cubic-bezier(.16,1,.3,1); }
+.organic .kicker.is-in .rule { transform: scaleX(1); }
+
+/* Staggered items (cards / list rows / tags). Uses the independent `translate`
+   property + a keyframe so it never fights an element's own hover `transform`.
+   Per-item delay is set in JS on [data-stagger] containers. */
+.organic .reveal-item { opacity: 0; }
+.organic .reveal-item.is-in { animation: revealItem .72s cubic-bezier(.16,1,.3,1) both; }
+@keyframes revealItem { from { opacity: 0; translate: 0 22px; } to { opacity: 1; translate: 0 0; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .organic .reveal { opacity: 1; transform: none; transition: none; }
+  .organic .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .organic h1.reveal, .organic h2.reveal { filter: none; }
+  .organic .kicker .rule { transform: none; transition: none; }
+  .organic .reveal-item { opacity: 1; }
+  .organic .reveal-item.is-in { animation: none; }
 }
 .organic h1, .organic h2, .organic h3, .organic h4,
 .organic .brandmark {
@@ -550,6 +585,10 @@ a[role="button"]:active {
   background: radial-gradient(120% 90% at 50% 40%, transparent 45%,
     color-mix(in oklch, var(--color-bg), transparent 35%) 100%);
 }
+/* Cream side-grade for the full-bleed 3D object — background gradient + live
+   opacity are set by SculptureBackground so the watch fades into the page
+   behind the active section's text. */
+.o-grade { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; }
 
 /* Section scaffold */
 .organic .o-section {

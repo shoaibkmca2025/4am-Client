@@ -371,20 +371,78 @@ const LandingPage: React.FC = () => {
     return () => io.disconnect();
   }, [show3D]);
 
-  // Calm scroll reveal for [.reveal] elements
+  // Scroll reveal — `.reveal` (single blocks) + `.reveal-item` (staggered
+  // grid/list/tag children inside a [data-stagger] container).
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    const els = Array.from(root.querySelectorAll<HTMLElement>('.reveal'));
+    const els = Array.from(root.querySelectorAll<HTMLElement>('.reveal, .reveal-item'));
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       els.forEach((el) => el.classList.add('is-in'));
       return;
     }
+    els.forEach((el) => {
+      const parent = el.parentElement;
+      if (parent && parent.hasAttribute('data-stagger')) {
+        const sibs = Array.from(parent.children).filter((c) => c.classList.contains('reveal-item') || c.classList.contains('reveal'));
+        const i = Math.min(Math.max(0, sibs.indexOf(el)), 9); // cap so long groups don't crawl
+        if (el.classList.contains('reveal-item')) el.style.animationDelay = `${i * 65}ms`;
+        else if (i > 0) el.style.transitionDelay = `${i * 85}ms`;
+      }
+    });
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
+  }, []);
+
+  // Count-up for [data-count] numbers when they scroll into view.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const nums = Array.from(root.querySelectorAll<HTMLElement>('[data-count]'));
+    if (!nums.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      nums.forEach((el) => { el.textContent = el.dataset.count ?? el.textContent; });
+      return;
+    }
+    nums.forEach((el) => { el.textContent = '0'; });
+    const run = (el: HTMLElement) => {
+      const to = parseFloat(el.dataset.count ?? '0'); const t0 = performance.now(); const dur = 1300;
+      const tick = (now: number) => {
+        const p = Math.min(1, (now - t0) / dur); const e = 1 - Math.pow(1 - p, 3);
+        el.textContent = String(Math.round(to * e));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { run(e.target as HTMLElement); io.unobserve(e.target); } });
+    }, { threshold: 0.5 });
+    nums.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  // Subtle magnetic pull on the primary buttons (desktop, fine pointer only).
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    if (!window.matchMedia('(pointer: fine)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const btns = Array.from(root.querySelectorAll<HTMLElement>('.o-btn-primary'));
+    const cleanups: (() => void)[] = [];
+    btns.forEach((b) => {
+      const move = (e: PointerEvent) => {
+        const r = b.getBoundingClientRect();
+        const mx = e.clientX - (r.left + r.width / 2), my = e.clientY - (r.top + r.height / 2);
+        b.style.transform = `translate(${mx * 0.22}px, ${my * 0.32}px)`;
+      };
+      const leave = () => { b.style.transform = ''; };
+      b.addEventListener('pointermove', move);
+      b.addEventListener('pointerleave', leave);
+      cleanups.push(() => { b.removeEventListener('pointermove', move); b.removeEventListener('pointerleave', leave); });
+    });
+    return () => cleanups.forEach((fn) => fn());
   }, []);
 
   return (
@@ -403,7 +461,7 @@ const LandingPage: React.FC = () => {
         <section id="home" className="o-section">
           <div className="o-col">
             <p className="kicker reveal"><span className="rule" />4AM Global Media</p>
-            <h1 className="reveal">A creative network made for today &amp; tomorrow.</h1>
+            <h1 className="reveal text-gradient-4am">A creative network made for today &amp; tomorrow.</h1>
             <p className="lede reveal">
               We power founders, operators and teams across the globe with strategy, design,
               engineering and growth marketing that compounds.
@@ -437,9 +495,9 @@ const LandingPage: React.FC = () => {
               work that follows is aimed, not decorative.
             </p>
             <div className="stats reveal">
-              <div><b>{PROJECTS.length}</b><small>Client sites shipped</small></div>
-              <div><b>{SERVICES.length}</b><small>Core services</small></div>
-              <div><b>{MARKETPLACES.length}</b><small>Marketplaces</small></div>
+              <div><b data-count={PROJECTS.length}>{PROJECTS.length}</b><small>Client sites shipped</small></div>
+              <div><b data-count={SERVICES.length}>{SERVICES.length}</b><small>Core services</small></div>
+              <div><b data-count={MARKETPLACES.length}>{MARKETPLACES.length}</b><small>Marketplaces</small></div>
             </div>
           </div>
         </section>
@@ -452,9 +510,9 @@ const LandingPage: React.FC = () => {
             <p className="lede reveal" style={{ marginBottom: 8 }}>
               Seven capabilities, one team — tap any to see how we deliver it.
             </p>
-            <div className="o-services reveal">
+            <div className="o-services" data-stagger>
               {SERVICES.map((s, i) => (
-                <Link key={s.slug} to={`/services/${s.slug}`} className="o-service" aria-label={`${s.title} — view service`}>
+                <Link key={s.slug} to={`/services/${s.slug}`} className="o-service reveal-item" aria-label={`${s.title} — view service`}>
                   <span className="o-service-num">{String(i + 1).padStart(2, '0')}</span>
                   <span className="o-service-title">{s.title}</span>
                   <span className="o-service-arrow" aria-hidden="true">
@@ -477,9 +535,9 @@ const LandingPage: React.FC = () => {
               Web platforms, mobile apps and the integrations behind them — designed, shipped and
               maintained by the same people.
             </p>
-            <div className="row reveal">
+            <div className="row" data-stagger>
               {['React', 'React Native', 'Node', 'Python', 'Cloud'].map((t) => (
-                <span key={t} className="o-tag o-tag-outline">{t}</span>
+                <span key={t} className="o-tag o-tag-outline reveal-item">{t}</span>
               ))}
             </div>
           </div>
@@ -494,9 +552,9 @@ const LandingPage: React.FC = () => {
               Paid, organic, owned. We put your message where the attention already is and measure
               every hop it makes.
             </p>
-            <div className="row reveal">
+            <div className="row" data-stagger>
               {['Performance ads', 'SEO', 'Social', 'Content & film'].map((t) => (
-                <span key={t} className="o-tag o-tag-accent-2">{t}</span>
+                <span key={t} className="o-tag o-tag-accent-2 reveal-item">{t}</span>
               ))}
             </div>
           </div>
@@ -527,8 +585,8 @@ const LandingPage: React.FC = () => {
               A distributed bench of engineers, strategists, editors and media buyers — and a
               marketplace desk that launches brands across India’s leading platforms.
             </p>
-            <div className="row reveal" style={{ gap: 8 }}>
-              {MARKETPLACES.map((m) => <span key={m} className="o-tag o-tag-neutral">{m}</span>)}
+            <div className="row" data-stagger style={{ gap: 8 }}>
+              {MARKETPLACES.map((m) => <span key={m} className="o-tag o-tag-neutral reveal-item">{m}</span>)}
             </div>
           </div>
         </section>
@@ -538,9 +596,9 @@ const LandingPage: React.FC = () => {
           <div className="o-wide">
             <p className="kicker reveal"><span className="rule" />Selected work</p>
             <h2 className="reveal">Results we can point to.</h2>
-            <div className="o-cards reveal">
+            <div className="o-cards" data-stagger>
               {FEATURED_WORK.map((p) => (
-                <a key={p.id} className="o-card" href={p.url} target="_blank" rel="noopener noreferrer">
+                <a key={p.id} className="o-card reveal-item" href={p.url} target="_blank" rel="noopener noreferrer">
                   <span className="o-card-kicker">{p.industry ?? p.category}</span>
                   <span className="o-card-title">{p.title}</span>
                   {p.result && <span className="o-card-result">{p.result}</span>}
@@ -559,9 +617,9 @@ const LandingPage: React.FC = () => {
           <div className="o-wide">
             <p className="kicker reveal"><span className="rule" />Leadership</p>
             <h2 className="reveal">The people behind 4AM.</h2>
-            <div className="o-cards reveal">
+            <div className="o-cards" data-stagger>
               {LEADERS.map((l) => (
-                <article key={l.name} className="o-card o-leader">
+                <article key={l.name} className="o-card o-leader reveal-item">
                   <div className="o-leader-photo">
                     <img src={l.photo} alt={l.name} loading="lazy" />
                   </div>
@@ -578,9 +636,9 @@ const LandingPage: React.FC = () => {
             </div>
             <div className="o-featured reveal">
               <span className="o-featured-label">As featured in</span>
-              <div className="row" style={{ gap: 8 }}>
+              <div className="row" data-stagger style={{ gap: 8 }}>
                 {FEATURED_IN.map((o) => (
-                  <a key={o.name} className="o-tag o-tag-neutral" href={o.href} target="_blank" rel="noopener noreferrer">{o.name}</a>
+                  <a key={o.name} className="o-tag o-tag-neutral reveal-item" href={o.href} target="_blank" rel="noopener noreferrer">{o.name}</a>
                 ))}
               </div>
             </div>
