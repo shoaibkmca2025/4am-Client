@@ -593,6 +593,11 @@ a[role="button"]:active {
 /* Section scaffold */
 .organic .o-section {
   min-height: 100vh; display: grid; align-content: center;
+  /* minmax(0, 1fr), not the implicit `auto`: an auto track is sized by its
+     content, so a wide child (the work carousel's off-screen rail) would
+     blow the column past the padding box and shove the whole section
+     sideways. This pins the column to the available width. */
+  grid-template-columns: minmax(0, 1fr);
   padding: clamp(96px, 12vh, 140px) clamp(24px, 7vw, 140px);
   box-sizing: border-box; position: relative; z-index: 2;
 }
@@ -872,6 +877,144 @@ select.o-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 }
 .organic .o-card-link { font-size: 12px; letter-spacing: .06em; color: var(--color-accent-700); margin-top: 6px; }
 .organic a.o-card:hover .o-card-link { text-decoration: underline; }
+
+/* ── Work carousel (components/WorkCarousel.tsx) ───────────────────
+   A rail of tall project cards. At rest each card shows its media panel,
+   the client line and the title. Hover (or keyboard focus) shrinks the
+   media and cross-fades the face underneath to the measured result, the
+   stack and a CTA. Coarse-pointer devices have no hover to reveal with,
+   so the media query at the bottom lays both faces out statically. */
+.organic .wc-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: clamp(20px, 4vw, 60px);
+}
+.organic .wc-head h2 { margin-bottom: 0; }
+
+.organic .wc-nav { display: flex; gap: 10px; padding-bottom: 4px; }
+.organic .wc-arrow {
+  width: clamp(62px, 5.4vw, 84px); height: clamp(44px, 3.8vw, 56px);
+  border: 1px solid transparent; border-radius: 999px;
+  background: var(--color-text); color: var(--color-bg);
+  display: grid; place-items: center; cursor: pointer; padding: 0;
+  transition: background .25s ease, color .25s ease, transform .3s cubic-bezier(.16,1,.3,1), border-color .25s ease;
+}
+.organic .wc-arrow:hover:not(:disabled) { background: var(--color-accent); transform: translateY(-2px); }
+.organic .wc-arrow:disabled {
+  background: var(--color-surface); border-color: var(--color-divider);
+  color: color-mix(in srgb, var(--color-text) 30%, transparent); cursor: default;
+}
+.organic .wc-arrow-prev svg { transform: scaleX(-1); }
+
+.organic .wc-viewport {
+  --wc-card: 340px; --wc-gap: 18px; --wc-h: clamp(430px, 58vh, 560px);
+  overflow: hidden; min-width: 0; margin-top: clamp(26px, 3vw, 40px); touch-action: pan-y;
+}
+.organic .wc-track {
+  display: flex; gap: var(--wc-gap);
+  transition: transform .72s cubic-bezier(.22, 1, .36, 1); will-change: transform;
+}
+
+.organic .wc-card {
+  flex: 0 0 var(--wc-card); width: var(--wc-card); height: var(--wc-h);
+  box-sizing: border-box; padding: 18px;
+  display: flex; flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
+  border-radius: var(--radius-lg);
+  color: var(--color-text); text-decoration: none;
+  transition: box-shadow .4s ease, border-color .4s ease;
+}
+.organic .wc-card:hover, .organic .wc-card:focus-visible {
+  opacity: 1; outline: none; box-shadow: var(--shadow-lg);
+  border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+/* Media panel — a real screenshot when the project carries `image`,
+   otherwise a warm monogram plate. */
+.organic .wc-media {
+  position: relative; flex: none; height: 72%; overflow: hidden;
+  border-radius: var(--radius-md);
+  background: linear-gradient(150deg, var(--color-accent-100), var(--color-neutral-300));
+  display: grid; place-items: center;
+  transition: height .6s cubic-bezier(.22, 1, .36, 1);
+}
+.organic .wc-card:hover .wc-media, .organic .wc-card:focus-visible .wc-media { height: 55%; }
+.organic .wc-media img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover; object-position: top; display: block;
+  opacity: 0; /* stays transparent (monogram shows) until a real shot is ready */
+  transition: opacity .5s ease, transform .8s cubic-bezier(.22, 1, .36, 1);
+}
+.organic .wc-media img.is-ready { opacity: 1; }
+.organic .wc-card:hover .wc-media img { transform: scale(1.05); }
+.organic .wc-mono {
+  font-family: var(--font-heading); font-weight: 400; letter-spacing: -.02em;
+  font-size: clamp(52px, 5.5vw, 78px); line-height: 1;
+  color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+/* Alternate plates in sage so the rail reads as a set, not a repeat. */
+.organic .wc-card:nth-child(even) .wc-media {
+  background: linear-gradient(150deg, var(--color-accent-2-100), var(--color-neutral-300));
+}
+.organic .wc-card:nth-child(even) .wc-mono { color: color-mix(in srgb, var(--color-accent-2-700) 55%, transparent); }
+.organic .wc-chip {
+  position: absolute; top: 12px; left: 12px;
+  font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  padding: 5px 11px; border-radius: 999px;
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  color: var(--color-accent-800);
+}
+
+/* Two stacked faces, cross-faded on hover. */
+.organic .wc-body { position: relative; flex: 1; min-height: 0; margin-top: 16px; }
+.organic .wc-face { position: absolute; inset: 0; display: flex; transition: opacity .32s ease; }
+.organic .wc-face-rest { align-items: flex-end; justify-content: space-between; gap: 14px; }
+.organic .wc-face-hover { flex-direction: column; justify-content: space-between; gap: 12px; opacity: 0; pointer-events: none; }
+.organic .wc-card:hover .wc-face-rest, .organic .wc-card:focus-visible .wc-face-rest { opacity: 0; }
+.organic .wc-card:hover .wc-face-hover, .organic .wc-card:focus-visible .wc-face-hover { opacity: 1; }
+
+.organic .wc-meta { display: grid; gap: 5px; }
+.organic .wc-client {
+  font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 52%, transparent);
+}
+.organic .wc-name { font-family: var(--font-heading); font-size: clamp(19px, 1.5vw, 24px); line-height: 1.08; }
+.organic .wc-pill {
+  flex: none; width: 58px; height: 40px; border-radius: 999px;
+  background: var(--color-text); color: var(--color-bg); display: grid; place-items: center;
+}
+
+.organic .wc-result {
+  font-family: var(--font-heading); font-size: clamp(26px, 2.3vw, 34px); line-height: 1;
+  color: var(--color-accent-700);
+}
+.organic .wc-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.organic .wc-cta {
+  display: grid; place-items: center; height: 46px; border-radius: 999px;
+  background: var(--color-accent); color: var(--color-bg);
+  font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+}
+
+@media (max-width: 1180px) { .organic .wc-viewport { --wc-card: 310px; } }
+@media (max-width: 700px) {
+  .organic .wc-viewport { --wc-card: min(78vw, 320px); --wc-gap: 14px; --wc-h: clamp(400px, 64vh, 500px); }
+  .organic .wc-head { align-items: flex-start; }
+}
+
+/* No hover to reveal with — show the whole card at once. */
+@media (hover: none) {
+  .organic .wc-media { height: 54%; }
+  .organic .wc-body { position: static; display: flex; flex-direction: column; gap: 10px; }
+  .organic .wc-face { position: static; opacity: 1; }
+  .organic .wc-face-rest { align-items: flex-start; }
+  .organic .wc-face-hover { pointer-events: auto; flex: 1; }
+  .organic .wc-pill { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .organic .wc-track, .organic .wc-media, .organic .wc-media img,
+  .organic .wc-face, .organic .wc-arrow { transition: none; }
+}
 
 /* Leadership cards */
 .organic .o-leader { gap: 12px; }

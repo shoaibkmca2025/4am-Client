@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { SERVICES, PROJECTS } from '../constants';
 import { scrollToSection } from '../utils/scroll';
+import WorkCarousel from './WorkCarousel';
 const SculptureBackground = React.lazy(() => import('./SculptureBackground'));
 
 const HOME_PAGE_TITLE = 'A Creative Network made for today & tomorrow | 4AM Global Media';
@@ -15,8 +16,12 @@ const MARKETPLACES = [
   'Nykaa', 'FirstCry', 'ONDC', 'Shopify', 'WooCommerce',
 ];
 
-// Featured case studies — the six projects that carry a measured result.
-const FEATURED_WORK = PROJECTS.filter((p) => p.result).slice(0, 6);
+// The full client roster — the projects that carry a measured result lead the
+// rail (their hover face shows the metric), the rest follow.
+const WORK = [
+  ...PROJECTS.filter((p) => p.result),
+  ...PROJECTS.filter((p) => !p.result),
+];
 
 // Leadership — condensed from the full Founder profiles.
 const LEADERS = [
@@ -643,20 +648,13 @@ const LandingPage: React.FC = () => {
         {/* 9 · Work */}
         <section id="work" className="o-section">
           <div className="o-wide">
-            <p className="kicker reveal"><span className="rule" />Selected work</p>
-            <h2 className="reveal">Results we can point to.</h2>
-            <div className="o-cards" data-stagger>
-              {FEATURED_WORK.map((p) => (
-                <a key={p.id} className="o-card reveal-item" href={p.url} target="_blank" rel="noopener noreferrer">
-                  <span className="o-card-kicker">{p.industry ?? p.category}</span>
-                  <span className="o-card-title">{p.title}</span>
-                  {p.result && <span className="o-card-result">{p.result}</span>}
-                  <span className="o-card-link">Visit site →</span>
-                </a>
-              ))}
-            </div>
+            <WorkCarousel
+              projects={WORK}
+              kicker="Our work"
+              heading="Sites we've shipped."
+            />
             <p className="lede reveal" style={{ marginTop: 26, marginBottom: 0 }}>
-              …and {PROJECTS.length - FEATURED_WORK.length}+ more client sites shipped worldwide.
+              {PROJECTS.length} client websites delivered worldwide — swipe through the work.
             </p>
           </div>
         </section>
