@@ -373,7 +373,7 @@ const Founder: React.FC = () => {
             >
               <div className="founder-photo relative rounded-2xl overflow-hidden border border-white/[0.08] max-w-md">
                 <img
-                  src="/assets/shoaib-khatik-web.jpg"
+                  src="/assets/shoaib-khatik-web.jpg?v=2"
                   alt="Shoaib Khatik — Co-Founder of 4AM Global Media"
                   loading="lazy"
                   className="w-full h-auto"

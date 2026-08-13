@@ -36,7 +36,7 @@ const LEADERS = [
   {
     name: 'Shoaib Khatik',
     role: 'Co-Founder',
-    photo: '/assets/shoaib-khatik-web.jpg',
+    photo: '/assets/shoaib-khatik-web.jpg?v=2',
     tags: ['Full-Stack', 'MERN · Python', 'AI Solutions'],
     bio: 'Leads the technology vision and product engineering — building scalable, user-focused digital products with Python, the MERN stack, React Native and cloud technologies.',
     accent: 'accent-2' as const,
