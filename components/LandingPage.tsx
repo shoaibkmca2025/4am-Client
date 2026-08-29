@@ -659,7 +659,12 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* 10 · Leadership */}
+        {/* 10 · Leadership — TEMPORARILY HIDDEN per request. To restore, remove this
+            opening comment marker and the closing comment marker at the end of the block.
+            Note: this drops the landing from 12 to 11 .o-section elements, so the WebGL
+            watch background now spreads its 12 phases across 11 sections (a minor
+            phase-alignment shift, not a break). Restoring returns it to exact 1:1 sync.
+
         <section id="about" className="o-section">
           <div className="o-wide">
             <p className="kicker reveal"><span className="rule" />Leadership</p>
@@ -691,6 +696,7 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
         </section>
+        */}
 
         {/* 11 · Quote */}
         <section id="testimonials" className="o-section">
