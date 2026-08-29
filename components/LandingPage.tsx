@@ -26,14 +26,6 @@ const WORK = [
 // Leadership — condensed from the full Founder profiles.
 const LEADERS = [
   {
-    name: 'Vaibhav Pasi',
-    role: 'Co-Founder',
-    photo: '/assets/vaibhav-pasi.jpg',
-    tags: ['Digital Marketing', 'AI Consulting', 'Product Onboarding'],
-    bio: 'Technology entrepreneur and growth strategist leading 4AM’s vision — pairing creativity, engineering and business intelligence to scale brands across web, software and the marketplaces.',
-    accent: 'accent' as const,
-  },
-  {
     name: 'Shoaib Khatik',
     role: 'Co-Founder',
     photo: '/assets/shoaib-khatik-web.jpg?v=2',
@@ -659,12 +651,7 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* 10 · Leadership — TEMPORARILY HIDDEN per request. To restore, remove this
-            opening comment marker and the closing comment marker at the end of the block.
-            Note: this drops the landing from 12 to 11 .o-section elements, so the WebGL
-            watch background now spreads its 12 phases across 11 sections (a minor
-            phase-alignment shift, not a break). Restoring returns it to exact 1:1 sync.
-
+        {/* 10 · Leadership */}
         <section id="about" className="o-section">
           <div className="o-wide">
             <p className="kicker reveal"><span className="rule" />Leadership</p>
@@ -696,7 +683,6 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
         </section>
-        */}
 
         {/* 11 · Quote */}
         <section id="testimonials" className="o-section">
