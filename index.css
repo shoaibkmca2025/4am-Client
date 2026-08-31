@@ -1199,7 +1199,9 @@ select.o-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 .sk-beat {
   position: fixed; z-index: 3;
   left: 22px; right: 22px;
-  bottom: clamp(120px, 20vh, 190px);
+  /* Sits directly under the artwork — `--sk-band-bottom` is written by the
+     paint loop, so it tracks the fitted drawing at any screen size. */
+  top: calc(var(--sk-band-bottom, 60vh) + clamp(16px, 3.2vh, 30px));
   margin: 0; text-align: center;
   font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.015em;
   font-size: clamp(23px, 6.6vw, 34px); line-height: 1.12;
@@ -1216,7 +1218,7 @@ select.o-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 .sk-beat-cta {
   position: fixed; z-index: 3;
   left: 0; right: 0;
-  bottom: clamp(48px, 8vh, 84px);
+  top: calc(var(--sk-band-bottom, 60vh) + clamp(66px, 12vh, 104px));
   display: flex; justify-content: center;
   opacity: 0;                 /* the paint loop owns this too */
 }

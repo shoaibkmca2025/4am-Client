@@ -35,11 +35,14 @@ const SD_Q  = 72;
 // ink-weighted horizontal centroid is found and smoothed across neighbours,
 // so the window follows the action instead of sitting dead centre.
 //
-// Note the cost, which is a property of the aspect ratios and not the code:
-// a 0.5-aspect window over a 16:9 frame keeps ~28% of its width, so artwork
-// and lettering outside that window is not shown on phones.
-const PT_ASPECT = 0.5;      // 1:2 — covers phones and portrait tablets
-const PT_W = 640;
+// The aspect is a direct trade: taller fills more of a phone, but keeps less
+// of the frame's width. 1:2 filled the screen and cut the illustration in
+// half — a figure and the lightbulb sliced down the middle. 0.72 keeps ~40%
+// of the width, which is enough to hold the drawn SUBJECT of each scene
+// intact; only the surrounding hand-lettering falls outside, and the beat
+// line under the artwork already carries that.
+const PT_ASPECT = 0.72;
+const PT_W = 760;
 const PT_H = Math.round(PT_W / PT_ASPECT);
 const PT_Q = 72;
 const PT_STEP = 2;          // same cadence as `sd`

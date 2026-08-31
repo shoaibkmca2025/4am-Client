@@ -60,7 +60,7 @@ const SETS = {
   // Phones get a genuinely portrait REFRAME, not the landscape frame
   // letterboxed. Each frame is cropped around its own ink-weighted centre by
   // `scripts/extract-sketch-frames.mjs`, so the window follows the action.
-  pt: { dir: 'pt', count: 70, w: 640, h: 1280 },
+  pt: { dir: 'pt', count: 70, w: 760, h: 1056 },
 } as const;
 
 const clamp01 = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x);
@@ -138,10 +138,11 @@ const RUSH_W = 0.4;    // inside a cross-dissolve
 const NORMAL_W = 1;
 
 /**
- * Portrait uses the `pt` reframe and fills the screen with it. That crop keeps
- * about 28% of the original frame's width — artwork and lettering outside the
- * window is not shown on phones — which is inherent to fitting a 16:9 drawing
- * to a ~0.46 screen, not something the renderer can recover.
+ * Portrait uses the `pt` reframe, fitted so nothing is clipped at the screen
+ * edge. The reframe keeps ~40% of the original frame's width: enough for each
+ * scene's drawn subject, not enough for the lettering around it, which the
+ * beat line underneath carries instead. A taller crop would fill more of the
+ * phone but starts cutting the illustration itself in half.
  */
 const BEAT_LINES = [
   'You bring the idea.',
