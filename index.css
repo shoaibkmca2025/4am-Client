@@ -917,6 +917,13 @@ select.o-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 .organic .wc-card {
   flex: 0 0 var(--wc-card); width: var(--wc-card); height: var(--wc-h);
   box-sizing: border-box; padding: 18px;
+  /* The rail lays out every project at once (97 of them), and off-screen
+     cards were still being styled and painted on each scroll — measured as
+     the single biggest scroll cost on the page below the hero. The card has
+     a fixed width and height, so the browser can skip rendering the ones
+     that are nowhere near the viewport with no layout shift. */
+  content-visibility: auto;
+  contain-intrinsic-size: var(--wc-card) var(--wc-h);
   display: flex; flex-direction: column;
   background: var(--color-surface);
   border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
@@ -1059,3 +1066,427 @@ select.o-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 }
 .organic .o-field-err { display: block; margin-top: 5px; font-size: 11px; color: #a23; }
 @media (max-width: 520px) { .organic .o-form-grid { grid-template-columns: 1fr; } }
+
+/* ══════════════════════════════════════════════════════════════════════
+   SKETCH SCROLL HERO — the pencil frame sequence (components/
+   SketchScrollHero.tsx). The canvas is a fixed z-0 backdrop, exactly like
+   #o-scene; the track above it only exists to create scroll distance.
+   ════════════════════════════════════════════════════════════════════ */
+.sk-stage {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: var(--color-bg);         /* the graded frames' paper tone */
+  contain: layout paint style;         /* keep it out of page repaints */
+  will-change: opacity;
+}
+/* Sized and positioned by the paint loop; its backing store matches the
+   device pixels it covers, so the compositor never rescales it. No
+   `will-change: transform` on purpose — promoting it to a scaled layer is
+   exactly what made the drawing look soft. */
+.sk-canvas { display: block; position: absolute; top: 0; left: 0; }
+
+
+/* The runway. `#home.sk-track` beats the phone `.organic #home` rule that
+   collapses ordinary hero sections to 84svh. */
+.organic .sk-track {
+  /* Length is a budget: frames x distance-per-frame (see the weights in
+     SketchScrollHero, which are near-linear so the drawing always tracks the
+     scroll). 500vh puts an ordinary frame at ~25 scroll-px — five screens to
+     play the whole sequence. */
+  position: relative; z-index: 2; min-height: 500vh; background: transparent;
+}
+.organic #home.sk-track.is-static,
+.organic .sk-track.is-static { min-height: 100svh; }
+@supports not (min-height: 100svh) {
+  .organic #home.sk-track.is-static,
+  .organic .sk-track.is-static { min-height: 100vh; }
+}
+/* A sideways phone is cramped enough that the copy has to win, so the static
+   drawing drops back to a backdrop there. */
+.sk-stage.sk-dim { opacity: .3; }
+
+/* Nothing scrubs in static mode, so don't invite it. */
+.sk-track.is-static .sk-cue { display: none; }
+
+/* A phone held sideways has ~390px of height — the full-size hero copy is
+   taller than that and was running off the top of the screen into the logo.
+   Everything scales off viewport height here rather than width. */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 560px) {
+  .sk-intro {
+    left: clamp(16px, 4vw, 40px); right: auto;
+    width: min(56ch, 60vw);
+    top: 50%; translate: 0 -50%;
+  }
+  .sk-intro .kicker { font-size: 10px; margin-bottom: 6px; }
+  .sk-intro h1 { font-size: clamp(22px, 7.4vh, 32px); line-height: 1.02; margin: 0 0 10px; }
+  .sk-intro .lede { font-size: 13px; line-height: 1.45; margin: 0 0 14px; }
+  .sk-intro-actions { gap: 10px; }
+  .sk-intro-actions .o-btn { padding: 9px 16px; font-size: 12px; }
+}
+
+/* Opening headline — sits over the near-empty first frames, then clears out
+   before the artwork letters its own title. JS owns opacity/transform. */
+.sk-intro {
+  position: fixed; z-index: 3;
+  top: 50%; translate: 0 -50%;
+  right: clamp(24px, 6vw, 118px);
+  width: min(46ch, 44vw);
+  will-change: opacity, transform;
+}
+.sk-intro .kicker { display: flex; align-items: center; gap: 12px; }
+.sk-intro h1 {
+  font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.015em;
+  font-size: clamp(40px, 4.6vw, 82px); line-height: .97; margin: 0 0 22px;
+  text-wrap: pretty;
+}
+.sk-intro .lede {
+  font-size: clamp(15px, 1.15vw, 19px); line-height: 1.62; margin: 0 0 26px;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 28%);
+}
+.sk-intro-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.sk-cue {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 30px;
+  font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 45%);
+}
+.sk-cue i {
+  display: block; width: 44px; height: 1px; background: currentColor;
+  transform-origin: left center; animation: skCue 2.2s cubic-bezier(.16,1,.3,1) infinite;
+}
+@keyframes skCue { 0%,100% { transform: scaleX(.35); opacity: .5; } 50% { transform: scaleX(1); opacity: 1; } }
+
+/* Progress rule for the sequence. No chapter labels: the artwork letters its
+   own titles, so an overlay label duplicated and covered them. */
+.sk-hud {
+  position: absolute; left: clamp(16px, 2.6vw, 42px); top: 50%; translate: 0 -50%;
+  width: 120px;
+}
+/* Progress through the sequence itself. */
+.sk-progress {
+  height: 2px; width: 120px; border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text) 14%, transparent);
+  box-shadow: 0 0 0 3px rgba(245, 234, 216, .8), 0 0 10px 3px rgba(245, 234, 216, .6);
+}
+.sk-progress span {
+  display: block; height: 100%; width: 100%; transform: scaleX(0);
+  transform-origin: left center; border-radius: 999px; background: var(--color-accent);
+}
+
+@media (max-width: 900px) {
+  .organic #home.sk-track { min-height: 450vh; padding: 0; }
+  /* The drawing rides high on portrait screens (see paint() in
+     SketchScrollHero) — the copy takes the space below it. */
+  .sk-intro {
+    right: auto; left: 22px; width: min(92vw, 40ch);
+    top: auto; bottom: 7vh; translate: none;
+  }
+  .sk-intro h1 { font-size: clamp(34px, 9.4vw, 50px); margin-bottom: 16px; }
+  .sk-intro .lede { font-size: 15px; margin-bottom: 20px; }
+  .sk-cue { margin-top: 20px; }
+  .sk-hud { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .organic #home.sk-track { min-height: 100vh; }
+  .sk-cue i { animation: none; transform: scaleX(1); }
+  .sk-chapters li { transition: none; }
+}
+
+/* ── Beat line (portrait only) ───────────────────────────────────────
+   Portrait now fills the screen with the reframed artwork, so these sit OVER
+   the drawing near the bottom rather than under a band. The reframe crops
+   away part of the original lettering, which makes this line more useful
+   there, not less — so it carries a paper halo to stay readable over
+   whatever pencil happens to be behind it. */
+.sk-beat {
+  position: fixed; z-index: 3;
+  left: 22px; right: 22px;
+  bottom: clamp(120px, 20vh, 190px);
+  margin: 0; text-align: center;
+  font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.015em;
+  font-size: clamp(23px, 6.6vw, 34px); line-height: 1.12;
+  color: var(--color-text);
+  text-wrap: balance;
+  text-shadow:
+    0 0 3px  rgba(245, 234, 216, 1),
+    0 0 8px  rgba(245, 234, 216, 1),
+    0 0 16px rgba(245, 234, 216, .95),
+    0 0 30px rgba(245, 234, 216, .8);
+  pointer-events: none;
+  opacity: 0;                 /* the paint loop owns this */
+}
+.sk-beat-cta {
+  position: fixed; z-index: 3;
+  left: 0; right: 0;
+  bottom: clamp(48px, 8vh, 84px);
+  display: flex; justify-content: center;
+  opacity: 0;                 /* the paint loop owns this too */
+}
+/* Landscape fills the frame with the drawing, so neither belongs there. */
+@media (min-aspect-ratio: 115/100) {
+  .sk-beat, .sk-beat-cta { display: none; }
+}
+
+/* Screen-reader-only description of the canvas story. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SKETCH SLIDES — vector pencil panels that draw themselves on scroll
+   (components/SketchSlides.tsx).
+   ════════════════════════════════════════════════════════════════════ */
+.sks { position: relative; z-index: 2; padding: clamp(90px, 12vh, 150px) clamp(24px, 7vw, 140px) 0; }
+.sks-head { max-width: min(1180px, 100%); margin: 0 auto clamp(40px, 6vh, 78px); }
+.sks-head .kicker { display: flex; align-items: center; gap: 12px; }
+.sks-head h2 {
+  font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.015em;
+  font-size: clamp(32px, 4vw, 60px); line-height: 1.02; margin: 0;
+}
+
+.sks-slide {
+  max-width: min(1180px, 100%); margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(30px, 5vw, 84px); align-items: center;
+  padding: clamp(52px, 8vh, 104px) 0;
+  border-top: 1px solid var(--color-divider);
+}
+.sks-slide:first-of-type { border-top: 0; }
+.sks-slide.is-flip .sks-copy { order: 2; }
+.sks-slide.is-flip .sks-art  { order: 1; }
+
+.sks-copy { max-width: 52ch; }
+.sks-n {
+  display: block; font-family: var(--font-heading); font-size: 13px;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 58%); margin-bottom: 14px;
+}
+.sks-copy .kicker { display: flex; align-items: center; gap: 12px; }
+.sks-copy .kicker .rule { transform: scaleX(1); }
+.sks-copy h3 {
+  font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.015em;
+  font-size: clamp(26px, 2.7vw, 42px); line-height: 1.06; margin: 0 0 16px; text-wrap: pretty;
+}
+.sks-copy .lede {
+  font-size: clamp(15px, 1.05vw, 17px); line-height: 1.68; margin: 0;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 26%);
+}
+
+.sks-art { margin: 0; position: relative; }
+.sks-art svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* Graphite, not ink: warm-grey strokes with a soft round cap. */
+.sks-ink {
+  /* Same graphite ramp the frame sequence is graded onto: ink sits between
+     the grade's shadow and midtone so a solid vector line reads at the same
+     weight as a pencil stroke, and hatching uses the midtone itself. */
+  fill: none; stroke: #3a2d24; stroke-width: 2.6;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.sks-shade { fill: none; stroke: #8a7461; stroke-width: 1.5; stroke-linecap: round; }
+/* Cap how large a fitted drawing can get so all four read at one scale. */
+.sks-art svg { max-height: 62vh; margin-inline: auto; }
+.sks-note {
+  margin-top: 10px; text-align: center; font-size: 13px; letter-spacing: .04em;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 48%);
+  font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .sks { padding: 62px 22px 0; }
+  .sks-slide { grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 44px 0; }
+  .sks-slide.is-flip .sks-copy,
+  .sks-slide.is-flip .sks-art { order: initial; }
+  .sks-art { max-width: 440px; }
+}
+
+/* Pull-quote used on the landing work section. */
+.organic .o-quote {
+  margin: clamp(44px, 7vh, 86px) 0 0; padding: 30px 0 0;
+  border-top: 1px solid var(--color-divider);
+  font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.015em;
+  font-size: clamp(21px, 2.2vw, 34px); line-height: 1.22; text-wrap: pretty;
+}
+.organic .o-quote cite {
+  display: block; margin-top: 16px; font-family: var(--font-body); font-style: normal;
+  font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 45%);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SERVICES INDEX — /services (components/ServicesPage.tsx)
+   ════════════════════════════════════════════════════════════════════ */
+.svx { position: relative; background: var(--color-bg); }
+.svx .o-section { min-height: auto; padding-block: clamp(80px, 11vh, 140px); }
+.svx-hero-wrap { padding-top: clamp(140px, 20vh, 220px); }
+.svx-hero .kicker { display: flex; align-items: center; gap: 12px; }
+.svx-hero h1 {
+  font-size: clamp(46px, 6.6vw, 108px); line-height: .94; margin: 0 0 26px; text-wrap: balance;
+}
+.svx-hero .lede {
+  font-size: clamp(16px, 1.3vw, 21px); line-height: 1.6; max-width: 54ch; margin: 0 0 44px;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 26%);
+}
+.svx-hero-meta {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px; max-width: 620px; padding-top: 30px; border-top: 1px solid var(--color-divider);
+}
+.svx-hero-meta > div { display: grid; gap: 6px; }
+.svx-hero-meta b {
+  font-family: var(--font-heading); font-weight: 400;
+  font-size: clamp(26px, 3vw, 42px); line-height: 1;
+}
+.svx-hero-meta small {
+  font-size: 12px; letter-spacing: .06em;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 42%);
+}
+
+/* ── Editorial service rows ─────────────────────────────────────── */
+.svx-list-wrap { position: relative; padding-block: 0 clamp(80px, 11vh, 140px); }
+.svx-list { list-style: none; margin: 0; padding: 0; }
+.svx-row { position: relative; }
+.svx-link {
+  position: relative; display: grid; align-items: center;
+  grid-template-columns: 64px minmax(0, 1fr) auto 54px;
+  gap: clamp(16px, 2.4vw, 40px);
+  padding: clamp(28px, 3.6vh, 46px) 0;
+  color: inherit; text-decoration: none;
+  transition: padding-left .5s cubic-bezier(.16,1,.3,1);
+}
+.svx-rule {
+  position: absolute; left: 0; right: 0; top: 0; height: 1px;
+  background: var(--color-divider); transform-origin: left center;
+}
+.svx-row:last-child .svx-link::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--color-divider);
+}
+.svx-num {
+  font-family: var(--font-heading); font-size: 14px;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 58%);
+  transition: color .35s;
+}
+.svx-main { display: grid; gap: 10px; min-width: 0; }
+.svx-title {
+  font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.015em;
+  font-size: clamp(28px, 3.6vw, 56px); line-height: 1.02;
+  transition: color .35s;
+}
+.svx-desc {
+  font-size: 15px; line-height: 1.6; max-width: 56ch;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 34%);
+}
+.svx-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.svx-tags .o-tag { font-size: 11px; }
+.svx-thumb { display: none; }
+.svx-go {
+  display: flex; align-items: center; justify-content: flex-end;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 55%);
+  transition: color .35s, translate .5s cubic-bezier(.16,1,.3,1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .svx-link:hover { padding-left: 22px; }
+  .svx-link:hover .svx-title,
+  .svx-link:hover .svx-num,
+  .svx-link:hover .svx-go { color: var(--color-accent); }
+  .svx-link:hover .svx-go { translate: 8px 0; }
+}
+.svx-link:focus-visible {
+  outline: 2px solid var(--color-accent); outline-offset: 6px; border-radius: var(--radius-sm);
+}
+
+/* Cursor-tracked preview — desktop pointers only. */
+.svx-preview {
+  position: fixed; top: 0; left: 0; z-index: 30; pointer-events: none;
+  width: 300px; height: 220px; border-radius: var(--radius-md); overflow: hidden;
+  box-shadow: var(--shadow-lg); opacity: 0; scale: .92;
+  transition: opacity .4s cubic-bezier(.16,1,.3,1), scale .5s cubic-bezier(.16,1,.3,1);
+}
+.svx-preview.is-on { opacity: 1; scale: 1; }
+.svx-preview img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transition: opacity .35s ease;
+}
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .svx-preview { display: none; }
+  /* No hover panel on touch — the art goes inline in the row instead. */
+  .svx-thumb {
+    display: block; width: clamp(84px, 15vw, 132px); aspect-ratio: 4 / 3;
+    border-radius: var(--radius-sm); overflow: hidden;
+  }
+  .svx-thumb img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+/* ── Method rail ─────────────────────────────────────────────────── */
+.svx-how h2 { font-size: clamp(30px, 3.8vw, 56px); margin: 0 0 clamp(34px, 5vh, 60px); }
+.svx-steps { position: relative; display: grid; gap: clamp(24px, 3.4vh, 42px); padding-left: 44px; }
+.svx-rail {
+  position: absolute; left: 13px; top: 6px; bottom: 6px; width: 2px;
+  background: var(--color-divider); border-radius: 999px; overflow: hidden;
+}
+.svx-rail span {
+  display: block; width: 100%; height: 100%; background: var(--color-accent);
+  transform: scaleY(0); transform-origin: top center;
+}
+.svx-step { position: relative; }
+.svx-step-n {
+  position: absolute; left: -44px; top: 2px;
+  width: 28px; height: 28px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--color-bg); border: 1px solid var(--color-divider);
+  font-family: var(--font-heading); font-size: 11px; color: var(--color-accent-700);
+}
+.svx-step h3 {
+  font-family: var(--font-heading); font-weight: 400; letter-spacing: -0.015em;
+  font-size: clamp(20px, 2vw, 28px); margin: 0 0 8px;
+}
+.svx-step p {
+  margin: 0; font-size: 15px; line-height: 1.65; max-width: 62ch;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 32%);
+}
+
+/* ── Closing CTA ─────────────────────────────────────────────────── */
+.svx-cta-wrap { border-top: 1px solid var(--color-divider); }
+.svx-cta h2 { font-size: clamp(30px, 4vw, 58px); margin: 0 0 18px; }
+.svx-cta .lede {
+  font-size: clamp(15px, 1.2vw, 19px); line-height: 1.62; max-width: 54ch; margin: 0 0 30px;
+  color: color-mix(in oklch, var(--color-text), var(--color-bg) 28%);
+}
+.svx-cta .o-btn { text-decoration: none; }
+
+@media (max-width: 900px) {
+  .svx .o-section { padding-inline: 22px; }
+  .svx-hero-wrap { padding-top: 116px; }
+  .svx-link { grid-template-columns: 34px minmax(0, 1fr) auto; gap: 14px; padding: 24px 0; }
+  .svx-go { display: none; }
+  .svx-desc { font-size: 14px; }
+  .svx-hero-meta { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+}
+@media (max-width: 560px) {
+  .svx-tags { display: none; }
+}
+
+
+/* ── Transparent navbar legibility ───────────────────────────────────
+   The header has no background so the page (and the sketch sequence) runs
+   full-bleed underneath it. That means dark artwork — the founder photos,
+   a project thumbnail — can scroll straight under dark nav text. A short
+   paper-toned halo keeps the labels readable over anything without putting
+   a visible band back across the page. */
+/* Short, fully-opaque radii stacked first: they build a cream pad that hugs
+   the glyphs, so dark-on-dark still reads. The wider, softer radii after
+   them just feather that pad into the page. A single wide shadow only
+   outlines the letters and leaves their interiors unreadable. */
+.nav-legible {
+  text-shadow:
+    0 0 2px  rgba(245, 234, 216, 1),
+    0 0 4px  rgba(245, 234, 216, 1),
+    0 0 7px  rgba(245, 234, 216, 1),
+    0 0 11px rgba(245, 234, 216, .98),
+    0 0 18px rgba(245, 234, 216, .9),
+    0 0 30px rgba(245, 234, 216, .65);
+}
+.nav-legible-bar {
+  filter:
+    drop-shadow(0 0 2px rgba(245, 234, 216, 1))
+    drop-shadow(0 0 5px rgba(245, 234, 216, 1))
+    drop-shadow(0 0 12px rgba(245, 234, 216, .9));
+}

@@ -3,7 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { SERVICES, PROJECTS } from '../constants';
 import { scrollToSection } from '../utils/scroll';
 import WorkCarousel from './WorkCarousel';
-const SculptureBackground = React.lazy(() => import('./SculptureBackground'));
+import SketchScrollHero from './SketchScrollHero';
+// `SketchSlides` (the four vector pencil panels) is intentionally NOT in the
+// flow: the sequence hands straight off to the work rail. The component is
+// kept for whenever it is wanted back — drop it in below the hero.
 
 const HOME_PAGE_TITLE = 'A Creative Network made for today & tomorrow | 4AM Global Media';
 const HOME_PAGE_DESCRIPTION =
@@ -52,43 +55,11 @@ const FEATURED_IN = [
   { name: 'Times News Express',     href: 'http://www.timesnewsexpress.co.in/2026/05/vaibhav-pasi-visionary-entrepreneur.html' },
 ];
 
-// Where the sculpture should sit per section so it lands in the EMPTY half
-// beside the text (never behind it). `side` = target world-x fed to the
-// sculpture (+ = right / - = left, opposite the text column); `o` = opacity
-// (dimmed on the full-width content sections where there is no empty half).
-// `side` is a SCREEN-space target: how far toward a frame edge the object's
-// centre should sit (~0.42 ≈ 42% from centre toward the edge; + = right).
-// The render loop converts this to world-x for the current camera and clamps
-// it so the object's edge never leaves the frame — same apparent size, always
-// in view. Full-width content sections push a bit further and dim.
-const PLACE: Record<string, { side: number; o: number }> = {
-  home:        { side: 0.42,  o: 1 },    // text left  → object right
-  why:         { side: -0.42, o: 1 },    // text right → object left
-  focus:       { side: 0.42,  o: 1 },
-  services:    { side: 0.55, o: 0.14 },  // full-width accordion → recede
-  software:    { side: 0.42,  o: 1 },
-  reach:       { side: -0.42, o: 1 },
-  method:      { side: 0.42,  o: 1 },
-  network:     { side: -0.42, o: 1 },
-  work:        { side: 0.58,  o: 0.16 },
-  about:       { side: 0.58,  o: 0.14 },
-  testimonials:{ side: 0.42,  o: 1 },
-  contact:     { side: -0.58, o: 0.26 },
-};
-
 // Rail order — must match the <section id> list below.
 const RAIL: { id: string; label: string }[] = [
-  { id: 'home', label: 'Intro' },
-  { id: 'why', label: 'Why 4AM' },
-  { id: 'focus', label: 'Focus' },
-  { id: 'services', label: 'Capability' },
-  { id: 'software', label: 'Software' },
-  { id: 'reach', label: 'Reach' },
-  { id: 'method', label: 'Method' },
-  { id: 'network', label: 'Network' },
-  { id: 'work', label: 'Work' },
-  { id: 'about', label: 'Leadership' },
-  { id: 'testimonials', label: 'Voices' },
+  { id: 'home',    label: 'The story' },
+  { id: 'work',    label: 'Work' },
+  { id: 'about',   label: 'Leadership' },
   { id: 'contact', label: 'Contact' },
 ];
 
@@ -117,74 +88,6 @@ const DotRail: React.FC = () => {
           onClick={() => scrollToSection(r.id)}
         />
       ))}
-    </div>
-  );
-};
-
-/* ── Scroll cue (bottom-left, fades after first scroll) ──────────── */
-const ScrollCue: React.FC = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const onScroll = () => { if (ref.current) ref.current.style.opacity = window.scrollY > 60 ? '0' : '1'; };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-  return <div className="o-cue" ref={ref}>Scroll</div>;
-};
-
-/* ── Services — expandable capability rows (accordion) ───────────── */
-const ServicesAccordion: React.FC = () => {
-  const [open, setOpen] = useState<number | null>(null);
-  const [hover, setHover] = useState<number | null>(null);
-  return (
-    <div className="svc-accordion reveal">
-      {SERVICES.map((s, i) => {
-        const isOpen = open === i;
-        const lift = hover === i && !isOpen;      // slide + tint only while closed
-        const caps = (s.features ?? []).slice(0, 4);
-        return (
-          <div key={s.slug} className={`svc-row${isOpen ? ' is-open' : ''}`}>
-            <button
-              type="button"
-              className="svc-head"
-              aria-expanded={isOpen}
-              onClick={() => setOpen(isOpen ? null : i)}
-              onMouseEnter={() => setHover(i)}
-              onMouseLeave={() => setHover(null)}
-              style={{ transform: lift ? 'translateX(14px)' : 'translateX(0)' }}
-            >
-              <span className="svc-num">{String(i + 1).padStart(2, '0')}</span>
-              <span className="svc-title" style={lift ? { color: 'var(--color-accent)' } : undefined}>{s.title}</span>
-              <span className="svc-plus" aria-hidden="true">
-                <i className="svc-plus-h" />
-                <i className="svc-plus-v" style={{ transform: `scaleY(${isOpen ? 0 : 1})` }} />
-              </span>
-            </button>
-            <div className="svc-panel" data-open={isOpen ? 'true' : 'false'}>
-              <div className="svc-panel-inner">
-                <div className="svc-grid">
-                  <p className="svc-desc">{s.description}</p>
-                  {caps.length > 0 && (
-                    <div className="svc-caps">
-                      <span className="svc-caps-label">Capabilities</span>
-                      <div className="svc-caps-tags">
-                        {caps.map((c) => <span key={c} className="svc-cap">{c}</span>)}
-                      </div>
-                    </div>
-                  )}
-                  <div className="svc-media">
-                    <div className="svc-thumb"><img src={s.image} alt={s.title} loading="lazy" /></div>
-                    <Link to={`/services/${s.slug}`} className="svc-view">
-                      View service <span aria-hidden="true">→</span>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })}
     </div>
   );
 };
@@ -363,33 +266,6 @@ const ContactForm: React.FC = () => {
 const LandingPage: React.FC = () => {
   const location = useLocation();
   const rootRef = useRef<HTMLDivElement>(null);
-  const [show3D, setShow3D] = useState(false);
-
-  // Desktop / idle gate for the WebGL sculpture — never on phones,
-  // reduced-motion, save-data or weak CPUs (matches the app's perf policy).
-  useEffect(() => {
-    const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
-    if (
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      window.matchMedia('(max-width: 1024px)').matches ||
-      window.matchMedia('(pointer: coarse)').matches ||
-      (navigator.hardwareConcurrency || 8) < 4 ||
-      nav.connection?.saveData
-    ) return;
-    const w = window as Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
-    };
-    let idleId: number | undefined; let timeoutId: number | undefined;
-    const enable = () => setShow3D(true);
-    if (w.requestIdleCallback) idleId = w.requestIdleCallback(enable, { timeout: 1200 });
-    else timeoutId = window.setTimeout(enable, 800);
-    return () => {
-      if (idleId !== undefined && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
-    };
-  }, []);
-
   // Route-state driven scroll (Navbar/Footer navigate('/', { state:{scrollTo} }))
   useEffect(() => {
     const state = location.state as { scrollTo?: string } | null;
@@ -402,27 +278,6 @@ const LandingPage: React.FC = () => {
     const tag = document.querySelector('meta[name="description"]');
     if (tag) tag.setAttribute('content', HOME_PAGE_DESCRIPTION);
   }, []);
-
-  // Move the sculpture into the empty half of the active section so it sits
-  // beside the text, and dim it on the full-width content sections. Re-runs
-  // once the canvas mounts (show3D) — observing fires an initial callback,
-  // so the opening placement is set without waiting for a scroll.
-  useEffect(() => {
-    if (!show3D) return;
-    const sections = RAIL.map((r) => document.getElementById(r.id)).filter(Boolean) as HTMLElement[];
-    const apply = (id: string) => {
-      const pl = PLACE[id] ?? { side: 0, o: 1 };
-      (window as unknown as { __sculptSideX?: number }).__sculptSideX = pl.side;
-      const canvas = document.getElementById('o-scene');
-      if (canvas) canvas.style.opacity = String(pl.o);
-    };
-    const io = new IntersectionObserver(
-      (entries) => { entries.forEach((e) => { if (e.isIntersecting) apply(e.target.id); }); },
-      { rootMargin: '-45% 0px -45% 0px', threshold: 0 },
-    );
-    sections.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [show3D]);
 
   // Scroll reveal — `.reveal` (single blocks) + `.reveal-item` (staggered
   // grid/list/tag children inside a [data-stagger] container).
@@ -500,144 +355,14 @@ const LandingPage: React.FC = () => {
 
   return (
     <div ref={rootRef} className="organic">
-      {show3D && (
-        <React.Suspense fallback={null}>
-          <SculptureBackground />
-        </React.Suspense>
-      )}
-      <div className="o-vignette" aria-hidden="true" />
+      {/* 1 · The pencil-sketch scroll sequence — fixed canvas + its scroll
+             track. Everything below scrolls over it, then it fades out. */}
+      <SketchScrollHero />
+
       <DotRail />
-      <ScrollCue />
 
       <main>
-        {/* 1 · Hero */}
-        <section id="home" className="o-section">
-          <div className="o-col">
-            <p className="kicker reveal"><span className="rule" />4AM Global Media</p>
-            <h1 className="reveal text-gradient-4am">A creative network made for today &amp; tomorrow.</h1>
-            <p className="lede reveal">
-              We power founders, operators and teams across the globe with strategy, design,
-              engineering and growth marketing that compounds.
-            </p>
-            <div className="row reveal">
-              <button className="o-btn o-btn-primary" onClick={() => scrollToSection('contact')}>Start a project</button>
-              <button className="o-btn o-btn-ghost" onClick={() => scrollToSection('services')}>See how we work →</button>
-            </div>
-          </div>
-        </section>
-
-        {/* 2 · Why 4AM */}
-        <section id="why" className="o-section">
-          <div className="o-col right">
-            <p className="kicker reveal"><span className="rule" />Why 4AM</p>
-            <h2 className="reveal">The hour before everyone else starts.</h2>
-            <p className="lede reveal">
-              4AM is the quiet edge of the day — the head start. It is how we work and what we sell:
-              momentum, before the market notices.
-            </p>
-          </div>
-        </section>
-
-        {/* 3 · Focus + stats */}
-        <section id="focus" className="o-section">
-          <div className="o-col">
-            <p className="kicker reveal"><span className="rule" />Focus</p>
-            <h2 className="reveal">We look closely, then we build.</h2>
-            <p className="lede reveal">
-              Every engagement opens with a diagnostic — audience, funnel, product surface — so the
-              work that follows is aimed, not decorative.
-            </p>
-            <div className="stats reveal">
-              <div><b data-count={PROJECTS.length}>{PROJECTS.length}</b><small>Client sites shipped</small></div>
-              <div><b data-count={SERVICES.length}>{SERVICES.length}</b><small>Core services</small></div>
-              <div><b data-count={MARKETPLACES.length}>{MARKETPLACES.length}</b><small>Marketplaces</small></div>
-            </div>
-          </div>
-        </section>
-
-        {/* 4 · Services — expandable capability rows */}
-        <section id="services" className="o-section">
-          <div className="o-wide">
-            <div className="svc-header">
-              <div>
-                <p className="kicker reveal"><span className="rule" />Capability</p>
-                <h2 className="reveal svc-h">Our services.</h2>
-              </div>
-              <p className="lede reveal svc-intro">
-                Comprehensive solutions to scale your business — one accountable team across every
-                discipline. Open any capability to see how we deliver it.
-              </p>
-            </div>
-            <ServicesAccordion />
-          </div>
-        </section>
-
-        {/* 5 · Software */}
-        <section id="software" className="o-section">
-          <div className="o-col">
-            <p className="kicker reveal"><span className="rule" />Software</p>
-            <h2 className="reveal">Products that hold up under real traffic.</h2>
-            <p className="lede reveal">
-              Web platforms, mobile apps and the integrations behind them — designed, shipped and
-              maintained by the same people.
-            </p>
-            <div className="row" data-stagger>
-              {['React', 'React Native', 'Node', 'Python', 'Cloud'].map((t) => (
-                <span key={t} className="o-tag o-tag-outline reveal-item">{t}</span>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 6 · Reach */}
-        <section id="reach" className="o-section">
-          <div className="o-col right">
-            <p className="kicker reveal"><span className="rule" />Reach</p>
-            <h2 className="reveal">Built to broadcast.</h2>
-            <p className="lede reveal">
-              Paid, organic, owned. We put your message where the attention already is and measure
-              every hop it makes.
-            </p>
-            <div className="row" data-stagger>
-              {['Performance ads', 'SEO', 'Social', 'Content & film'].map((t) => (
-                <span key={t} className="o-tag o-tag-accent-2 reveal-item">{t}</span>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 7 · Method */}
-        <section id="method" className="o-section">
-          <div className="o-col">
-            <p className="kicker reveal"><span className="rule" />Method</p>
-            <h2 className="reveal">Straight through the middle of the problem.</h2>
-            <p className="lede reveal">
-              Short cycles, visible decisions, no theatre. You see the work while it is still cheap to change.
-            </p>
-            <ul className="ed-list reveal">
-              {['Diagnose', 'Design', 'Build', 'Launch & grow'].map((step, i) => (
-                <li key={step}><i>{String(i + 1).padStart(2, '0')}</i><span>{step}</span></li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* 8 · Network + marketplaces */}
-        <section id="network" className="o-section">
-          <div className="o-col right">
-            <p className="kicker reveal"><span className="rule" />Network</p>
-            <h2 className="reveal">Specialists, on the day you need them.</h2>
-            <p className="lede reveal">
-              A distributed bench of engineers, strategists, editors and media buyers — and a
-              marketplace desk that launches brands across India’s leading platforms.
-            </p>
-            <div className="row" data-stagger style={{ gap: 8 }}>
-              {MARKETPLACES.map((m) => <span key={m} className="o-tag o-tag-neutral reveal-item">{m}</span>)}
-            </div>
-          </div>
-        </section>
-
-        {/* 9 · Work */}
+        {/* 2 · Work — first thing after the sequence finishes */}
         <section id="work" className="o-section">
           <div className="o-wide">
             <WorkCarousel
@@ -645,13 +370,34 @@ const LandingPage: React.FC = () => {
               kicker="Our work"
               heading="Sites we've shipped."
             />
-            <p className="lede reveal" style={{ marginTop: 26, marginBottom: 0 }}>
-              {PROJECTS.length} client websites delivered worldwide — swipe through the work.
+
+            <div className="stats reveal" style={{ marginTop: 34 }}>
+              <div><b data-count={PROJECTS.length}>{PROJECTS.length}</b><small>Client sites shipped</small></div>
+              <div><b data-count={SERVICES.length}>{SERVICES.length}</b><small>Core services</small></div>
+              <div><b data-count={MARKETPLACES.length}>{MARKETPLACES.length}</b><small>Marketplaces</small></div>
+            </div>
+
+            <p className="lede reveal" style={{ marginTop: 26 }}>
+              {PROJECTS.length} client websites delivered worldwide — and a marketplace desk that
+              launches brands across India&rsquo;s leading platforms.
             </p>
+            <div className="row" data-stagger style={{ gap: 8 }}>
+              {MARKETPLACES.map((m) => <span key={m} className="o-tag o-tag-neutral reveal-item">{m}</span>)}
+            </div>
+
+            <div className="row reveal" style={{ marginTop: 30 }}>
+              <Link className="o-btn o-btn-primary" to="/services">Explore our services</Link>
+            </div>
+
+            <blockquote className="o-quote reveal">
+              &ldquo;The 4AM team brought clarity to our growth strategy and execution. They operate
+              like an extension of our internal team.&rdquo;
+              <cite>Head of Marketing · SaaS brand</cite>
+            </blockquote>
           </div>
         </section>
 
-        {/* 10 · Leadership */}
+        {/* 3 · Founders */}
         <section id="about" className="o-section">
           <div className="o-wide">
             <p className="kicker reveal"><span className="rule" />Leadership</p>
@@ -684,23 +430,12 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* 11 · Quote */}
-        <section id="testimonials" className="o-section">
-          <div className="o-col">
-            <blockquote className="reveal">
-              “The 4AM team brought clarity to our growth strategy and execution. They operate like an
-              extension of our internal team.”
-            </blockquote>
-            <cite className="reveal">Head of Marketing · SaaS brand</cite>
-          </div>
-        </section>
-
-        {/* 12 · Contact */}
+        {/* 4 · Contact */}
         <section id="contact" className="o-section">
           <div className="o-wide o-contact">
             <div className="o-contact-intro">
               <p className="kicker reveal"><span className="rule" />Contact</p>
-              <h2 className="reveal">It is early. Let’s begin.</h2>
+              <h2 className="reveal">It is early. Let&rsquo;s begin.</h2>
               <p className="lede reveal">Tell us what you are trying to move, and we will tell you what it takes.</p>
               <dl className="o-contact-meta reveal">
                 <div><dt>Email</dt><dd><a href="mailto:Info@4amglobalmedia.com">Info@4amglobalmedia.com</a></dd></div>

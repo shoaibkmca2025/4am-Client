@@ -15,6 +15,7 @@ import ScrollProgress from './components/ScrollProgress';
 // discover it a round-trip later. Biggest win on phone connections.
 const landingChunk = import('./components/LandingPage');
 const LandingPage = lazy(() => landingChunk.catch(() => import('./components/LandingPage')));
+const ServicesPage = lazy(() => import('./components/ServicesPage'));
 const ServicePage  = lazy(() => import('./components/ServicePage'));
 // Platform surfaces — code-split so marketing visitors never download them.
 const StudentPortal = lazy(() => import('./components/platform/StudentPortal'));
@@ -173,6 +174,7 @@ function App() {
             >
               <Routes>
                 <Route path="/"               element={<LandingPage />} />
+                <Route path="/services"       element={<ServicesPage />} />
                 <Route path="/services/:slug" element={<ServicePage />} />
                 <Route path="/portal"         element={<StudentPortal />} />
                 <Route path="/admin"          element={<AdminPanel />} />

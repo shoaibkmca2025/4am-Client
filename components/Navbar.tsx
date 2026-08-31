@@ -4,19 +4,21 @@ import { gsap } from 'gsap';
 import { scrollToSection, scrollToTop } from '../utils/scroll';
 import { useActiveSection } from '../utils/useActiveSection';
 
-const NAV_LINKS = [
+// `to` links navigate to their own route; `sectionId` links scroll the
+// landing page (and route home first when we are somewhere else).
+type NavLink = { label: string; sectionId?: string; to?: string };
+
+const NAV_LINKS: NavLink[] = [
   { label: 'WORK',     sectionId: 'work' },
-  { label: 'SERVICES', sectionId: 'services' },
+  { label: 'SERVICES', to: '/services' },
   { label: 'ABOUT',    sectionId: 'about' },
-  { label: 'NEWS',     sectionId: 'testimonials' },
   { label: 'CONTACT',  sectionId: 'contact' },
 ];
 
-const NAV_IDS = NAV_LINKS.map((l) => l.sectionId);
+const NAV_IDS = NAV_LINKS.map((l) => l.sectionId).filter(Boolean) as string[];
 
 const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen]     = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const headerRef    = useRef<HTMLElement>(null);
   const logoRef      = useRef<HTMLDivElement>(null);
@@ -56,13 +58,6 @@ const Navbar: React.FC = () => {
     }, headerRef);
 
     return () => ctx.revert();
-  }, []);
-
-  // ── scroll detection ───────────────────────────────────────────────
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // ── mobile menu GSAP timeline ──────────────────────────────────────
@@ -108,18 +103,28 @@ const Navbar: React.FC = () => {
     setIsOpen(false);
   };
 
-  const handleNavClick = (sectionId: string) => {
-    if (location.pathname === '/') scrollToSection(sectionId);
-    else navigate('/', { state: { scrollTo: sectionId } });
+  const handleNavClick = (link: NavLink) => {
+    if (link.to) {
+      navigate(link.to);
+    } else if (location.pathname === '/') {
+      scrollToSection(link.sectionId!);
+    } else {
+      navigate('/', { state: { scrollTo: link.sectionId } });
+    }
     setIsOpen(false);
   };
 
+  const isActive = (link: NavLink) =>
+    link.to ? location.pathname.startsWith(link.to) : onHome && activeSection === link.sectionId;
+
+  // Always transparent: the scrolled cream fill + blur + bottom rule painted
+  // an opaque band across the top of the scroll sequence and every section
+  // behind it. The full-screen mobile menu below keeps its own solid
+  // background — that one has to be readable.
   return (
     <header
       ref={headerRef}
-      className={`fixed top-0 left-0 right-0 z-[9990] transition-all duration-500 ${
-        scrolled ? 'bg-[#f5ead8]/90 backdrop-blur-md border-b border-[#201e1d]/10' : 'bg-transparent'
-      }`}
+      className="fixed top-0 left-0 right-0 z-[9990] bg-transparent"
     >
       <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10">
         <div className="flex items-center justify-between h-[70px] md:h-[80px]">
@@ -146,8 +151,8 @@ const Navbar: React.FC = () => {
               <NavButton
                 key={link.label}
                 label={link.label}
-                active={onHome && activeSection === link.sectionId}
-                onClick={() => handleNavClick(link.sectionId)}
+                active={isActive(link)}
+                onClick={() => handleNavClick(link)}
               />
             ))}
           </nav>
@@ -157,7 +162,7 @@ const Navbar: React.FC = () => {
             <button
               ref={ctaRef}
               className="flex items-center justify-center px-5 py-2 max-md:px-3.5 max-md:py-1.5 rounded-full bg-[#c67139] text-[#f5ead8] text-[11px] max-md:text-[10px] font-semibold tracking-[0.12em] uppercase hover:bg-[#b2622d] active:scale-95 transition-all duration-200"
-              onClick={() => handleNavClick('contact')}
+              onClick={() => handleNavClick({ label: 'CONTACT', sectionId: 'contact' })}
             >
               Let's Talk
             </button>
@@ -165,7 +170,7 @@ const Navbar: React.FC = () => {
             {/* Hamburger — animated bars */}
             <button
               onClick={() => setIsOpen((v) => !v)}
-              className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[5px] group z-50"
+              className="nav-legible-bar lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[5px] group z-50"
               aria-label="Toggle menu"
               aria-expanded={isOpen}
             >
@@ -197,7 +202,7 @@ const Navbar: React.FC = () => {
             <button
               key={link.label}
               ref={(el) => { if (el) menuLinks.current[i] = el; }}
-              onClick={() => handleNavClick(link.sectionId)}
+              onClick={() => handleNavClick(link)}
               className="group flex items-baseline gap-4 text-[9vw] sm:text-5xl tracking-[-0.01em] text-[#201e1d] hover:text-[#c67139] transition-colors duration-300 leading-none"
               style={{ fontFamily: 'Caprasimo, Georgia, serif' }}
             >
@@ -254,7 +259,7 @@ const NavButton: React.FC<{ label: string; active?: boolean; onClick: () => void
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       aria-current={active ? 'true' : undefined}
-      className={`relative text-[11px] font-semibold tracking-[0.2em] transition-colors duration-300 uppercase py-1 ${
+      className={`nav-legible relative text-[11px] font-semibold tracking-[0.2em] transition-colors duration-300 uppercase py-1 ${
         active ? 'text-[#c67139]' : 'text-[#201e1d]/60 hover:text-[#201e1d]'
       }`}
     >

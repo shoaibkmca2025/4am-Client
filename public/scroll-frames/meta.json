@@ -1,0 +1,16 @@
+{
+  "hd": 140,
+  "sd": 70,
+  "pt": 70,
+  "sdStep": 2,
+  "ptStep": 2,
+  "hdWidth": 1600,
+  "sdWidth": 960,
+  "ptWidth": 640,
+  "ptHeight": 1280,
+  "grade": {
+    "shadow": "#241c17",
+    "mid": "#8a7461",
+    "high": "#f5ead8"
+  }
+}

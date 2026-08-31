@@ -3,11 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
-import { preloadRobot } from './lib/preloadRobot';
 
-// Start warming the 3D robot assets from the very first moment (idle-gated,
-// desktop-only) so it appears sooner instead of only after LandingPage mounts.
-preloadRobot('/models/mecha.glb');
+// The 3D robot/sculpture backdrop was replaced by the pencil-sketch scroll
+// sequence (components/SketchScrollHero.tsx), so nothing mounts MechaRobot
+// any more. Preloading its ~6.9MB model here would only steal bandwidth from
+// the frame sequence that is actually on screen. `lib/preloadRobot.ts` is
+// kept for whenever the 3D surface comes back.
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
