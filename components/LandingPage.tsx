@@ -29,6 +29,14 @@ const WORK = [
 // Leadership — condensed from the full Founder profiles.
 const LEADERS = [
   {
+    name: 'Vaibhav Pasi',
+    role: 'Co-Founder',
+    photo: '/assets/vaibhav-pasi.jpg',
+    tags: ['Digital Marketing', 'AI Consulting', 'Product Onboarding'],
+    bio: 'Technology entrepreneur and growth strategist leading 4AM’s vision — pairing creativity, engineering and business intelligence to scale brands across web, software and the marketplaces.',
+    accent: 'accent' as const,
+  },
+  {
     name: 'Shoaib Khatik',
     role: 'Co-Founder',
     photo: '/assets/shoaib-khatik-web.jpg?v=2',

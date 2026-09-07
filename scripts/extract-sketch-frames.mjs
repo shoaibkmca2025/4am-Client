@@ -88,6 +88,75 @@ const buildLUT = ({ shadow, mid, high }) => {
 
 const LUT = buildLUT(GRADE);
 
+/**
+ * The closing frames (115-139) carry a footer strip with garbled
+ * auto-generated lettering — "4amalobalinatieopp", "Tect Of Press Releasess".
+ * The strip itself is the ground the tree grows out of, so it stays; only the
+ * lettering is painted out.
+ *
+ * Cropping was the obvious alternative and does not work: frames 0-114 carry
+ * ink down to the very last row (feet, desk legs), so a uniform crop would
+ * cut them. Blending the strip vertically was tried too and smears its
+ * texture into vertical streaks. Inpainting each glyph run HORIZONTALLY keeps
+ * the strip's horizontal grain intact.
+ */
+const stripFooterText = async (img) => {
+  const { data, info } = await img.raw().toBuffer({ resolveWithObject: true });
+  const { width: W, height: H, channels: C } = info;
+  const lum = (y, x) => { const i = (y * W + x) * C; return 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]; };
+
+  // The dark strip touching the bottom edge, if there is one.
+  let barTop = H;
+  for (let y = H - 1; y >= 0; y--) {
+    let s = 0; for (let x = 0; x < W; x++) s += lum(y, x);
+    if (s / W < 150) barTop = y; else break;
+  }
+  if (H - barTop < 8) return sharp(data, { raw: { width: W, height: H, channels: C } });
+
+  const bh = H - barTop;
+  const mask = new Uint8Array(W * bh);
+  for (let y = 0; y < bh; y++) {
+    const vals = new Float64Array(W);
+    for (let x = 0; x < W; x++) vals[x] = lum(barTop + y, x);
+    const sorted = Array.from(vals).sort((a, b) => a - b);
+    const thr = Math.max(sorted[Math.floor(sorted.length * 0.35)] + 22, 128);
+    for (let x = 0; x < W; x++) if (vals[x] > thr) mask[y * W + x] = 1;
+  }
+
+  // Separable dilation, so the anti-aliased glyph edge goes with the glyph.
+  const R = 3;
+  const tmp = new Uint8Array(W * bh), dil = new Uint8Array(W * bh);
+  for (let y = 0; y < bh; y++) for (let x = 0; x < W; x++) {
+    let on = 0;
+    for (let d = -R; d <= R && !on; d++) { const nx = x + d; if (nx >= 0 && nx < W && mask[y * W + nx]) on = 1; }
+    tmp[y * W + x] = on;
+  }
+  for (let y = 0; y < bh; y++) for (let x = 0; x < W; x++) {
+    let on = 0;
+    for (let d = -R; d <= R && !on; d++) { const ny = y + d; if (ny >= 0 && ny < bh && tmp[ny * W + x]) on = 1; }
+    dil[y * W + x] = on;
+  }
+
+  for (let y = 0; y < bh; y++) {
+    let x = 0;
+    while (x < W) {
+      if (!dil[y * W + x]) { x++; continue; }
+      let end = x; while (end < W && dil[y * W + end]) end++;
+      const L = x - 1, Rr = end;
+      for (let k = x; k < end; k++) {
+        const t = (k - L) / Math.max(1, Rr - L), i = ((barTop + y) * W + k) * C;
+        for (let c = 0; c < 3; c++) {
+          const a = L >= 0 ? data[((barTop + y) * W + L) * C + c] : data[((barTop + y) * W + Rr) * C + c];
+          const b = Rr < W ? data[((barTop + y) * W + Rr) * C + c] : data[((barTop + y) * W + L) * C + c];
+          data[i + c] = Math.round(a * (1 - t) + b * t);
+        }
+      }
+      x = end;
+    }
+  }
+  return sharp(data, { raw: { width: W, height: H, channels: C } });
+};
+
 /** Greyscale the frame, then push every pixel through the duotone ramp. */
 const gradeFrame = async (buf) => {
   const { data, info } = await sharp(buf).greyscale().raw().toBuffer({ resolveWithObject: true });
@@ -141,7 +210,7 @@ let ptBytes = 0, ptCount = 0;
 
 for (let i = 0; i < frames.length; i++) {
   const raw = Buffer.from(frames[i], 'base64');
-  const graded = await gradeFrame(raw);
+  const graded = await stripFooterText(await gradeFrame(raw));
 
   const hd = await graded.clone().resize({ width: HD_W, kernel: 'lanczos3' })
     .sharpen(SHARPEN).webp({ quality: HD_Q, effort: 6 }).toBuffer();
