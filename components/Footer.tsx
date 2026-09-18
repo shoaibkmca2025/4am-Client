@@ -1,5 +1,4 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { scrollToSection } from '../utils/scroll';
@@ -9,12 +8,13 @@ const SERIF = { fontFamily: 'Caprasimo, Georgia, serif' } as const;
 
 const FOOTER_NAV = [
   { label: 'Work',     sectionId: 'work' },
+  { label: 'Services', sectionId: 'services' },
   { label: 'About',    sectionId: 'about' },
+  { label: 'News',     sectionId: 'testimonials' },
   { label: 'Contact',  sectionId: 'contact' },
 ];
 
 const FOOTER_SERVICES = [
-  { label: 'All Services',      href: '/services' },
   { label: 'Digital Marketing', href: '/services/digital-marketing' },
   { label: 'Branding',          href: '/services/branding' },
   { label: 'Social Media',      href: '/services/social-media-growth' },
@@ -31,16 +31,6 @@ const FOOTER_SOCIALS = [
 
 const Footer: React.FC = () => {
   const ctaBtnRef = useRef<HTMLButtonElement>(null);
-  const location  = useLocation();
-  const navigate  = useNavigate();
-
-  // Section links only resolve on the landing page — from /services or a
-  // service detail page they have to route home first and scroll on arrival
-  // (LandingPage reads `state.scrollTo`).
-  const goToSection = (sectionId: string) => {
-    if (location.pathname === '/') scrollToSection(sectionId);
-    else navigate('/', { state: { scrollTo: sectionId } });
-  };
 
   // Newsletter capture → /api/newsletter
   const [nlEmail, setNlEmail] = useState('');
@@ -101,7 +91,7 @@ const Footer: React.FC = () => {
           >
             <button
               ref={ctaBtnRef}
-              onClick={() => goToSection('contact')}
+              onClick={() => scrollToSection('contact')}
               className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-[#201e1d]/20 flex items-center justify-center text-[#201e1d]/60 hover:bg-[#c67139] hover:text-[#f5ead8] hover:border-[#c67139] transition-colors duration-300 shrink-0"
               aria-label="Contact us"
             >
@@ -121,7 +111,7 @@ const Footer: React.FC = () => {
           {FOOTER_NAV.map((item) => (
             <button
               key={item.label}
-              onClick={() => goToSection(item.sectionId)}
+              onClick={() => scrollToSection(item.sectionId)}
               className="hover-underline text-[11px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/50 hover:text-[#c67139] transition-colors duration-300"
             >
               {item.label}
@@ -162,7 +152,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2.5">
               {FOOTER_NAV.map((link) => (
                 <li key={link.label}>
-                  <button onClick={() => goToSection(link.sectionId)} className="hover-underline text-xs text-[#201e1d]/55 hover:text-[#c67139] transition-colors">
+                  <button onClick={() => scrollToSection(link.sectionId)} className="hover-underline text-xs text-[#201e1d]/55 hover:text-[#c67139] transition-colors">
                     {link.label}
                   </button>
                 </li>
