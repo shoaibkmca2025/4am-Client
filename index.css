@@ -1125,6 +1125,11 @@ header.fixed.top-0::before {
 #o-rail button[aria-current="true"] { background: transparent; transform: none; }
 #o-rail button[aria-current="true"]::before { background: var(--color-accent); inset: 3.25px; }
 
+/* 10b · The footer's nav items are a mix of <a> and <button>; a button's UA
+   `text-align: center` combined with the 44px min-width above indented short
+   labels ("Work", "About", "News") by up to 8px against their column. */
+.ft-link, .ft-nav, .ft-legal { text-align: start; }
+
 /* 11 · Secondary text to ≥4.5:1 (ink 70% = 5.33:1 on #ebddc5). */
 .organic .text-muted,
 .organic .wc-client,
