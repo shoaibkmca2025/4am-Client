@@ -112,7 +112,7 @@ const MagneticCursor: React.FC = () => {
       >
         <span
           ref={labelRef}
-          className="text-[7px] font-bold tracking-[0.18em] uppercase text-[#201e1d] select-none"
+          className="text-[10px] font-bold tracking-[0.06em] uppercase text-[#201e1d] select-none"
         >
           VIEW
         </span>

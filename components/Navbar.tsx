@@ -156,7 +156,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4">
             <button
               ref={ctaRef}
-              className="flex items-center justify-center px-5 py-2 max-md:px-3.5 max-md:py-1.5 rounded-full bg-[#c67139] text-[#f5ead8] text-[11px] max-md:text-[10px] font-semibold tracking-[0.12em] uppercase hover:bg-[#b2622d] active:scale-95 transition-all duration-200"
+              className="flex items-center justify-center nav-cta px-5 py-2 max-md:px-3.5 max-md:py-1.5 rounded-full bg-[#9e5424] text-[#f5ead8] text-[11px] font-semibold tracking-[0.12em] uppercase hover:bg-[#8c491a] active:scale-95 transition-all duration-200"
               onClick={() => handleNavClick('contact')}
             >
               Let's Talk
@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
             {/* Hamburger — animated bars */}
             <button
               onClick={() => setIsOpen((v) => !v)}
-              className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-[5px] group z-50"
+              className="lg:hidden relative w-11 h-11 flex flex-col items-center justify-center gap-[5px] group z-50"
               aria-label="Toggle menu"
               aria-expanded={isOpen}
             >
@@ -210,9 +210,9 @@ const Navbar: React.FC = () => {
         </nav>
 
         {/* Bottom bar */}
-        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between text-[10px] font-semibold tracking-[0.25em] uppercase text-[#201e1d]/40">
+        <div className="absolute bottom-10 left-6 right-6 flex items-center justify-between text-[11px] font-semibold tracking-[0.25em] uppercase text-[#201e1d]/70">
           <span>4AM Global Media</span>
-          <a href="mailto:Info@4amglobalmedia.com" className="hover:text-[#c67139] transition-colors">
+          <a href="mailto:Info@4amglobalmedia.com" className="menu-mail hover:text-[#9e5424] transition-colors">
             Info@4amglobalmedia.com
           </a>
         </div>
@@ -255,13 +255,13 @@ const NavButton: React.FC<{ label: string; active?: boolean; onClick: () => void
       onMouseLeave={onLeave}
       aria-current={active ? 'true' : undefined}
       className={`relative text-[11px] font-semibold tracking-[0.2em] transition-colors duration-300 uppercase py-1 ${
-        active ? 'text-[#c67139]' : 'text-[#201e1d]/60 hover:text-[#201e1d]'
+        active ? 'text-[#9e5424]' : 'text-[#201e1d]/70 hover:text-[#201e1d]'
       }`}
     >
       {label}
       <span
         ref={lineRef}
-        className={`absolute bottom-0 left-0 w-full h-px scale-x-0 ${active ? 'bg-[#c67139]' : 'bg-[#201e1d]'}`}
+        className={`absolute bottom-0 left-0 w-full h-px scale-x-0 ${active ? 'bg-[#9e5424]' : 'bg-[#201e1d]'}`}
       />
     </button>
   );

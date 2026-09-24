@@ -1059,3 +1059,90 @@ select.o-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 }
 .organic .o-field-err { display: block; margin-top: 5px; font-size: 11px; color: #a23; }
 @media (max-width: 520px) { .organic .o-form-grid { grid-template-columns: 1fr; } }
+/* ════════════════════════════════════════════════════════════════════
+   HIG audit fixes — numbers refer to the audit's ranked list. Items 1, 3,
+   6 and 14 targeted the sketch-hero markup, which this build doesn't have.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* 2 · Scroll-edge material under the fixed nav: a blurred fade, not an
+   opaque band, so content passes under it instead of through the labels. */
+header.fixed.top-0::before {
+  content: ""; position: absolute; inset: 0 0 -28px; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom, rgb(245 234 216 / .92), rgb(245 234 216 / 0));
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
+          mask-image: linear-gradient(to bottom, #000 45%, transparent);
+}
+@media (prefers-reduced-transparency: reduce) {
+  header.fixed.top-0::before { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--color-bg); -webkit-mask-image: none; mask-image: none; inset: 0; }
+}
+
+/* 4 · Button fills and accent text to ≥4.5:1 against cream
+   (#9e5424 = 4.71:1, hover #8c491a = 5.72:1; was #c67139 = 3.03:1). */
+.o-btn-primary { background: #9e5424; }
+.o-btn-primary:hover { background: #8c491a; }
+.organic .wc-cta { background: #9e5424; }
+
+/* 5 · Never fake a weight the font doesn't ship (Caprasimo is 400 only). */
+:root { font-synthesis-weight: none; }
+
+/* 7 · Three leaders fill the row instead of leaving an empty 4th column. */
+.organic .o-cards { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+/* 9 · System I-beam over text entry (the custom cursor hid it). */
+@media (pointer: fine) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]), textarea { cursor: text !important; }
+  select { cursor: pointer !important; }
+}
+
+/* 10 · Hit targets: 44px on touch, 20px minimum with a pointer. */
+@media (pointer: coarse) {
+  .nav-cta { position: relative; }
+  .nav-cta::after { content: ""; position: absolute; inset: -8px 0; }              /* 28 → 44 */
+  .ft-list > li + li { margin-top: 0 !important; }
+  .ft-link { display: inline-block; padding-block: 14px; }                          /* 16 → 44 */
+  .ft-legal { padding-block: 14px; }                                                /* 16 → 44 */
+  .organic .o-featured .row { row-gap: 18px; }
+  .organic .o-featured a.o-tag { position: relative; }
+  .organic .o-featured a.o-tag::after { content: ""; position: absolute; inset: -9px -4px; } /* 26 → 44 */
+  .organic .o-contact-meta dd a { display: inline-block; padding-block: 10.5px; margin-block: -10.5px; } /* 23 → 44 */
+  .ft-link { min-width: 44px; }
+  .ft-nav { padding-block: 13px; }                                                  /* 18 → 44 */
+  .ft-input { padding-block: 14px; }                                                /* 16 → 44 */
+  .menu-mail { display: inline-block; padding-block: 13px; }                        /* 18 → 44 */
+  header.fixed.top-0 a[href="/"] { padding-block: 4px; }                            /* 36 → 44 */
+}
+@media (pointer: fine) {
+  .ft-link, .ft-legal, .ft-input { padding-block: 2px; }                            /* 16 → 20 */
+  .ft-nav { padding-block: 1px; }                                                   /* 18 → 20 */
+}
+#o-rail { gap: 0; }
+#o-rail button { width: 20px; height: 20px; background: transparent; position: relative; } /* 9 → 20 */
+#o-rail button::before {
+  content: ""; position: absolute; inset: 5.5px; border-radius: 999px;
+  background: color-mix(in oklch, var(--color-text), transparent 78%); transition: background .18s;
+}
+#o-rail button[aria-current="true"] { background: transparent; transform: none; }
+#o-rail button[aria-current="true"]::before { background: var(--color-accent); inset: 3.25px; }
+
+/* 11 · Secondary text to ≥4.5:1 (ink 70% = 5.33:1 on #ebddc5). */
+.organic .text-muted,
+.organic .wc-client,
+.organic .o-featured-label,
+.organic .o-contact-meta dt,
+.o-field > label { color: color-mix(in srgb, var(--color-text) 70%, transparent); }
+
+/* 12 · Nothing under 11px (iOS minimum). */
+.o-card-kicker, .organic .wc-chip { font-size: 11px; }
+
+/* 13 · Readable measure for the Work lede (~115 → ~65 characters). */
+.organic #work .lede { max-width: 36em; }
+
+/* 15 · Text face, not the display face, on 15px button labels. */
+.o-btn { font-family: var(--font-body); font-weight: 600; letter-spacing: .01em; }
+
+/* 17 · Press feedback that survives the magnetic inline transform, and
+   covers link-buttons too (`scale` composes with `transform`). */
+.o-btn { transition: background .2s, color .2s, border-color .2s, transform .1s, scale .1s; }
+.o-btn:active { scale: .96; }
+

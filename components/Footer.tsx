@@ -75,11 +75,11 @@ const Footer: React.FC = () => {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.9, ease: E }}
           >
-            <span className="text-[10px] md:text-[11px] font-semibold tracking-[0.28em] uppercase text-[#8c491a] block mb-5">
+            <span className="text-[11px] font-semibold tracking-[0.28em] uppercase text-[#8c491a] block mb-5">
               Ready to start?
             </span>
-            <h2 style={SERIF} className="text-[10vw] md:text-[6.5vw] lg:text-[5vw] leading-[0.98] tracking-[-0.01em] text-[#201e1d]">
-              Let’s create<br />something <span className="text-[#c67139]">great.</span>
+            <h2 style={SERIF} className="font-normal text-[10vw] md:text-[6.5vw] lg:text-[5vw] leading-[0.98] tracking-[-0.01em] text-[#201e1d]">
+              Let’s create<br />something <span className="text-[#9e5424]">great.</span>
             </h2>
           </motion.div>
 
@@ -112,7 +112,7 @@ const Footer: React.FC = () => {
             <button
               key={item.label}
               onClick={() => scrollToSection(item.sectionId)}
-              className="hover-underline text-[11px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/50 hover:text-[#c67139] transition-colors duration-300"
+              className="hover-underline ft-nav text-[11px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/70 hover:text-[#9e5424] transition-colors duration-300"
             >
               {item.label}
             </button>
@@ -131,42 +131,42 @@ const Footer: React.FC = () => {
               alt="4AM Global Media"
               className="h-11 w-auto rounded-lg bg-[#1d1d1d] px-2.5 py-1.5 mb-4"
             />
-            <p className="text-[#201e1d]/55 text-xs leading-relaxed max-w-xs">
+            <p className="text-[#201e1d]/70 text-xs leading-relaxed max-w-xs">
               The growth engine that never sleeps. A creative network made for today and tomorrow.
             </p>
           </div>
 
           <div>
-            <h4 className="text-[10px] font-semibold tracking-[0.28em] uppercase text-[#201e1d]/40 mb-4">Services</h4>
-            <ul className="space-y-2.5">
+            <h4 className="text-[11px] font-semibold tracking-[0.28em] uppercase text-[#201e1d]/70 mb-4">Services</h4>
+            <ul className="ft-list space-y-2.5">
               {FOOTER_SERVICES.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="hover-underline text-xs text-[#201e1d]/55 hover:text-[#c67139] transition-colors">{link.label}</a>
+                  <a href={link.href} className="hover-underline ft-link text-xs text-[#201e1d]/70 hover:text-[#9e5424] transition-colors">{link.label}</a>
                 </li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="text-[10px] font-semibold tracking-[0.28em] uppercase text-[#201e1d]/40 mb-4">Company</h4>
-            <ul className="space-y-2.5">
+            <h4 className="text-[11px] font-semibold tracking-[0.28em] uppercase text-[#201e1d]/70 mb-4">Company</h4>
+            <ul className="ft-list space-y-2.5">
               {FOOTER_NAV.map((link) => (
                 <li key={link.label}>
-                  <button onClick={() => scrollToSection(link.sectionId)} className="hover-underline text-xs text-[#201e1d]/55 hover:text-[#c67139] transition-colors">
+                  <button onClick={() => scrollToSection(link.sectionId)} className="hover-underline ft-link text-xs text-[#201e1d]/70 hover:text-[#9e5424] transition-colors">
                     {link.label}
                   </button>
                 </li>
               ))}
-              <li><a href="/portal" className="hover-underline text-xs text-[#201e1d]/55 hover:text-[#c67139] transition-colors">Student Portal</a></li>
+              <li><a href="/portal" className="hover-underline ft-link text-xs text-[#201e1d]/70 hover:text-[#9e5424] transition-colors">Student Portal</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-[10px] font-semibold tracking-[0.28em] uppercase text-[#201e1d]/40 mb-4">Connect</h4>
-            <ul className="space-y-2.5">
+            <h4 className="text-[11px] font-semibold tracking-[0.28em] uppercase text-[#201e1d]/70 mb-4">Connect</h4>
+            <ul className="ft-list space-y-2.5">
               {FOOTER_SOCIALS.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined} className="hover-underline text-xs text-[#201e1d]/55 hover:text-[#c67139] transition-colors">
+                  <a href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined} className="hover-underline ft-link text-xs text-[#201e1d]/70 hover:text-[#9e5424] transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -174,12 +174,12 @@ const Footer: React.FC = () => {
             </ul>
             <div className="mt-6 pt-5 border-t border-[#201e1d]/10 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#7a8a5e] animate-pulse" />
-              <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/40">Available</span>
+              <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/70">Available</span>
             </div>
 
             {/* Newsletter */}
             <form onSubmit={subscribe} noValidate className="mt-6">
-              <label htmlFor="nl-email" className="block text-[10px] font-semibold tracking-[0.28em] uppercase text-[#201e1d]/40 mb-3">
+              <label htmlFor="nl-email" className="block text-[11px] font-semibold tracking-[0.28em] uppercase text-[#201e1d]/70 mb-3">
                 Newsletter
               </label>
               {nlStatus === 'done' ? (
@@ -194,9 +194,9 @@ const Footer: React.FC = () => {
                       onChange={(e) => setNlEmail(e.currentTarget.value)}
                       placeholder="you@company.com"
                       autoComplete="email"
-                      className="w-full bg-transparent text-xs text-[#201e1d] placeholder:text-[#201e1d]/35 focus:outline-none"
+                      className="ft-input w-full bg-transparent text-xs text-[#201e1d] placeholder:text-[#201e1d]/35 focus:outline-none"
                     />
-                    <button type="submit" disabled={nlStatus === 'sending'} aria-label="Subscribe" className="shrink-0 text-[#201e1d]/40 hover:text-[#c67139] transition-colors duration-300 disabled:opacity-40">
+                    <button type="submit" disabled={nlStatus === 'sending'} aria-label="Subscribe" className="shrink-0 p-[15px] -my-[15px] -mr-[15px] text-[#201e1d]/70 hover:text-[#c67139] transition-colors duration-300 disabled:opacity-40">
                       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                         <path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -214,13 +214,13 @@ const Footer: React.FC = () => {
 
       {/* ── Bottom bar ── */}
       <div className="w-full max-w-[1600px] mx-auto px-6 md:px-10 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
-        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/35">
+        <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/70">
           &copy; {new Date().getFullYear()} 4AM Global Media. All rights reserved.
         </p>
-        <div className="flex items-center gap-5 text-[10px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/35">
-          <button className="hover:text-[#c67139] transition-colors duration-200">Privacy</button>
-          <button className="hover:text-[#c67139] transition-colors duration-200">Terms</button>
-          <button className="hover:text-[#c67139] transition-colors duration-200">Cookies</button>
+        <div className="flex items-center gap-5 text-[11px] font-semibold tracking-[0.2em] uppercase text-[#201e1d]/70">
+          <button className="ft-legal hover:text-[#9e5424] transition-colors duration-200">Privacy</button>
+          <button className="ft-legal hover:text-[#9e5424] transition-colors duration-200">Terms</button>
+          <button className="ft-legal hover:text-[#9e5424] transition-colors duration-200">Cookies</button>
         </div>
       </div>
     </footer>
