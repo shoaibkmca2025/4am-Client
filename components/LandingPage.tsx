@@ -388,11 +388,25 @@ const LandingPage: React.FC = () => {
       requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
       cancelIdleCallback?: (id: number) => void;
     };
+    // Building the calibre is one ~720ms synchronous block of three.js work —
+    // by far the largest task on the page. The old `{ timeout: 1200 }` FORCED
+    // that block to run at 1.2s whether or not the browser was still busy, so
+    // it landed mid-boot and was the whole Total Blocking Time score.
+    //
+    // A decorative background must never preempt the main thread, so: wait for
+    // `load` (all critical work done), then for a genuine idle period. The
+    // 4s backstop only exists so it still appears on a permanently busy page —
+    // it is a fallback, not the normal path.
     let idleId: number | undefined; let timeoutId: number | undefined;
     const enable = () => setShow3D(true);
-    if (w.requestIdleCallback) idleId = w.requestIdleCallback(enable, { timeout: 1200 });
-    else timeoutId = window.setTimeout(enable, 800);
+    const schedule = () => {
+      if (w.requestIdleCallback) idleId = w.requestIdleCallback(enable, { timeout: 4000 });
+      else timeoutId = window.setTimeout(enable, 2500);
+    };
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule, { once: true });
     return () => {
+      window.removeEventListener('load', schedule);
       if (idleId !== undefined && w.cancelIdleCallback) w.cancelIdleCallback(idleId);
       if (timeoutId !== undefined) clearTimeout(timeoutId);
     };

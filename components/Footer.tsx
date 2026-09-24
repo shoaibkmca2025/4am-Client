@@ -127,8 +127,12 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-14">
           <div className="col-span-2 md:col-span-1">
             <img
-              src="/logo-mark.png"
+              src="/logo-mark.webp"
               alt="4AM Global Media"
+              width={256}
+              height={145}
+              loading="lazy"
+              decoding="async"
               className="h-11 w-auto rounded-lg bg-[#1d1d1d] px-2.5 py-1.5 mb-4"
             />
             <p className="text-[#201e1d]/70 text-xs leading-relaxed max-w-xs">

@@ -166,7 +166,12 @@ function App() {
           <LayoutWrapper>
             <Suspense
               fallback={
-                <div className="min-h-[60vh] flex items-center justify-center text-sm text-[#201e1d]/40 bg-[#f5ead8]">
+                // Full viewport height, not 60vh: the Footer renders directly
+                // under this fallback, so a short one leaves the footer visible
+                // on first paint and then throws it several screens down when
+                // the real page arrives — measured as a 0.40 layout shift, the
+                // entire CLS score. A 100vh placeholder keeps it below the fold.
+                <div className="min-h-screen flex items-center justify-center text-sm text-[#201e1d]/40 bg-[#f5ead8]">
                   Loading…
                 </div>
               }
