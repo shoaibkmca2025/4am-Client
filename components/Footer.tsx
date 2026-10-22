@@ -129,8 +129,8 @@ const Footer: React.FC = () => {
             <img
               src="/logo-mark.webp"
               alt="4AM Global Media"
-              width={256}
-              height={145}
+              width={298}
+              height={140}
               loading="lazy"
               decoding="async"
               className="h-11 w-auto rounded-lg bg-[#1d1d1d] px-2.5 py-1.5 mb-4"

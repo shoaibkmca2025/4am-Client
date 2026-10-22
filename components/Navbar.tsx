@@ -135,8 +135,8 @@ const Navbar: React.FC = () => {
               <img
                 src="/logo-mark.webp"
                 alt="4AM Global Media"
-                width={256}
-                height={145}
+                width={298}
+                height={140}
                 className="h-9 md:h-11 w-auto rounded-lg bg-[#1d1d1d] px-2.5 py-1.5 shadow-[0_2px_12px_rgba(32,30,29,0.18)] group-hover:opacity-90 transition-opacity duration-300"
               />
             </Link>
