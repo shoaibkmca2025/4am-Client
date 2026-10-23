@@ -1,14 +1,17 @@
 {
-  "rewrites": [
-    { "source": "/verify/:serial", "destination": "/api/router?__path=verify-page&serial=:serial" },
-    { "source": "/blog", "destination": "/api/router?__path=blog-page" },
-    { "source": "/blog/:slug", "destination": "/api/router?__path=blog-page&slug=:slug" },
-    { "source": "/careers", "destination": "/api/router?__path=careers-page" },
-    { "source": "/careers/:slug", "destination": "/api/router?__path=careers-page&slug=:slug" },
-    { "source": "/api/router", "destination": "/api/router" },
-    { "source": "/api/ping", "destination": "/api/ping" },
-    { "source": "/api/:path*", "destination": "/api/router?__path=:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/portal", "destination": "/", "permanent": false },
+    { "source": "/admin", "destination": "/", "permanent": false },
+    { "source": "/blog/:path*", "destination": "/", "permanent": false },
+    { "source": "/careers/:path*", "destination": "/", "permanent": false },
+    { "source": "/verify/:path*", "destination": "/", "permanent": false }
   ],
   "headers": [
     {
@@ -19,22 +22,16 @@
         { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
-        { "key": "X-DNS-Prefetch-Control", "value": "on" }
-      ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" },
-        { "key": "X-Robots-Tag", "value": "noindex" }
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
       ]
     },
     {
       "source": "/assets/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }]
+    },
+    {
+      "source": "/(css|js)/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }]
     }
   ]
 }

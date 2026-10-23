@@ -1,58 +1,28 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for AI coding agents working in this repository.
 
-## Commands
+## What this is
 
-- `npm run dev` — Vite dev server on **port 3000** (configured in `vite.config.ts`, not the Vite default 5173).
-- `npm run build` — runs `tsc` (type-check, no emit) then `vite build`. TS errors will fail the build.
-- `npm run lint` — ESLint with `--max-warnings 0`. Note: `.eslintrc.cjs` disables `@typescript-eslint/no-unused-vars`, `react-hooks/exhaustive-deps`, `@typescript-eslint/no-explicit-any`, and a few other rules — lint is intentionally permissive.
-- `npm run preview` — serve the built `dist/`.
-- **Required env**: `VITE_GEMINI_API_KEY` in `.env.local` (consumed by `components/AIChatbot.tsx` via `@google/genai`). Without it the chatbot fails silently when opened.
+A static website: hand-written HTML, CSS and plain JavaScript in `public/`. No framework, no npm, no build step, no backend. The owner explicitly wants it kept that way (fast load, no backend or admin panel). The previous React/Vite app and its API (portal, admin, blog, careers, certificates) were removed in October 2026; they are recoverable from git history before that change.
 
-There is no test runner configured.
+## Run and deploy
 
-## Architecture
+- Preview: `npx serve public` (clean URLs: `/services/seo` → `services/seo.html`).
+- Deploy: Vercel serves `public/` directly. `vercel.json` sets `framework: null`, empty install and build commands, `outputDirectory: "public"`, `cleanUrls`, and redirects the removed backend routes (`/portal`, `/admin`, `/blog`, `/careers`, `/verify`) to `/`.
 
-### Entry chain
-`index.tsx` → `<ErrorBoundary>` → `App.tsx` → `<Router>` → `<ScrollToTop>` → `<SmoothScroll>` (Lenis + GSAP provider) → `<Navbar>` + `<LayoutWrapper>{<Suspense><Routes/></Suspense>}</LayoutWrapper>` → optional `<AIChatbot>`.
+## Structure
 
-Routes are just two: `/` renders `LandingPage`, `/services/:slug` renders `ServicePage`, anything else redirects to `/`. Both route components are `lazy()` — the `Suspense` fallback is the "Loading…" screen in `App.tsx`.
+- `public/index.html` — home page. Ten `<section class="scene" data-scene="…">` blocks drive the scroll engine.
+- `public/services/<slug>.html` — seven service pages, each with its own `<title>`, meta description, canonical, Open Graph tags and JSON-LD (`Service`, `BreadcrumbList`, `FAQPage`). Keep these in sync with the home page service list, the footer on every page, and `sitemap.xml`.
+- `public/css/site.css` — every style. Palette tokens on `:root`: `--bg` platinum `#E5E4E2`, `--surface` lavender `#E6E0F0`, `--ink` coffee `#6F4E37`. Coffee is the only text colour (5.8:1 on both backgrounds); don't use lavender for text.
+- `public/js/main.js` — ES module. Every page: menu, reveal-on-scroll, copy buttons, contact form. Home page only (`body.home`): the scene engine (one rAF loop reading `scrollY`) — header clock 04:00 → 06:12, keyframes `K` (landscape) and `P` (portrait) for the globe, pinned Services/Method/Work scenes (`html.pin`, desktop ≥ 900×560 and no reduced motion), project coverflow.
+- `public/js/globe.js` — WebGL Earth, dynamically imported after `requestIdleCallback`. A full-screen ray-traced sphere shaded from NASA textures in `public/assets/earth/` (1k set on phones and weak devices, 4k day map on desktop) plus a point pass for arcs, satellites and city markers.
 
-### The scroll stack (important — don't fight it)
-Scrolling is owned by **Lenis** inside `components/SmoothScroll.tsx`, driven by `gsap.ticker`, and bridged to `ScrollTrigger` via `lenis.on('scroll', ScrollTrigger.update)`. Two consequences:
+## Rules that matter
 
-1. `index.css` intentionally does **not** set `scroll-behavior: smooth` on `html`. Re-adding it will desync Lenis. Native anchor jumps are intercepted by a click handler in `SmoothScroll` that calls `lenis.scrollTo`.
-2. There is also a legacy `utils/scroll.ts` (`scrollToSection`, `smoothScrollTo`) with its own `requestAnimationFrame` loop and retry-until-element-mounts logic. It's used by `Navbar`, `Hero` CTAs, and `LandingPage` route-state-driven scroll. This runs independently of Lenis — both work, but pick one per call site and stay consistent.
-
-### Entrance animations
-GSAP animations live inside components and follow this pattern: `useLayoutEffect` → `gsap.context(() => { ... }, rootRef)` → `return () => ctx.revert()`. Always scope selectors to the component root (pass the element as the second `gsap.context` arg). Always branch on `window.matchMedia('(prefers-reduced-motion: reduce)').matches` and render the final state immediately when true.
-
-### Performance gating
-Non-critical features defer themselves until the browser is idle, and opt out entirely on low-capability devices. The pattern recurs in `App.tsx` (chatbot) and `LandingPage.tsx` (3D background):
-
-- `requestIdleCallback` with a timeout, falling back to `setTimeout`
-- Skip entirely if `navigator.connection.saveData`, `prefers-reduced-motion`, `hardwareConcurrency < 4`, or `matchMedia('(max-width: 1024px)')`
-- `LandingPage` also pauses `GlobalNetworkBackground` during active scroll via a 140ms debounce
-
-Respect these gates when adding new heavy effects. `vite.config.ts` manual-chunks `three` + `@react-three/fiber` into `three-vendor` so the 3D bundle is split out.
-
-### Data & types
-`constants.ts` (~33KB) is the single source of truth for `NAV_ITEMS`, `SERVICES` (drives `/services/:slug`), `PROJECTS` (client case studies, ~97 entries), and `CLIENTS`. `types.ts` defines the shapes. `data/` and `components/dashboard/` exist but are currently empty. Adding a new service means: add entry to `SERVICES` in `constants.ts` — `ServicePage` picks it up by `slug` from the route param. Adding a nav link means editing `NAV_ITEMS`.
-
-### Auth
-`components/AuthContext.tsx` wraps the app (inside `AuthProvider`). `types.ts` has `User` and `Opportunity` shapes that look like placeholders for a dashboard/careers feature that isn't wired up yet — treat as aspirational unless asked to build it.
-
-### Styling
-Tailwind with a custom `brand` palette in `tailwind.config.js` (`brand.primary` electric orange `#FF6A3D`, `brand.secondary` gold `#FFC56A`, `brand.accent` violet `#8B5CF6`, `brand.cyan` `#22D3EE`, `brand.lime` `#A3E635`, plus `dark`, `gray`, `bg`, `surface`).
-
-**Scroll color grading**: `LandingPage.tsx` wraps each section in a `[data-grade]`/`[data-orbs]`/`[data-accent]` div; a ScrollTrigger per zone tweens the page background tint, cross-fades three fixed radial-gradient "glow orbs" (orange/violet/cyan), and dispatches the zone's accent via the `4am:accent` CustomEvent. Sections therefore use `bg-transparent`, NOT `bg-black` — re-adding an opaque background on a section breaks the grading.
-
-**Canvas background**: `ScrollCanvasBackground.tsx` is a fixed Canvas 2D layer behind the landing sections — particle constellation with proximity lines, drifting dot-grid parallaxed by scroll, data pulses, and scroll-velocity streaking. It re-tints itself by listening for `4am:accent`. It idle-defers startup and opts out on mobile/reduced-motion/save-data/weak CPUs, so never assume it exists.
-
-**Gradient text gotcha**: `background-clip: text` does not paint through child spans that carry transforms (GSAP-animated words/chars). Gradient headlines must put the gradient class on the animated span itself — `wordClassName="text-gradient-brand"` on `RevealText`, or the `.hero-grad .hero-char` per-character rule in `index.css`. Putting `text-gradient-*` on the parent of animated spans renders invisible text.
-
-**Signature scroll sections**: `CodeShowcase.tsx` (self-typing code editor — software dev story) and `GrowthChart.tsx` (self-drawing SVG growth curve + KPI counters — marketing story). Both play a `once: true` GSAP timeline when scrolled into view — there are NO pinned/scroll-jacked sections on the page (deliberate UX decision; don't reintroduce pins). `ProcessSection.tsx` is a vertical timeline whose rail fill is the only scrubbed animation. `ScrollFillSection.tsx` and `NetworkAndTrends.tsx` exist but are unused. Custom fonts registered as `font-sans` (Inter), `font-display` (DM Sans), `font-mono` (JetBrains Mono). `index.css` also defines hand-rolled utilities for the Dentsu-inspired redesign: `text-massive`, `text-display`, `text-section-title`, `btn-line`, `btn-pill`, `ring-3d`, `horizontal-scroll`, `animate-reveal-up`. Use these before reaching for ad-hoc CSS.
-
-### Deployment
-`vercel.json` is a pure SPA rewrite — every path falls through to `/index.html`. Build output is `dist/`, which is git-ignored (zero tracked files) — Vercel builds from source on push, so deploying = commit + push the source only.
+- Off-screen home scenes use `content-visibility: auto`. In the engine, check a section's own box (`near()`) before reading geometry inside it, or the browser is forced to lay it out.
+- The hero `<h1>` has fixed `<br>` line breaks so the web-font swap cannot change its line count (no layout shift). Keep them.
+- Respect `prefers-reduced-motion` (engine and CSS already branch on it) and gate hover effects behind `@media (hover: hover) and (pointer: fine)`.
+- The contact form has no server: it validates, then opens `mailto:` or `wa.me` with the brief. Don't add a backend unless asked.
+- Images are WebP with explicit `width`/`height`; below-the-fold images use `loading="lazy"`.
