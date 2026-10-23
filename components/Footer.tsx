@@ -133,7 +133,7 @@ const Footer: React.FC = () => {
               height={140}
               loading="lazy"
               decoding="async"
-              className="h-11 w-auto rounded-lg bg-[#1d1d1d] px-2.5 py-1.5 mb-4"
+              className="h-11 w-auto rounded-lg bg-white px-2.5 py-1.5 mb-4"
             />
             <p className="text-[#201e1d]/70 text-xs leading-relaxed max-w-xs">
               The growth engine that never sleeps. A creative network made for today and tomorrow.
