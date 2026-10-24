@@ -1,20 +1,22 @@
 /* 4AM Global Media — site script (plain JavaScript, no libraries).
 
-   Every page: mobile menu, reveal-on-scroll, current year.
-   Landing (body.home): the scene engine — one rAF loop that reads scrollY
-   and drives the header clock (04:00 → 06:12), the WebGL Earth, the pinned
-   Services / Method / Work scenes and the 3D project coverflow — plus the
-   contact form, which hands the brief to the visitor's email app or
-   WhatsApp (there is no server).
-   Service pages (body.sp): a gentle 3D tilt on the hero photo. */
+   Every page: menu, reveal-on-scroll (sketches draw themselves), counters,
+   3D tilt on cards, copy buttons, and the contact form, which hands the
+   brief to the visitor's email app or WhatsApp (there is no server).
+
+   Home (body.home): the film engine. A fixed canvas scrubs a pre-rendered
+   3D film of an interface plant growing, from the top of the page to the
+   first solid section. Frames stream in coarse-to-fine; only the few
+   frames around the playhead are kept decoded, so memory stays small. */
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const smooth = (t) => t * t * (3 - 2 * t);
-const RMQ = matchMedia('(prefers-reduced-motion: reduce)');
-let rm = RMQ.matches;
+const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+const root = document.documentElement;
+if (!rm && 'IntersectionObserver' in window) root.classList.add('anim');
 
 const EMAIL = 'Info@4amglobalmedia.com';
 const WHATSAPP = '918826406545';
@@ -29,33 +31,51 @@ if (menuBtn && nav) {
   nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('open')) { setMenu(false); menuBtn.focus(); } });
 }
-
 const skip = $('.skip');
 if (skip) skip.addEventListener('click', () => setTimeout(() => { const m = $('#main'); if (m) m.focus({ preventScroll: true }); }, 0));
 
-/* reveal on first sight (only what starts below the fold) */
-if (!rm && 'IntersectionObserver' in window) {
-  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.remove('pre'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px' });
-  // After the first frame, so this read never forces a layout of its own.
-  requestAnimationFrame(() => $$('.rv').forEach((el) => {
-    // Read the section's box, not the element's: off-screen sections skip
-    // layout (content-visibility), and measuring inside one forces it.
-    const sec = el.closest('.scene, .sp-sec') || el;
-    if (sec.getBoundingClientRect().top > innerHeight) { el.classList.add('pre'); io.observe(el); }
+/* counters: count up once when they come into view */
+const count = (el) => {
+  const to = +el.dataset.count, t0 = performance.now();
+  const step = (now) => { const p = clamp((now - t0) / 1600, 0, 1); el.textContent = String(Math.round(to * (1 - Math.pow(1 - p, 3)))); if (p < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+};
+
+/* reveal on first sight: .rv fades up; sketches inside draw themselves */
+if (root.classList.contains('anim')) {
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('on');
+    $$('[data-count]', e.target).forEach(count);
+    io.unobserve(e.target);
+  }), { rootMargin: '0px 0px -12% 0px' });
+  // after the first frame, so this never forces a layout of its own
+  requestAnimationFrame(() => $$('.rv, .sk.draw:not(.rv .sk)').forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) { el.classList.add('on'); return; }  // already in view
+    $$('[data-count]', el).forEach((c) => { c.textContent = '0'; });
+    io.observe(el);
   }));
 }
 
-/* gentle 3D tilt toward the pointer */
-const tilt = (card, kx, ky) => {
-  card.addEventListener('pointermove', (e) => {
-    const r = card.getBoundingClientRect();
-    card.style.setProperty('--ty', (((e.clientX - r.left) / r.width - .5) * ky).toFixed(2) + 'deg');
-    card.style.setProperty('--tx', (-((e.clientY - r.top) / r.height - .5) * kx).toFixed(2) + 'deg');
-  });
-  card.addEventListener('pointerleave', () => { card.style.removeProperty('--tx'); card.style.removeProperty('--ty'); });
-};
-if (fine && !rm) $$('.person').forEach((c) => tilt(c, 6, 8));
-if (fine && !rm) $$('.sp-photo .frame').forEach((c) => tilt(c, 8, 12));
+/* gentle 3D tilt toward the pointer (+ a spotlight on service cards) */
+if (fine && !rm) {
+  const tilt = (card, k) => {
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      card.style.setProperty('--ry', ((x - .5) * k).toFixed(2) + 'deg');
+      card.style.setProperty('--rx', ((.5 - y) * k).toFixed(2) + 'deg');
+      card.style.setProperty('--ty', ((x - .5) * k).toFixed(2) + 'deg');
+      card.style.setProperty('--tx', ((.5 - y) * k * .7).toFixed(2) + 'deg');
+      card.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+      card.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+    });
+    card.addEventListener('pointerleave', () => ['--ry', '--rx', '--ty', '--tx'].forEach((p) => card.style.removeProperty(p)));
+  };
+  $$('.scard').forEach((c) => tilt(c, 10));
+  $$('.card, .person').forEach((c) => tilt(c, 6));
+  $$('.sp-photo .frame').forEach((c) => tilt(c, 12));
+}
 
 /* copy buttons */
 $$('[data-copy]').forEach((btn) => {
@@ -69,7 +89,14 @@ $$('[data-copy]').forEach((btn) => {
   });
 });
 
-/* ---------- contact form ---------- */
+/* "Browse all" opens the full project index */
+const allWork = $('#all-work details');
+if (allWork) {
+  $$('a[href="#all-work"]').forEach((a) => a.addEventListener('click', () => { allWork.open = true; }));
+  if (location.hash === '#all-work') allWork.open = true;
+}
+
+/* ---------- contact form (no server: hands off to email or WhatsApp) ---------- */
 const form = $('form.brief');
 if (form) {
   const indian = (() => {
@@ -97,16 +124,13 @@ if (form) {
     return e;
   };
   let tried = false;
-  const show = (errs) => {
-    ORDER.forEach((k) => {
-      const input = $('#f-' + k, form), msg = $('#e-' + k, form);
-      input.closest('.field').classList.toggle('bad', !!errs[k]);
-      msg.textContent = errs[k] || '';
-      if (errs[k]) { input.setAttribute('aria-invalid', 'true'); input.setAttribute('aria-describedby', 'e-' + k); }
-      else { input.removeAttribute('aria-invalid'); input.removeAttribute('aria-describedby'); }
-    });
-  };
-  // after a failed attempt, clear each error as soon as it is fixed
+  const show = (errs) => ORDER.forEach((k) => {
+    const input = $('#f-' + k, form), msg = $('#e-' + k, form);
+    input.closest('.field').classList.toggle('bad', !!errs[k]);
+    msg.textContent = errs[k] || '';
+    if (errs[k]) { input.setAttribute('aria-invalid', 'true'); input.setAttribute('aria-describedby', 'e-' + k); }
+    else { input.removeAttribute('aria-invalid'); input.removeAttribute('aria-describedby'); }
+  });
   form.addEventListener('input', () => { if (tried) show(validate()); });
   form.addEventListener('change', () => { if (tried) show(validate()); });
   const status = $('.status', form);
@@ -126,11 +150,10 @@ if (form) {
     const viaWhatsApp = e.submitter && e.submitter.value === 'whatsapp';
     const wa = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(subject + '\n\n' + body)}`;
     const mail = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    if (viaWhatsApp) window.open(wa, '_blank', 'noopener');
-    else location.href = mail;
-    const first2 = val('name').split(/\s+/)[0];
+    if (viaWhatsApp) window.open(wa, '_blank', 'noopener'); else location.href = mail;
     status.innerHTML = '';
     const b = document.createElement('b');
+    const first2 = val('name').split(/\s+/)[0];
     b.textContent = viaWhatsApp ? `Thanks, ${first2}. WhatsApp opened with your brief.` : `Thanks, ${first2}. Your email app opened with the brief ready to send.`;
     const rest = document.createElement('span');
     rest.append(' Press send there and we reply within 24 hours. Nothing opened? ');
@@ -144,238 +167,136 @@ if (form) {
   });
 }
 
-/* ══════════ landing: the scene engine ══════════ */
-if (document.body.classList.contains('home')) {
-  /* lon/lat: point of the Earth facing the camera (deg) · x,y: globe centre in screen units (-1..1)
-     s: globe radius as a share of half the screen height · dawn: longitude of the sunrise line
-     arcs/sats/india/mk: layer visibility · dim: globe strength · rise: sunrise glow · m: minutes after 04:00 */
-  const K = {
-    hero:     { m: 0,   lon: 100, lat: 14, x: .42,  y: 0,     s: .80, dawn: 145, arcs: 0, sats: 0, india: 0,  mk: 0, dim: 1,   rise: 0 },
-    why:      { m: 10,  lon: 120, lat: 20, x: -.44, y: 0,     s: .72, dawn: 132, arcs: 0, sats: 0, india: 0,  mk: 0, dim: .95, rise: 0 },
-    services: { m: 20,  lon: 138, lat: 8,  x: -.46, y: -.02,  s: .52, dawn: 122, arcs: 0, sats: 1, india: 0,  mk: 0, dim: .95, rise: 0 },
-    software: { m: 35,  lon: 150, lat: 12, x: .62,  y: -.62,  s: .34, dawn: 110, arcs: 0, sats: 0, india: 0,  mk: 0, dim: .8,  rise: 0 },
-    reach:    { m: 50,  lon: 10,  lat: 40, x: .34,  y: -.08,  s: .78, dawn: 98,  arcs: 1, sats: 0, india: 0,  mk: 0, dim: 1,   rise: 0 },
-    market:   { m: 65,  lon: 80,  lat: 21, x: .56,  y: 0,     s: .98, dawn: 83,  arcs: 0, sats: 0, india: 1,  mk: 1, dim: 1,   rise: .1 },
-    method:   { m: 80,  lon: 72,  lat: 20, x: .84,  y: .70,   s: .15, dawn: 70,  arcs: 0, sats: 0, india: .4, mk: 0, dim: .9,  rise: .2 },
-    work:     { m: 100, lon: 78,  lat: 55, x: 0,    y: -1.5,  s: 1.22, dawn: 50, arcs: 0, sats: 0, india: 0,  mk: 0, dim: 1,   rise: 1 },
-    team:     { m: 115, lon: 78,  lat: 52, x: 0,    y: -1.58, s: 1.22, dawn: 40, arcs: 0, sats: 0, india: 0,  mk: 0, dim: .9,  rise: 1 },
-    contact:  { m: 132, lon: 78,  lat: 50, x: 0,    y: -1.62, s: 1.22, dawn: 22, arcs: 0, sats: 0, india: 0,  mk: 0, dim: .95, rise: .7 },
-  };
-  /* portrait screens: copy fills the screen, so the planet stays clear of it —
-     large above the hero copy, then a small planet in the top corner, then
-     the sunrise horizon under the cards at the end */
-  const P = {
-    hero: { x: .28, y: .64, s: .44, dim: 1 }, why: { x: .62, y: .72, s: .2, dim: 1 }, services: { x: .62, y: .72, s: .2, dim: 1 },
-    software: { x: .62, y: .72, s: .18, dim: 1 }, reach: { x: .56, y: .7, s: .24, dim: 1 }, market: { x: .56, y: .7, s: .26, dim: 1 },
-    method: { x: .6, y: .74, s: .15, dim: 1 }, work: { x: 0, y: -1.25, s: .95, dim: .6 }, team: { x: 0, y: -1.2, s: .95, dim: .6 },
-    contact: { x: 0, y: -1.32, s: .95, dim: .6 },
-  };
-  const KEYS = ['lon', 'lat', 'x', 'y', 's', 'dawn', 'arcs', 'sats', 'india', 'mk', 'dim', 'rise'];
-  const root = document.documentElement;
-  const scrollToY = (top, instant) => window.scrollTo({ top, behavior: instant ? 'auto' : 'smooth' });
+/* ══════════ home: the film ══════════ */
+const stage = $('.stage');
+if (stage) {
+  const canvas = $('#film'), solid = $('.solid'), rail = $('.progress'), bars = rail ? $$('i', rail) : [];
+  const beats = $$('.beat');
+  const LAST = 286;  // frames 0…286 of the original film
 
-  const scenes = $$('[data-scene]');
-  let marks = [], vh = innerHeight, vw = innerWidth, portrait = false, pinOn = false;
-  function layout() {
-    vh = innerHeight; vw = innerWidth;
-    portrait = vw / vh < .85;
-    pinOn = !rm && vw >= 900 && vh >= 560;
-    root.classList.toggle('pin', pinOn);
-    marks = scenes.map((el) => {
-      const r = el.getBoundingClientRect(), top = r.top + scrollY, h = el.offsetHeight;
-      const a = top - .18 * vh, b = Math.max(a, top + h - .82 * vh);
-      const name = el.dataset.scene;
-      return { el, top, h, a, b, k: Object.assign({}, K[name], portrait ? P[name] : null), label: el.dataset.label || '' };
-    });
-  }
-  const mark = (id) => marks.find((x) => x.el.id === id);
+  /* story beats: words rise when a beat is a third on screen */
+  if (root.classList.contains('anim')) {
+    const bio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); bio.unobserve(e.target); } }), { threshold: .3 });
+    beats.forEach((b) => bio.observe(b));
+  } else beats.forEach((b) => b.classList.add('in'));
 
-  function sceneState(y) {
-    if (y <= marks[0].b) return { k: marks[0].k, i: 0 };
-    for (let i = 0; i < marks.length - 1; i++) {
-      const A = marks[i], B = marks[i + 1];
-      if (y <= A.b) return { k: A.k, i };
-      if (y < B.a) {
-        const t = smooth(clamp((y - A.b) / (B.a - A.b), 0, 1)), k = { m: 0 };
-        for (const n of KEYS) k[n] = A.k[n] + (B.k[n] - A.k[n]) * t;
-        return { k, i: t < .5 ? i : i + 1 };
+  /* nav: highlight the section in view */
+  const links = $$('.nav a');
+  const navIO = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    links.forEach((a) => a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id ? 'true' : 'false'));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  ['services', 'work', 'process', 'team', 'contact'].forEach((id) => { const s = document.getElementById(id); if (s) navIO.observe(s); });
+
+  const conn = navigator.connection;
+  const still = rm || (conn && conn.saveData) || !canvas.getContext;
+  if (!still) {
+    const mobile = matchMedia('(max-width: 860px)').matches || Math.min(innerWidth, innerHeight) < 600;
+    const set = mobile ? { dir: 'm', step: 3 } : { dir: 'd', step: 2 };
+    const frames = []; for (let f = 1; f <= 287; f += set.step) frames.push(f);
+    const N = frames.length;
+    const url = (i) => `/assets/film/${set.dir}/${String(frames[i]).padStart(3, '0')}.webp`;
+    const ctx = canvas.getContext('2d', { alpha: false });
+
+    /* loading: coarse to fine (every 16th frame first, then 8th …), 6 at a time */
+    const blobs = new Array(N), order = [], seen = new Set();
+    for (const stride of [16, 8, 4, 2, 1]) for (let i = 0; i < N; i += stride) if (!seen.has(i)) { seen.add(i); order.push(i); }
+    if (!seen.has(N - 1)) order.push(N - 1);
+    let next = 0, alive = true, started = false;
+    const pump = () => {
+      if (!alive || next >= order.length) return;
+      const i = order[next++];
+      fetch(url(i)).then((r) => (r.ok ? r.blob() : null)).then((b) => { if (b) { blobs[i] = b; if (Math.abs(i - playhead) < 4) dirty = true; } }).catch(() => {}).finally(pump);
+    };
+    // The poster covers the first screen, so the film can wait: start streaming
+    // once the page has loaded and gone idle, or as soon as the visitor scrolls.
+    const start = () => { if (started) return; started = true; for (let k = 0; k < 6; k++) pump(); };
+    addEventListener('scroll', start, { once: true, passive: true });
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1200));
+    if (document.readyState === 'complete') idle(start, { timeout: 2500 });
+    else addEventListener('load', () => idle(start, { timeout: 2500 }), { once: true });
+
+    /* decoding: keep only the frames around the playhead as bitmaps */
+    const KEEP = mobile ? 8 : 14;
+    const bitmaps = new Map(), decoding = new Set();
+    const canBitmap = typeof createImageBitmap === 'function';
+    const want = (i) => {
+      if (i < 0 || i >= N || !blobs[i] || bitmaps.has(i) || decoding.has(i)) return;
+      decoding.add(i);
+      const done = (bm) => { decoding.delete(i); if (!bm) return; bitmaps.set(i, bm); dirty = true; evict(); };
+      if (canBitmap) createImageBitmap(blobs[i]).then(done, () => decoding.delete(i));
+      else { const img = new Image(); img.src = URL.createObjectURL(blobs[i]); img.decode().then(() => done(img), () => decoding.delete(i)); }
+    };
+    let playhead = 0;
+    const evict = () => {
+      if (bitmaps.size <= KEEP) return;
+      const far = [...bitmaps.keys()].sort((a, b) => Math.abs(b - playhead) - Math.abs(a - playhead));
+      for (const i of far.slice(0, bitmaps.size - KEEP)) { const bm = bitmaps.get(i); if (bm.close) bm.close(); bitmaps.delete(i); }
+    };
+    const nearest = (i) => { for (let d = 0; d < N; d++) { if (bitmaps.has(i - d)) return i - d; if (bitmaps.has(i + d)) return i + d; } return -1; };
+
+    /* camera: [frame, zoom, focusX, focusY] — tight on the plant, pull out, push back in */
+    const CAM = [[0, 1.62, .66, .42], [100, 1.7, .67, .4], [124, 1.6, .64, .45], [168, 1.04, .52, .5], [230, 1.1, .55, .48], [286, 1.32, .6, .42]];
+    const camera = (p) => {
+      for (let k = 0; k < CAM.length - 1; k++) {
+        const A = CAM[k], B = CAM[k + 1];
+        if (p <= B[0]) { const t = smooth(clamp((p - A[0]) / (B[0] - A[0]), 0, 1)); return [1, 2, 3].map((j) => A[j] + (B[j] - A[j]) * t); }
       }
-    }
-    return { k: marks[marks.length - 1].k, i: marks.length - 1 };
-  }
-  function clockMinutes(y) {
-    const c = y + vh * .5;
-    if (c <= marks[0].top + vh * .5) return 0;
-    for (let i = 0; i < marks.length - 1; i++) {
-      const A = marks[i], B = marks[i + 1];
-      if (c < B.top) return A.k.m + (B.k.m - A.k.m) * clamp((c - A.top) / (B.top - A.top), 0, 1);
-    }
-    return K.contact.m;
-  }
-  /* Off-screen scenes skip layout (content-visibility: auto). Reading the
-     geometry of anything INSIDE a skipped scene forces the browser to lay it
-     out after all, so every per-frame read first checks the scene's own box. */
-  const near = (sec, margin = .25) => { const r = sec.getBoundingClientRect(); return r.bottom > -vh * margin && r.top < vh * (1 + margin); };
+      return CAM[CAM.length - 1].slice(1);
+    };
 
-  /* header: clock, nav highlight, dawn progress */
-  const topEl = $('.top'), clockT = $('.clock .t'), clockL = $('.clock .lbl'), sunDot = $('.clock .sun');
-  const navLinks = $$('.nav a');
-  let lastClock = '', lastScene = -1, lastP = -1;
-  function updateHeader(y) {
-    const docH = root.scrollHeight;
-    const end = y + vh >= docH - 4;
-    const m = end ? K.contact.m : Math.round(clockMinutes(y));
-    const txt = String(4 + Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
-    if (txt !== lastClock) { clockT.textContent = txt; lastClock = txt; sunDot.classList.toggle('up', m >= 95); }
-    const p = Math.round(clamp(y / Math.max(1, docH - vh), 0, 1) * 1000) / 1000;
-    if (p !== lastP) { topEl.style.setProperty('--dawn-p', String(p)); lastP = p; }
-    const st = sceneState(y);
-    if (st.i !== lastScene) {
-      lastScene = st.i; clockL.textContent = marks[st.i].label;
-      const id = marks[st.i].el.id;
-      navLinks.forEach((a) => a.setAttribute('aria-current', a.getAttribute('href') === '#' + id ? 'true' : 'false'));
-    }
-    return st;
-  }
+    let W = 0, H = 0, dirty = true, end = 1, solidTop = 0;
+    const size = () => {
+      const dpr = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 1.75, Math.sqrt(3.2e6 / Math.max(1, innerWidth * innerHeight)));
+      W = canvas.width = Math.round(innerWidth * dpr); H = canvas.height = Math.round(innerHeight * dpr);
+      solidTop = solid.getBoundingClientRect().top + scrollY;
+      end = Math.max(1, solidTop - innerHeight);
+      dirty = true;
+    };
+    size();
+    let rz = 0;
+    addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(size, 120); });
 
-  /* services: the active satellite */
-  const svcs = $$('.svc'), svcN = $('#svc-n'), svcSec = $('#services');
-  let hoverSvc = -1, activeSvc = 0;
-  svcs.forEach((li, i) => {
-    li.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hoverSvc = i; });
-    li.addEventListener('pointerleave', () => { hoverSvc = -1; });
-    li.addEventListener('focusin', () => { hoverSvc = i; });
-    li.addEventListener('focusout', () => { hoverSvc = -1; });
-  });
-  function updateServices(y) {
-    const m = mark('services');
-    let idx;
-    if (pinOn) { const p = clamp((y - m.top) / (m.h - vh), 0, .9999); idx = Math.floor(p * svcs.length); }
-    else {
-      if (hoverSvc < 0 && !near(svcSec, 0)) return;
-      let best = 1e9; idx = 0;
-      svcs.forEach((li, i) => { const r = li.getBoundingClientRect(); const d = Math.abs(r.top + r.height / 2 - vh * .55); if (d < best) { best = d; idx = i; } });
-    }
-    if (hoverSvc >= 0) idx = hoverSvc;
-    if (idx !== activeSvc) { svcs[activeSvc].classList.remove('on'); svcs[idx].classList.add('on'); activeSvc = idx; svcN.textContent = String(idx + 1); }
-  }
+    /* pointer parallax nudges the framing slightly (never reveals an edge) */
+    let px = 0, py = 0, tpx = 0, tpy = 0;
+    if (fine) addEventListener('pointermove', (e) => { tpx = e.clientX / innerWidth - .5; tpy = e.clientY / innerHeight - .5; }, { passive: true });
 
-  /* software rig */
-  const rig = $('#rig'), stage = $('#stage'), softSec = $('#software');
-  let tiltX = 0, tiltY = 0;
-  if (matchMedia('(pointer:fine)').matches) {
-    stage.parentElement.addEventListener('pointermove', (e) => {
-      const r = stage.getBoundingClientRect();
-      tiltY = clamp((e.clientX - r.left) / r.width - .5, -.5, .5) * 12;
-      tiltX = -clamp((e.clientY - r.top) / r.height - .5, -.5, .5) * 8;
-    });
-    stage.parentElement.addEventListener('pointerleave', () => { tiltX = tiltY = 0; });
-  }
-  function updateRig() {
-    if (rm) { rig.style.setProperty('--ry', '-12deg'); rig.style.setProperty('--rx', '5deg'); return; }
-    if (!near(softSec)) return;
-    const r = stage.getBoundingClientRect();
-    const p = clamp(1 - (r.top + r.height / 2) / vh, 0, 1);
-    rig.style.setProperty('--ry', (-26 + p * 30 + tiltY).toFixed(2) + 'deg');
-    rig.style.setProperty('--rx', (8 - p * 6 + tiltX).toFixed(2) + 'deg');
-  }
-
-  /* method track */
-  const track = $('#track'), hz = $('#hz');
-  function updateMethod(y) {
-    const m = mark('method');
-    if (!pinOn) { if (track.style.transform) track.style.transform = ''; return; }
-    if (y < m.top - vh || y > m.top + m.h) return;
-    const p = clamp(((y - m.top) / (m.h - vh) - .08) / .84, 0, 1);
-    const max = Math.max(0, track.scrollWidth - vw);
-    track.style.transform = `translate3d(${(-max * smooth(p)).toFixed(1)}px,0,0)`;
-    hz.style.transform = `scaleX(${p.toFixed(4)})`;
-  }
-
-  /* work coverflow */
-  const flow = $('#flow'), cards = $$('#flow .card');
-  let flowF = 0;
-  function updateWork(y) {
-    const m = mark('work');
-    if (!pinOn) { if (cards[0].style.transform) cards.forEach((c) => { c.style.transform = ''; c.style.opacity = ''; c.style.zIndex = ''; c.style.pointerEvents = ''; }); return; }
-    if (y < m.top - vh || y > m.top + m.h && Math.abs(flowF - (cards.length - 1)) < .001) return;
-    const p = clamp((y - m.top) / (m.h - vh), 0, 1);
-    const target = p * (cards.length - 1);
-    flowF += (target - flowF) * .2;
-    if (Math.abs(target - flowF) < .001) flowF = target;
-    const gap = Math.min(300, vw * .2);
-    cards.forEach((c, i) => {
-      const o = i - flowF, ao = Math.abs(o), s = clamp(o, -1, 1);
-      c.style.transform = `translate3d(${(o * gap * (ao > 1 ? .78 + .22 / ao : 1)).toFixed(1)}px,0,${(-ao * 160).toFixed(1)}px) rotateY(${(-s * 38).toFixed(2)}deg)`;
-      c.style.opacity = clamp(1 - (ao - 1) * .55, 0, 1).toFixed(3);
-      c.style.zIndex = String(100 - Math.round(ao * 10));
-      c.style.pointerEvents = ao < .5 ? 'auto' : 'none';
-    });
-  }
-  function stepWork(dir) {
-    const m = mark('work');
-    if (pinOn) {
-      const cur = Math.round(clamp((scrollY - m.top) / (m.h - vh), 0, 1) * (cards.length - 1));
-      const n = clamp(cur + dir, 0, cards.length - 1);
-      scrollToY(m.top + (n / (cards.length - 1)) * (m.h - vh) + 1, rm);
-    } else flow.scrollBy({ left: dir * (cards[0].offsetWidth + 16), behavior: rm ? 'auto' : 'smooth' });
-  }
-  $('#prev').addEventListener('click', () => stepWork(-1));
-  $('#next').addEventListener('click', () => stepWork(1));
-
-  /* "Browse all" opens the full index */
-  const allWork = $('#all-work details');
-  $$('a[href="#all-work"]').forEach((a) => a.addEventListener('click', () => { allWork.open = true; }));
-  if (location.hash === '#all-work') allWork.open = true;
-
-  /* WebGL Earth — loaded and started once the browser is idle */
-  const canvas = $('#globe'), sky = $('#sky');
-  let globe = null;
-  const cur = Object.assign({}, K.hero);
-  let spin = Math.PI / 2, alive = true;
-  const startGL = () => {
-    import('./globe.js').then(({ createGlobe }) => {
+    let pos = 0, last = { pos: -1, px: 9, py: 9, w: 0 }, shown = false;
+    const frame = () => {
       if (!alive) return;
-      try {
-        // the canvas fades in on the first frame actually drawn (shaders may still be compiling)
-        globe = createGlobe(canvas, () => { globe = null; canvas.classList.remove('on'); }, () => canvas.classList.add('on'));
-      } catch (e) { console.warn(e); }
-    }).catch(() => {});
-  };
-  if (window.requestIdleCallback) requestIdleCallback(startGL, { timeout: 900 }); else setTimeout(startGL, 200);
-
-  /* main loop */
-  let last = performance.now(), clockTime = 0, running = false, skipF = false;
-  const lowFps = (navigator.hardwareConcurrency || 8) <= 4;
-  function frame(now) {
-    running = true;
-    const dt = Math.min(.1, (now - last) / 1000); last = now;
-    if (!rm) clockTime += dt;
-    const y = scrollY;
-    const st = updateHeader(y);
-    updateServices(y); updateMethod(y); updateWork(y); updateRig();
-    if (globe && !(lowFps && (skipF = !skipF))) {
-      let tgt = st.k;
-      if (rm) tgt = Object.assign({}, tgt, { lon: 92, lat: 16, x: portrait ? 0 : .5, y: portrait ? .45 : 0, s: portrait ? .42 : .7 });
-      const f = rm ? 1 : 1 - Math.exp(-dt * 5.5);
-      for (const n of KEYS) cur[n] += (tgt[n] - cur[n]) * f;
-      const drift = rm ? 0 : Math.sin(clockTime * .12) * 3;
-      const spinT = Math.PI / 2 - activeSvc / svcs.length * Math.PI * 2;
-      let ds = spinT - spin; ds = Math.atan2(Math.sin(ds), Math.cos(ds));
-      spin += ds * (rm ? 1 : 1 - Math.exp(-dt * 4));
-      sky.style.opacity = (cur.rise * .9).toFixed(3);
-      globe.draw(Object.assign({}, cur, { lon: cur.lon + drift }), clockTime, { activeSvc, spin, motion: rm ? 0 : 1 });
-    }
-    if (!document.hidden) requestAnimationFrame(frame); else running = false;
+      const y = scrollY;
+      const hp = clamp(y / end, 0, 1);
+      // ease the playhead toward the scroll position: steady film even with stepped wheels
+      const target = hp * LAST;
+      pos += (target - pos) * .18;
+      if (Math.abs(target - pos) < .01) pos = target;
+      px += (tpx - px) * .06; py += (tpy - py) * .06;
+      if (rail) { bars.forEach((b, i) => b.style.setProperty('--f', clamp(hp * 3 - i, 0, 1).toFixed(3))); rail.style.setProperty('--done', hp > .98 ? '1' : '0'); }
+      const covered = y > solidTop + 4;
+      const q = pos / set.step, i = Math.min(N - 1, Math.floor(q)), frac = q - i;
+      playhead = i;
+      want(i); want(i + 1); want(i - 1); want(i + 2);
+      const changed = dirty || Math.abs(last.pos - pos) > .005 || Math.abs(last.px - px) > .0005 || Math.abs(last.py - py) > .0005 || last.w !== W;
+      if (!covered && changed) {
+        const n0 = nearest(i);
+        if (n0 >= 0) {
+          const b0 = bitmaps.get(n0), iw = b0.width, ih = b0.height;
+          let [z, fx, fy] = camera(pos);
+          if (W < H) z = 1 + (z - 1) * .45;  // portrait already crops hard: zoom less, stay sharp
+          const s = Math.max(W / iw, H / ih) * z, dw = iw * s, dh = ih * s;
+          const ox = clamp(W / 2 - (fx + px * .012) * dw, W - dw, 0), oy = clamp(H / 2 - (fy + py * .012) * dh, H - dh, 0);
+          ctx.globalAlpha = 1; ctx.drawImage(b0, ox, oy, dw, dh);
+          const b1 = n0 === i && frac > .02 ? bitmaps.get(i + 1) : null;
+          if (b1) { ctx.globalAlpha = frac; ctx.drawImage(b1, ox, oy, dw, dh); ctx.globalAlpha = 1; }
+          if (!shown) { shown = true; stage.classList.add('live'); }
+          last = { pos, px, py, w: W }; dirty = false;
+        }
+      }
+      if (!document.hidden) requestAnimationFrame(frame); else running = false;
+    };
+    let running = true;
+    requestAnimationFrame(frame);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && !running) { running = true; requestAnimationFrame(frame); } });
+    if ('ResizeObserver' in window) new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(size, 120); }).observe(document.body);
   }
-  document.addEventListener('visibilitychange', () => { if (!document.hidden && !running && alive) { last = performance.now(); requestAnimationFrame(frame); } });
-
-  let rz = 0;
-  const onResize = () => { clearTimeout(rz); rz = setTimeout(() => { layout(); if (globe) globe.resize(); }, 120); };
-  addEventListener('resize', onResize);
-  RMQ.addEventListener && RMQ.addEventListener('change', (e) => { rm = e.matches; layout(); });
-  if ('ResizeObserver' in window) new ResizeObserver(onResize).observe(document.body);
-
-  // Measure inside the first frame, where the browser lays out anyway.
-  requestAnimationFrame((t) => { layout(); frame(t); });
 }

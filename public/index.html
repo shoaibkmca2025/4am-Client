@@ -7,7 +7,7 @@
 <meta name="description" content="4AM Global Media builds websites, apps and brands, then grows them with SEO, ads, social media and marketplace onboarding. 100 client projects shipped worldwide.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="google-site-verification" content="aXj2fD-1BBe7MPoguRkK_NU84RU-S7CjmROUaUdpBbY">
-<meta name="theme-color" content="#E5E4E2">
+<meta name="theme-color" content="#2E3D28">
 <link rel="canonical" href="https://4amglobalmedia.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="4AM Global Media">
@@ -24,242 +24,147 @@
 <link rel="preload" href="/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/site.css">
+<link rel="preload" as="image" href="/assets/film/d/001.webp" media="(min-width: 861px)" fetchpriority="high">
+<link rel="preload" as="image" href="/assets/film/m/001.webp" media="(max-width: 860px)" fetchpriority="high">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://4amglobalmedia.com/#org","name":"4AM Global Media","url":"https://4amglobalmedia.com/","logo":"https://4amglobalmedia.com/assets/og-4am.jpg","email":"Info@4amglobalmedia.com","telephone":"+918826406545","sameAs":["https://www.instagram.com/reel/DUBIUl5DfBU/"],"description":"A creative network made for today and tomorrow: web development, digital marketing, SEO, social media, branding, content and marketplace onboarding.","founder":[{"@type":"Person","name":"Vaibhav Pasi"},{"@type":"Person","name":"Shoaib Khatik"}]},{"@type":"WebSite","@id":"https://4amglobalmedia.com/#site","url":"https://4amglobalmedia.com/","name":"4AM Global Media","publisher":{"@id":"https://4amglobalmedia.com/#org"}}]}</script>
 </head>
-<body class="home">
+<body class="home" id="top">
 <a class="skip" href="#main">Skip to content</a>
 <header class="top">
-  <div class="top-in">
-    <a class="brand" href="#hero" aria-label="4AM Global Media, back to top"><img src="/logo-mark.webp" alt="4AM Global Media" width="298" height="140"></a>
-    <nav class="nav" id="nav" aria-label="Primary">
-      <a href="#services">Services</a>
-      <a href="#market">Marketplaces</a>
-      <a href="#work">Work</a>
-      <a href="#method">Method</a>
-      <a href="#team">Team</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <div class="clock" aria-hidden="true"><i class="sun"></i><span class="t">04:00</span><span class="lbl">Intro</span></div>
-    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-    <a class="btn btn-primary" href="#contact">Start a project</a>
-  </div>
+  <a class="brand" href="#top" aria-label="4AM Global Media, back to top"><img src="/logo-mark.webp" alt="4AM Global Media" width="298" height="140"></a>
+  <nav class="nav" id="nav" aria-label="Primary"><a href="#services">Services</a><a href="#work">Work</a><a href="#process">Process</a><a href="#team">Team</a><a href="#contact">Contact</a></nav>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+  <a class="pill" href="#contact">Start a project <i aria-hidden="true">↗</i></a>
 </header>
-<canvas id="globe" aria-hidden="true"></canvas>
-<div id="poster" aria-hidden="true"></div>
-<div id="sky" aria-hidden="true"></div>
+<div class="stage" aria-hidden="true">
+  <picture><source media="(min-width: 861px)" srcset="/assets/film/d/001.webp" width="1600" height="900"><img class="poster" src="/assets/film/m/001.webp" alt="" width="1024" height="576" fetchpriority="high"></picture>
+  <canvas id="film"></canvas>
+</div>
+<div class="progress" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <main id="main" tabindex="-1">
-<!-- 1 · hero -->
-<section id="hero" class="scene" data-scene="hero" data-label="Intro">
-  <div class="wrap">
-    <div class="half-l">
-      <p class="eyebrow"><time>04:00</time> 4AM Global Media</p>
-      <!-- fixed three-line break, so the line count cannot change when the web font swaps in -->
-      <h1>Before the <br>market <br><em>wakes&nbsp;up.</em></h1>
-      <p class="lede">We power founders, operators and teams across the globe with <strong>strategy, design, engineering and growth marketing</strong> that compounds.</p>
-      <div class="actions"><a class="btn btn-primary" href="#contact">Start a project</a><a class="btn btn-ghost" href="#work">See our work</a></div>
+<div class="film">
+  <section class="beat in" aria-label="Intro">
+    <div class="copy">
+      <p class="k">4AM Global Media · growth studio</p>
+      <h1><span class="w"><span>Before</span></span> <span class="w"><span>the</span></span> <span class="w"><span>market</span></span> <span class="w"><span class="grad">wakes</span></span> <span class="w"><span class="grad">up.</span></span></h1>
+      <p>We power founders, operators and teams across the globe with strategy, design, engineering and growth marketing that compounds.</p>
+      <span class="hand">scroll and watch it grow ↓</span>
     </div>
-  </div>
-  <p class="hint"><span></span>Scroll to sunrise</p>
-</section>
-
-<!-- 2 · why -->
-<section id="why" class="scene" data-scene="why" data-label="Why 4AM" aria-labelledby="why-h">
-  <div class="wrap">
-    <div class="half-r rv">
-      <p class="eyebrow"><time>04:10</time> Why 4AM</p>
-      <h2 id="why-h">The hour before everyone else starts.</h2>
-      <p class="lede">4AM is the quiet edge of the day: the head start. It is how we work and what we sell, <strong>momentum before the market notices.</strong></p>
-      <p class="lede">Every engagement opens with a diagnostic of your audience, funnel and product, so the work that follows is aimed, not decorative.</p>
-      <dl class="stats">
-        <div><dt>Client projects shipped</dt><dd>100</dd></div>
-        <div><dt>Core services</dt><dd>7</dd></div>
-        <div><dt>Marketplaces</dt><dd>15</dd></div>
-      </dl>
+  </section>
+  <section class="beat r" aria-label="Build">
+    <div class="copy">
+      <p class="k">Built to grow</p>
+      <h2><span class="w"><span>Websites</span></span> <span class="w"><span>and</span></span> <span class="w"><span>apps</span></span> <span class="w"><span>that</span></span> <span class="w"><span>keep</span></span> <span class="w"><span class="grad">growing.</span></span></h2>
+      <p class="rv">Web platforms, mobile apps and the integrations behind them, designed, shipped and maintained by the same people.</p>
     </div>
-  </div>
-</section>
+  </section>
+  <section class="beat" aria-label="Grow">
+    <div class="copy">
+      <p class="k">Growth with a pulse</p>
+      <h2><span class="w"><span>Marketing</span></span> <span class="w"><span>you</span></span> <span class="w"><span>can</span></span> <span class="w"><span class="grad">measure.</span></span></h2>
+      <p class="rv">Paid, organic, owned. We put your message where the attention already is, and measure every hop it makes.</p>
+      <div class="actions rv"><a class="pill light" href="#services">See what we do <i aria-hidden="true">↓</i></a><a class="ghost on-dark" href="#contact">Book a call</a></div>
+    </div>
+  </section>
+  <div class="spacer"></div>
+</div>
 
-<!-- 3 · services -->
-<section id="services" class="scene" data-scene="services" data-label="Services" aria-labelledby="svc-h">
-  <div class="stick">
-    <div class="wrap">
-      <div class="half-r">
-        <p class="eyebrow"><time>04:20</time> Capability</p>
-        <h2 id="svc-h">Seven services. One accountable team.</h2>
-        <p class="lede">Each satellite around the globe is one service. Scroll, hover or tab through them, and open any one for the full details.</p>
-        <ol class="svc-list">
-          <li class="svc on">
-            <h3><a href="/services/digital-marketing">Digital Marketing</a></h3>
-            <div class="more"><div><div class="more-in">
-              <div><p>Paid and owned campaigns engineered to turn attention into predictable pipeline.</p><ul><li>PPC and paid social</li><li>Email automation</li><li>Conversion rate optimization</li><li>Retargeting and segmentation</li></ul><span class="go" aria-hidden="true">Explore Digital Marketing →</span></div>
-              <span class="thumb"><img src="/assets/services/digital-marketing-thumb.webp" alt="" width="336" height="252" loading="lazy" decoding="async"></span>
-            </div></div></div>
-          </li>
-          <li class="svc">
-            <h3><a href="/services/branding">Branding</a></h3>
-            <div class="more"><div><div class="more-in">
-              <div><p>Visual identity and messaging systems that position you as the obvious choice.</p><ul><li>Logo and visual identity</li><li>Strategy and positioning</li><li>Messaging and tone of voice</li><li>Brand guidelines</li></ul><span class="go" aria-hidden="true">Explore Branding →</span></div>
-              <span class="thumb"><img src="/assets/services/branding-thumb.webp" alt="" width="336" height="252" loading="lazy" decoding="async"></span>
-            </div></div></div>
-          </li>
-          <li class="svc">
-            <h3><a href="/services/social-media-growth">Social Media Growth</a></h3>
-            <div class="more"><div><div class="more-in">
-              <div><p>Always-on content and social strategy designed for engagement and authority.</p><ul><li>Content strategy and calendar</li><li>Community management</li><li>Content built to travel</li><li>Analytics and reporting</li></ul><span class="go" aria-hidden="true">Explore Social Media Growth →</span></div>
-              <span class="thumb"><img src="/assets/services/social-media-growth-thumb.webp" alt="" width="336" height="252" loading="lazy" decoding="async"></span>
-            </div></div></div>
-          </li>
-          <li class="svc">
-            <h3><a href="/services/seo">SEO</a></h3>
-            <div class="more"><div><div class="more-in">
-              <div><p>Search strategies that compound over time and bring in high-intent, ready-to-buy traffic.</p><ul><li>On-page and technical SEO</li><li>Keyword research</li><li>Link building and authority</li><li>Content optimization</li></ul><span class="go" aria-hidden="true">Explore SEO →</span></div>
-              <span class="thumb"><img src="/assets/services/seo-thumb.webp" alt="" width="336" height="252" loading="lazy" decoding="async"></span>
-            </div></div></div>
-          </li>
-          <li class="svc">
-            <h3><a href="/services/web-development">Web Development</a></h3>
-            <div class="more"><div><div class="more-in">
-              <div><p>Conversion-focused websites and landing pages built for speed and clarity.</p><ul><li>Custom website design</li><li>E-commerce</li><li>Landing page optimization</li><li>Performance tuning</li></ul><span class="go" aria-hidden="true">Explore Web Development →</span></div>
-              <span class="thumb"><img src="/assets/services/web-development-thumb.webp" alt="" width="336" height="252" loading="lazy" decoding="async"></span>
-            </div></div></div>
-          </li>
-          <li class="svc">
-            <h3><a href="/services/content-creation">Content Creation</a></h3>
-            <div class="more"><div><div class="more-in">
-              <div><p>Video, copy and creative assets that keep your brand present everywhere.</p><ul><li>Video production and editing</li><li>Copywriting and storytelling</li><li>Graphic design</li><li>Photography</li></ul><span class="go" aria-hidden="true">Explore Content Creation →</span></div>
-              <span class="thumb"><img src="/assets/services/content-creation-thumb.webp" alt="" width="336" height="252" loading="lazy" decoding="async"></span>
-            </div></div></div>
-          </li>
-          <li class="svc">
-            <h3><a href="/services/marketplace-product-onboarding">Marketplace Onboarding</a></h3>
-            <div class="more"><div><div class="more-in">
-              <div><p>Seller registration, listings, catalog management and growth support across India's leading platforms.</p><ul><li>Seller registration</li><li>Catalog management</li><li>Brand store setup</li><li>Ads and promotions</li></ul><span class="go" aria-hidden="true">Explore Marketplace Onboarding →</span></div>
-              <span class="thumb"><img src="/assets/services/marketplace-product-onboarding-thumb.webp" alt="" width="336" height="252" loading="lazy" decoding="async"></span>
-            </div></div></div>
-          </li>
-        </ol>
-        <p class="svc-count" aria-hidden="true"><span id="svc-n">1</span> / 7</p>
+<div class="solid">
+  <div class="marquee" aria-hidden="true"><div class="row"><span>Websites</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Brands</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Growth</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Search</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Content</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Commerce</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Websites</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Brands</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Growth</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Search</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Content</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Commerce</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg></div></div>
+
+  <section class="sec" id="services" aria-labelledby="svc-h">
+    <p class="k rv">What we do</p>
+    <h2 id="svc-h" class="rv">Seven services. <span class="mark">One<svg class="sk draw ring" viewBox="0 0 200 80" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M34 16 C 76 0, 172 4, 190 30 C 206 58, 150 78, 92 75 C 30 72, 0 52, 14 31 C 23 17, 62 9, 104 11"/></svg></span> accountable team.</h2>
+    <ul class="svc-grid">
+      <li class="rv wide"><a class="scard feature" href="/services/digital-marketing">
+        <span class="viz"><svg class="sk draw " viewBox="0 0 120 80" aria-hidden="true" focusable="false"><path pathLength="1" class="s-t" stroke-width="3" d="M6 68 C 24 64, 30 42, 48 46 S 74 60, 88 32 S 106 14, 114 8"/><path pathLength="1" class="s-t" stroke-width="3" d="M104 6 L115 7 L111 18"/><path pathLength="1" class="s-s" stroke-width="2" d="M6 74 C 30 72, 40 60, 58 62 S 86 52, 100 46 S 112 42, 116 40"/><circle class="f-g" cx="48" cy="46" r="3.5"/><circle class="f-g" cx="88" cy="32" r="3.5"/></svg></span>
+        <h3>Digital Marketing</h3><p>Paid and owned campaigns engineered to turn attention into predictable pipeline.</p>
+        <span class="n"><span>01 · Growth</span><b>Explore →</b></span>
+      </a></li>
+      <li class="rv"><a class="scard" href="/services/branding">
+        <span class="viz"><svg class="sk draw " viewBox="0 0 120 80" aria-hidden="true" focusable="false"><circle pathLength="1" class="s-f" stroke-width="2.6" cx="38" cy="40" r="24"/><path pathLength="1" class="s-g" stroke-width="2.6" d="M38 23 L42.5 34.5 L55 35 L45 42.5 L48.5 55 L38 47.5 L27.5 55 L31 42.5 L21 35 L33.5 34.5 Z"/><circle class="f-a" cx="84" cy="22" r="10"/><circle class="f-g" cx="100" cy="40" r="10"/><circle class="f-t" cx="84" cy="58" r="10"/></svg></span>
+        <h3>Branding</h3><p>Visual identity and messaging systems that position you as the obvious choice.</p>
+        <span class="n"><span>02 · Identity</span><b>Explore →</b></span>
+      </a></li>
+      <li class="rv"><a class="scard" href="/services/social-media-growth">
+        <span class="viz"><svg class="sk draw " viewBox="0 0 120 80" aria-hidden="true" focusable="false"><path pathLength="1" class="s-s" stroke-width="2.6" d="M10 12 h46 a8 8 0 0 1 8 8 v16 a8 8 0 0 1 -8 8 h-26 l-12 10 v-10 h-8 a8 8 0 0 1 -8 -8 v-16 a8 8 0 0 1 8 -8 z"/><path pathLength="1" class="s-a" stroke-width="2.6" d="M62 34 h40 a8 8 0 0 1 8 8 v14 a8 8 0 0 1 -8 8 h-6 v10 l-12 -10 h-22 a8 8 0 0 1 -8 -8 v-14 a8 8 0 0 1 8 -8 z"/><path class="f-c" d="M86 20 c -5 -9 -18 -2 -11 7 l11 11 l11 -11 c7 -9 -6 -16 -11 -7z"/></svg></span>
+        <h3>Social Media Growth</h3><p>Always-on content and community that builds an audience, not just posts.</p>
+        <span class="n"><span>03 · Audience</span><b>Explore →</b></span>
+      </a></li>
+      <li class="rv"><a class="scard" href="/services/seo">
+        <span class="viz"><svg class="sk draw " viewBox="0 0 120 80" aria-hidden="true" focusable="false"><circle pathLength="1" class="s-f" stroke-width="3" cx="44" cy="36" r="20"/><path pathLength="1" class="s-f" stroke-width="4" d="M58 50 L78 70"/><path pathLength="1" class="s-a" stroke-width="3" d="M84 16 H114 M84 30 H108 M84 44 H100"/><path pathLength="1" class="s-t" stroke-width="3" d="M30 36 L40 46 L58 26"/></svg></span>
+        <h3>SEO</h3><p>Search strategies that compound and bring in high-intent, ready-to-buy traffic.</p>
+        <span class="n"><span>04 · Search</span><b>Explore →</b></span>
+      </a></li>
+      <li class="rv"><a class="scard" href="/services/web-development">
+        <span class="viz"><svg class="sk draw " viewBox="0 0 120 80" aria-hidden="true" focusable="false"><rect pathLength="1" class="s-f" stroke-width="2.6" x="6" y="8" width="108" height="64" rx="8"/><path pathLength="1" class="s-f" stroke-width="2" d="M6 22 H114"/><circle class="f-t" cx="16" cy="15" r="2.6"/><circle class="f-g" cx="25" cy="15" r="2.6"/><circle class="f-a" cx="34" cy="15" r="2.6"/><path pathLength="1" class="s-s" stroke-width="3" d="M42 36 L30 47 L42 58"/><path pathLength="1" class="s-s" stroke-width="3" d="M78 36 L90 47 L78 58"/><path pathLength="1" class="s-t" stroke-width="3" d="M66 32 L54 62"/></svg></span>
+        <h3>Web Development</h3><p>Fast, conversion-focused websites, stores and web apps built to sell.</p>
+        <span class="n"><span>05 · Product</span><b>Explore →</b></span>
+      </a></li>
+      <li class="rv"><a class="scard" href="/services/content-creation">
+        <span class="viz"><svg class="sk draw " viewBox="0 0 120 80" aria-hidden="true" focusable="false"><circle class="f-c breathe" cx="60" cy="40" r="25"/><path class="f-f" d="M52 28 L74 40 L52 52 Z"/><path pathLength="1" class="s-g" stroke-width="3" d="M18 12 L26 20 M102 12 L94 20 M18 68 L26 60 M102 68 L94 60"/></svg></span>
+        <h3>Content Creation</h3><p>Video, copy, design and photography made for every screen.</p>
+        <span class="n"><span>06 · Creative</span><b>Explore →</b></span>
+      </a></li>
+      <li class="rv"><a class="scard" href="/services/marketplace-product-onboarding">
+        <span class="viz"><svg class="sk draw " viewBox="0 0 120 80" aria-hidden="true" focusable="false"><path pathLength="1" class="s-f" stroke-width="2.8" d="M30 28 H90 L84 72 H36 Z"/><path pathLength="1" class="s-g" stroke-width="3" d="M46 28 C 46 10, 74 10, 74 28"/><path pathLength="1" class="s-t" stroke-width="3.4" d="M46 50 L56 60 L76 40"/><circle class="f-a" cx="100" cy="18" r="7"/><circle class="f-s" cx="16" cy="60" r="5"/></svg></span>
+        <h3>Marketplace Onboarding</h3><p>Seller registration, listings and growth across India's leading platforms.</p>
+        <span class="n"><span>07 · Commerce</span><b>Explore →</b></span>
+      </a></li>
+    </ul>
+  </section>
+
+  <section class="sec" id="market" aria-labelledby="mkt-h">
+    <div class="market">
+      <div class="rv">
+        <p class="k">Marketplace desk</p>
+        <h2 id="mkt-h" class="h2">India sees the sun first. So do your <span class="mark">listings.<svg class="sk draw under" viewBox="0 0 200 20" aria-hidden="true" focusable="false"><path pathLength="1" class="s-t" stroke-width="4" d="M4 14 C 40 5, 80 5, 120 10 S 178 17, 196 6"/></svg></span></h2>
+        <p class="lede">A marketplace desk that launches brands across India's leading e-commerce and quick-commerce platforms, from seller registration to the first sale and beyond.</p>
+        <ul class="chips" aria-label="Platforms we launch on"><li class="hot">Amazon</li><li class="hot">Flipkart</li><li>Blinkit</li><li>Zepto</li><li>Swiggy Instamart</li><li>BigBasket</li><li>JioMart</li><li class="hot">Meesho</li><li>Myntra</li><li>Ajio</li><li class="hot">Nykaa</li><li>FirstCry</li><li>ONDC</li><li>Shopify</li><li>WooCommerce</li></ul>
+        <div class="actions"><a class="pill" href="/services/marketplace-product-onboarding">Launch on marketplaces <i aria-hidden="true">↗</i></a></div>
       </div>
+      <ul class="caps rv"><li><span>01</span>Seller registration and verification</li><li><span>02</span>Product onboarding and catalog management</li><li><span>03</span>Product content and image optimization</li><li><span>04</span>Brand store setup and compliance</li><li><span>05</span>Inventory, pricing, ads and promotions</li><li><span>06</span>Ongoing account management</li></ul>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- 4 · software -->
-<section id="software" class="scene" data-scene="software" data-label="Software" aria-labelledby="soft-h">
-  <div class="wrap soft">
-    <div class="rv">
-      <p class="eyebrow"><time>04:35</time> Software</p>
-      <h2 id="soft-h">Products that hold up under real traffic.</h2>
-      <p class="lede">Web platforms, mobile apps and the integrations behind them, <strong>designed, shipped and maintained by the same people.</strong></p>
-      <ul class="chips"><li>React</li><li>React Native</li><li>Node</li><li>Python</li><li>Cloud</li></ul>
-      <p class="stack-note">Android · Java and .NET · MERN · AI solutions</p>
-      <div class="actions"><a class="btn btn-ghost" href="/services/web-development">Web development →</a></div>
-    </div>
-    <div class="stage" id="stage" aria-hidden="true">
-      <div class="rig" id="rig">
-        <div class="laptop"><div class="ui">
-          <i class="bar"><b></b><b></b><b></b></i>
-          <i class="side"><s></s><s></s><s></s><s></s><s></s></i>
-          <i class="main"><i class="kpis"><s></s><s></s><s></s></i>
-            <i class="chart"><svg viewBox="0 0 300 120" preserveAspectRatio="none"><path d="M0 96 C30 90 45 70 70 74 S120 52 150 56 S205 30 230 34 S275 14 300 10" fill="none" stroke="#6F4E37" stroke-width="2.5"/><path d="M0 108 C40 104 60 96 90 98 S150 84 180 86 S250 70 300 64" fill="none" stroke="#9C86C9" stroke-width="2" stroke-dasharray="5 6"/></svg></i>
-          </i>
-        </div></div>
-        <div class="phone"><div class="ui"><i class="notch"></i><i class="hero"></i><i class="rows"><s></s><s></s><s></s><s></s></i></div></div>
-      </div>
-    </div>
-  </div>
-</section>
+  <section class="sec" id="numbers" aria-labelledby="num-h">
+    <h2 id="num-h" class="sr">4AM in numbers</h2>
+    <dl class="nums rv">
+      <div><dt>Client projects shipped</dt><dd><span data-count="100">100</span></dd></div>
+      <div><dt>Core services</dt><dd><span data-count="7">7</span></dd></div>
+      <div><dt>Marketplaces we launch on</dt><dd><span data-count="15">15</span></dd></div>
+      <div><dt>Reply time</dt><dd><span data-count="24">24</span><small>h</small></dd></div>
+    </dl>
+  </section>
 
-<!-- 5 · reach -->
-<section id="reach" class="scene" data-scene="reach" data-label="Reach" aria-labelledby="reach-h">
-  <div class="wrap">
-    <div class="half-l rv">
-      <p class="eyebrow"><time>04:50</time> Reach</p>
-      <h2 id="reach-h">Built to broadcast.</h2>
-      <p class="lede">Paid, organic, owned. We put your message where the attention already is and <strong>measure every hop it makes.</strong></p>
-      <ul class="channels"><li><b>Performance ads</b><span>Paid search and paid social, retargeting, conversion tracking.</span></li><li><b>SEO</b><span>Technical fixes, keyword strategy and authority that compounds.</span></li><li><b>Social</b><span>Content calendars and community management.</span></li><li><b>Content and film</b><span>Video, copy, design and photography.</span></li></ul>
-      <p class="legend">Each gold arc runs from India to a market where 4AM has shipped client sites: the Cayman Islands, Orlando, Tampa, Houston, Los Angeles, Boston, Phoenix and Minneapolis.</p>
-    </div>
-  </div>
-</section>
-
-<!-- 6 · marketplaces -->
-<section id="market" class="scene" data-scene="market" data-label="Marketplaces" aria-labelledby="mkt-h">
-  <div class="wrap">
-    <div class="half-l rv">
-      <p class="eyebrow"><time>05:05</time> Marketplace desk</p>
-      <h2 id="mkt-h">India sees the sun first. So do your listings.</h2>
-      <p class="lede">A distributed bench of engineers, strategists, editors and media buyers, plus <strong>a marketplace desk that launches brands across India's leading platforms.</strong></p>
-      <ul class="chips" aria-label="Platforms we launch on"><li class="hot">Amazon</li><li class="hot">Flipkart</li><li>Blinkit</li><li>Zepto</li><li>Swiggy Instamart</li><li>BigBasket</li><li>JioMart</li><li class="hot">Meesho</li><li>Myntra</li><li>Ajio</li><li class="hot">Nykaa</li><li>FirstCry</li><li>ONDC</li><li>Shopify</li><li>WooCommerce</li></ul>
-      <ul class="caps"><li>Seller registration and verification</li><li>Product onboarding</li><li>Catalog management</li><li>Product content creation</li><li>Product image optimization</li><li>Brand store setup</li><li>Marketplace compliance</li><li>Inventory and pricing</li><li>Advertising and promotions</li><li>Ongoing account management</li></ul>
-      <div class="actions"><a class="btn btn-ghost" href="/services/marketplace-product-onboarding">Launch on marketplaces →</a></div>
-    </div>
-  </div>
-</section>
-
-<!-- 7 · method -->
-<section id="method" class="scene" data-scene="method" data-label="Method" aria-labelledby="method-h">
-  <div class="stick">
-    <div class="track" id="track">
-      <div class="intro-panel">
-        <p class="eyebrow"><time>05:20</time> Method</p>
-        <h2 id="method-h">Straight through the middle of the problem.</h2>
-        <p class="lede">Short cycles, visible decisions, no theatre. <strong>You see the work while it is still cheap to change.</strong></p>
-      </div>
-      <article class="step"><span class="n">01 / 04</span><h3>Diagnose</h3><p>Audience, funnel and product surface, examined before anything is made.</p><p class="out">You get: a diagnostic and a plan</p></article>
-      <article class="step"><span class="n">02 / 04</span><h3>Design</h3><p>Positioning, identity and interface, decided while changes still cost little.</p><p class="out">You get: designs to react to</p></article>
-      <article class="step"><span class="n">03 / 04</span><h3>Build</h3><p>Sites, apps and campaigns built by the same team that designed them.</p><p class="out">You get: working software and live campaigns</p></article>
-      <article class="step"><span class="n">04 / 04</span><h3>Launch and grow</h3><p>Ship, measure every channel, then put more behind what works.</p><p class="out">You get: growth that compounds</p></article>
-    </div>
-    <div class="horizon" aria-hidden="true"><i id="hz"></i></div>
-  </div>
-</section>
-
-<!-- 8 · work -->
-<section id="work" class="scene" data-scene="work" data-label="Work" aria-labelledby="work-h">
-  <div class="stick">
-    <div class="wrap">
-      <div class="work-head">
-        <div>
-          <p class="eyebrow"><time>05:40</time> Sunrise · Our work</p>
-          <h2 id="work-h">Sites and apps we've shipped.</h2>
-        </div>
-        <div class="flow-ctl">
-          <button type="button" id="prev" aria-label="Previous project">←</button>
-          <button type="button" id="next" aria-label="Next project">→</button>
-        </div>
-      </div>
-      <ul class="flow" id="flow" aria-label="Selected client projects">
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>app.felixbattery.com</span></div><img src="/assets/work/app-felixbattery-com.webp" alt="Felix Battery website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Web app</span></div>
-<div class="body"><p class="new">Latest project</p><h3>Felix Battery</h3><p class="k">Warranty replacement app for Felix Batteries: a replacement recorded in under a minute.</p><a href="https://app.felixbattery.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Felix Battery, opens in a new tab)</span> ↗</a></div></li>
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>launching soon</span></div><img src="/assets/work/vimalnath-sales-corporation.webp" alt="Vimalnath Sales Corporation website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">New launch</span></div>
-<div class="body"><p class="new">Latest project</p><h3>Vimalnath Sales Corporation</h3><p class="k">A venture of Akshay Biosteware.</p><p class="k"><b>Launching soon</b></p></div></li>
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>adhiraherbals.com</span></div><img src="/assets/work/adhiraherbals-com.webp" alt="Adhira Herbals website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">E-commerce</span></div>
-<div class="body"><p class="new">Latest project</p><h3>Adhira Herbals</h3><p class="k">Organic moringa powder store, hand-harvested and farm to pack.</p><a href="https://adhiraherbals.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Adhira Herbals, opens in a new tab)</span> ↗</a></div></li>
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>jokermedia.com</span></div><img src="/assets/work/jokermedia-com.webp" alt="Joker Media website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Entertainment</span></div>
-<div class="body"><h3>Joker Media</h3><p class="metric">+240%</p><p class="k">conversions</p><a href="https://jokermedia.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Joker Media, opens in a new tab)</span> ↗</a></div></li>
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>silverthatch.org.ky</span></div><img src="/assets/work/silverthatch-org-ky.webp" alt="Silver Thatch Pensions website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Finance</span></div>
-<div class="body"><h3>Silver Thatch Pensions</h3><p class="metric">3×</p><p class="k">traffic growth</p><a href="https://silverthatch.org.ky/" target="_blank" rel="noopener">Visit site<span class="sr"> (Silver Thatch Pensions, opens in a new tab)</span> ↗</a></div></li>
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>centuryboats.com</span></div><img src="/assets/work/centuryboats-com.webp" alt="Century Boats website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Marine</span></div>
-<div class="body"><h3>Century Boats</h3><p class="metric">45% lower</p><p class="k">customer acquisition cost</p><a href="https://centuryboats.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Century Boats, opens in a new tab)</span> ↗</a></div></li>
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>greendalept.com</span></div><img src="/assets/work/greendalept-com.webp" alt="Greendale Physical Therapy website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Healthcare</span></div>
-<div class="body"><h3>Greendale Physical Therapy</h3><p class="metric">+180%</p><p class="k">bookings</p><a href="https://greendalept.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Greendale Physical Therapy, opens in a new tab)</span> ↗</a></div></li>
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>russellsorlando.com</span></div><img src="/assets/work/russellsorlando-com.webp" alt="RussellsOrlando website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Hospitality</span></div>
-<div class="body"><h3>RussellsOrlando</h3><p class="metric">2.5×</p><p class="k">engagement</p><a href="https://russellsorlando.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (RussellsOrlando, opens in a new tab)</span> ↗</a></div></li>
-        <li class="card"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>rolypoly.com</span></div><img src="/assets/work/rolypoly-com.webp" alt="Rolly Polly website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Food and beverage</span></div>
-<div class="body"><h3>Rolly Polly</h3><p class="metric">+300%</p><p class="k">online orders</p><a href="https://rolypoly.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Rolly Polly, opens in a new tab)</span> ↗</a></div></li>
-      </ul>
-      <div class="work-foot"><span>100 client projects delivered worldwide.</span><a href="#all-work">Browse all 100 →</a></div>
-    </div>
-  </div>
-</section>
-
-<div class="all-work" id="all-work">
-  <div class="wrap">
-    <details>
-      <summary><span>All 100 client projects <small>with a live look at each site</small></span><i aria-hidden="true">+</i></summary>
-      <ul class="grid-work">
+  <section class="sec" id="work" aria-labelledby="work-h">
+    <p class="k rv">Our work</p>
+    <h2 id="work-h" class="rv" style="position:relative">Sites and apps we've <span class="mark">shipped.<svg class="sk draw under" viewBox="0 0 200 20" aria-hidden="true" focusable="false"><path pathLength="1" class="s-t" stroke-width="4" d="M4 14 C 40 5, 80 5, 120 10 S 178 17, 196 6"/></svg></span></h2>
+    <ul class="work-grid">
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>app.felixbattery.com</span></div><img src="/assets/work/app-felixbattery-com.webp" alt="Felix Battery website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Web app</span></div>
+<div class="body"><p class="new">Latest project</p><h3>Felix Battery</h3><p class="k2">Warranty replacement app for Felix Batteries: a replacement recorded in under a minute.</p><a href="https://app.felixbattery.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Felix Battery, opens in a new tab)</span> ↗</a></div></li>
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>launching soon</span></div><img src="/assets/work/vimalnath-sales-corporation.webp" alt="Vimalnath Sales Corporation website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">New launch</span></div>
+<div class="body"><p class="new">Latest project</p><h3>Vimalnath Sales Corporation</h3><p class="k2">A venture of Akshay Biosteware.</p><p class="k2"><b>Launching soon</b></p></div></li>
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>adhiraherbals.com</span></div><img src="/assets/work/adhiraherbals-com.webp" alt="Adhira Herbals website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">E-commerce</span></div>
+<div class="body"><p class="new">Latest project</p><h3>Adhira Herbals</h3><p class="k2">Organic moringa powder store, hand-harvested and farm to pack.</p><a href="https://adhiraherbals.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Adhira Herbals, opens in a new tab)</span> ↗</a></div></li>
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>jokermedia.com</span></div><img src="/assets/work/jokermedia-com.webp" alt="Joker Media website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Entertainment</span></div>
+<div class="body"><h3>Joker Media</h3><p class="metric">+240%</p><p class="k2">conversions</p><a href="https://jokermedia.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Joker Media, opens in a new tab)</span> ↗</a></div></li>
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>silverthatch.org.ky</span></div><img src="/assets/work/silverthatch-org-ky.webp" alt="Silver Thatch Pensions website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Finance</span></div>
+<div class="body"><h3>Silver Thatch Pensions</h3><p class="metric">3×</p><p class="k2">traffic growth</p><a href="https://silverthatch.org.ky/" target="_blank" rel="noopener">Visit site<span class="sr"> (Silver Thatch Pensions, opens in a new tab)</span> ↗</a></div></li>
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>centuryboats.com</span></div><img src="/assets/work/centuryboats-com.webp" alt="Century Boats website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Marine</span></div>
+<div class="body"><h3>Century Boats</h3><p class="metric">45% lower</p><p class="k2">customer acquisition cost</p><a href="https://centuryboats.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Century Boats, opens in a new tab)</span> ↗</a></div></li>
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>greendalept.com</span></div><img src="/assets/work/greendalept-com.webp" alt="Greendale Physical Therapy website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Healthcare</span></div>
+<div class="body"><h3>Greendale Physical Therapy</h3><p class="metric">+180%</p><p class="k2">bookings</p><a href="https://greendalept.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Greendale Physical Therapy, opens in a new tab)</span> ↗</a></div></li>
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>russellsorlando.com</span></div><img src="/assets/work/russellsorlando-com.webp" alt="RussellsOrlando website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Hospitality</span></div>
+<div class="body"><h3>RussellsOrlando</h3><p class="metric">2.5×</p><p class="k2">engagement</p><a href="https://russellsorlando.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (RussellsOrlando, opens in a new tab)</span> ↗</a></div></li>
+      <li class="card rv"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>rolypoly.com</span></div><img src="/assets/work/rolypoly-com.webp" alt="Rolly Polly website" width="640" height="400" loading="lazy" decoding="async"><span class="ind">Food and beverage</span></div>
+<div class="body"><h3>Rolly Polly</h3><p class="metric">+300%</p><p class="k2">online orders</p><a href="https://rolypoly.com/" target="_blank" rel="noopener">Visit site<span class="sr"> (Rolly Polly, opens in a new tab)</span> ↗</a></div></li>
+    </ul>
+    <div class="all-work" id="all-work">
+      <details>
+        <summary><span>All 100 client projects <small>with a live look at each site</small></span><i aria-hidden="true">+</i></summary>
+        <ul class="grid-work">
         <li><a href="https://app.felixbattery.com/" target="_blank" rel="noopener"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>app.felixbattery.com</span></div><img src="/assets/work/app-felixbattery-com.webp" alt="" width="640" height="400" loading="lazy" decoding="async"></div><span class="cap">Felix Battery<span aria-hidden="true">↗</span></span></a></li>
         <li><div><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>launching soon</span></div><img src="/assets/work/vimalnath-sales-corporation.webp" alt="" width="640" height="400" loading="lazy" decoding="async"></div><span class="cap">Vimalnath Sales Corporation</span></div></li>
         <li><a href="https://adhiraherbals.com/" target="_blank" rel="noopener"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>adhiraherbals.com</span></div><img src="/assets/work/adhiraherbals-com.webp" alt="" width="640" height="400" loading="lazy" decoding="async"></div><span class="cap">Adhira Herbals<span aria-hidden="true">↗</span></span></a></li>
@@ -361,25 +266,34 @@
         <li><a href="https://www.hollingsworthlaw.com/" target="_blank" rel="noopener"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>hollingsworthlaw.com</span></div><span class="mono" aria-hidden="true">HK</span></div><span class="cap">Hollingsworth Kelly Law Firm<span aria-hidden="true">↗</span></span></a></li>
         <li><a href="https://jimmyryce.org" target="_blank" rel="noopener"><div class="shot"><div class="chrome" aria-hidden="true"><b></b><b></b><b></b><span>jimmyryce.org</span></div><img src="/assets/work/jimmyryce-org.webp" alt="" width="640" height="400" loading="lazy" decoding="async"></div><span class="cap">Jimmy Ryce Foundation<span aria-hidden="true">↗</span></span></a></li>
       </ul>
-    </details>
-  </div>
-</div>
+      </details>
+    </div>
+  </section>
 
-<!-- 9 · team -->
-<section id="team" class="scene" data-scene="team" data-label="Team" aria-labelledby="team-h">
-  <div class="wrap rv">
-    <p class="eyebrow"><time>05:55</time> Leadership</p>
-    <h2 id="team-h">The people behind 4AM.</h2>
+  <section class="sec" id="process" aria-labelledby="pr-h">
+    <p class="k rv">How we work</p>
+    <h2 id="pr-h" class="rv">Diagnose, design, build, <span class="mark">grow.<svg class="sk draw ring" viewBox="0 0 200 80" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M34 16 C 76 0, 172 4, 190 30 C 206 58, 150 78, 92 75 C 30 72, 0 52, 14 31 C 23 17, 62 9, 104 11"/></svg></span></h2>
+    <ol class="steps-rows">
+      <li class="rv"><span class="num">01</span><h3>Diagnose</h3><p>Audience, funnel and product surface, examined before anything is made.<span class="out">you get: a diagnostic and a plan</span></p></li>
+      <li class="rv"><span class="num">02</span><h3>Design</h3><p>Positioning, identity and interface, decided while changes still cost little.<span class="out">you get: designs to react to</span></p></li>
+      <li class="rv"><span class="num">03</span><h3>Build</h3><p>Sites, apps and campaigns built by the same team that designed them.<span class="out">you get: working software and live campaigns</span></p></li>
+      <li class="rv"><span class="num">04</span><h3>Launch and grow</h3><p>Ship, measure every channel, then put more behind what works.<span class="out">you get: growth that compounds</span></p></li>
+    </ol>
+  </section>
+
+  <section class="sec" id="team" aria-labelledby="team-h">
+    <p class="k rv">Leadership</p>
+    <h2 id="team-h" class="rv">The people behind <span class="mark">4AM.<svg class="sk draw under" viewBox="0 0 200 20" aria-hidden="true" focusable="false"><path pathLength="1" class="s-t" stroke-width="4" d="M4 14 C 40 5, 80 5, 120 10 S 178 17, 196 6"/></svg></span></h2>
     <ul class="team">
-      <li class="person">
+      <li class="person rv">
         <span class="photo"><img src="/assets/team/vaibhav-pasi.webp" alt="Vaibhav Pasi" width="640" height="640" loading="lazy" decoding="async"></span>
         <div class="info"><p class="role">Co-founder</p><h3>Vaibhav Pasi</h3><p>Technology entrepreneur and growth strategist leading 4AM's vision, pairing creativity, engineering and business intelligence to scale brands across web, software and marketplaces.</p><ul class="chips"><li>Digital marketing</li><li>AI consulting</li><li>Product onboarding</li></ul></div>
       </li>
-      <li class="person">
+      <li class="person rv">
         <span class="photo"><img src="/assets/team/shoaib-khatik.webp" alt="Shoaib Khatik" width="640" height="640" loading="lazy" decoding="async"></span>
         <div class="info"><p class="role">Co-founder</p><h3>Shoaib Khatik</h3><p>Leads the technology vision and product engineering, building scalable, user-focused products with Python, the MERN stack, React Native and cloud technologies.</p><ul class="chips"><li>Full-stack</li><li>MERN · Python</li><li>AI solutions</li></ul></div>
       </li>
-      <li class="person">
+      <li class="person rv">
         <span class="photo"><img src="/assets/team/abhishek-prasad.webp" alt="Abhishek Prasad" width="640" height="640" loading="lazy" decoding="async"></span>
         <div class="info"><p class="role">Chief Technology Officer</p><h3>Abhishek Prasad</h3><p>Owns the technical roadmap and engineering excellence: high-performance mobile and enterprise apps, clean architecture, secure APIs and cloud-ready systems.</p><ul class="chips"><li>Android</li><li>Java and .NET</li><li>Product engineering</li></ul></div>
       </li>
@@ -399,23 +313,19 @@
       <p>“The 4AM team brought clarity to our growth strategy and execution. They operate like an extension of our internal team.”</p>
       <footer>Head of Marketing · SaaS brand</footer>
     </blockquote>
-  </div>
-</section>
+  </section>
 
-<!-- 10 · contact -->
-<section id="contact" class="scene" data-scene="contact" data-label="Contact" aria-labelledby="contact-h">
-  <div class="wrap contact">
-    <div class="rv">
-      <p class="eyebrow"><time>06:12</time> Contact</p>
-      <h2 id="contact-h">It is early. Let's begin.</h2>
-      <p class="lede">Tell us what you are trying to move, and <strong>we will tell you what it takes.</strong></p>
+  <section class="sec start" id="contact" aria-labelledby="contact-h">
+    <p class="k rv">Now booking</p>
+    <h2 id="contact-h" class="rv">Let's grow something people <span class="grad">come back to.</span></h2>
+    <p class="lede rv">Tell us what you are trying to move, and we will tell you what it takes. We reply within 24 hours.</p>
+    <div class="contact">
       <dl class="reach-us">
-        <div><dt>Email</dt><dd><a href="mailto:Info@4amglobalmedia.com">Info@4amglobalmedia.com</a><button class="copy" type="button" data-copy="Info@4amglobalmedia.com" aria-label="Copy email address">Copy</button></dd></div>
-        <div><dt>Phone and WhatsApp</dt><dd><a href="tel:+918826406545">+91 88264 06545</a><button class="copy" type="button" data-copy="+91 88264 06545" aria-label="Copy phone number">Copy</button></dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:Info@4amglobalmedia.com">Info@4amglobalmedia.com</a><button class="copy-btn" type="button" data-copy="Info@4amglobalmedia.com" aria-label="Copy email address">Copy</button></dd></div>
+        <div><dt>Phone and WhatsApp</dt><dd><a href="tel:+918826406545">+91 88264 06545</a><button class="copy-btn" type="button" data-copy="+91 88264 06545" aria-label="Copy phone number">Copy</button></dd></div>
         <div><dt>Location</dt><dd>Global, remote team</dd></div>
       </dl>
-    </div>
-    <form class="brief" id="brief" novalidate aria-labelledby="contact-h">
+      <form class="brief" id="brief" novalidate aria-labelledby="contact-h">
       <div class="grid2">
         <div class="field"><label for="f-name">Full name <span aria-hidden="true">*</span></label><input id="f-name" name="name" autocomplete="name" required placeholder="Priya Sharma"><span class="err" id="e-name"></span></div>
         <div class="field"><label for="f-email">Work email <span aria-hidden="true">*</span></label><input id="f-email" name="email" type="email" autocomplete="email" required placeholder="priya@company.com"><span class="err" id="e-email"></span></div>
@@ -426,26 +336,25 @@
         <div class="field full"><label for="f-message">Tell us about your project <span aria-hidden="true">*</span></label><textarea id="f-message" name="message" required placeholder="What are you launching, and what does success look like in 90 days?"></textarea><span class="err" id="e-message"></span></div>
       </div>
       <div class="form-end">
-        <button class="btn btn-primary" type="submit" name="via" value="email">Send brief by email</button>
-        <button class="btn btn-wa" type="submit" name="via" value="whatsapp">Send on WhatsApp</button>
+        <button class="pill light" type="submit" name="via" value="email">Send brief by email <i aria-hidden="true">↗</i></button>
+        <button class="pill light" type="submit" name="via" value="whatsapp">Send on WhatsApp</button>
         <small>Fields marked * are required. Your brief opens in your email app or WhatsApp, ready to send.</small>
       </div>
       <div class="status" role="status" hidden></div>
     </form>
-  </div>
-</section>
+    </div>
+  </section>
+</div>
 </main>
 
 <footer class="foot">
-  <div class="wrap">
-    <div class="foot-grid">
-      <div><a class="brand" href="#hero" aria-label="4AM Global Media, back to top"><img src="/logo-dark.webp" alt="4AM Global Media" width="340" height="160" loading="lazy" decoding="async"></a><p class="tag">The growth engine that never sleeps. A creative network made for today and tomorrow.</p></div>
-      <div><h3>Services</h3><ul><li><a href="/services/digital-marketing">Digital Marketing</a></li><li><a href="/services/branding">Branding</a></li><li><a href="/services/social-media-growth">Social Media Growth</a></li><li><a href="/services/seo">SEO</a></li><li><a href="/services/web-development">Web Development</a></li><li><a href="/services/content-creation">Content Creation</a></li><li><a href="/services/marketplace-product-onboarding">Marketplace Onboarding</a></li></ul></div>
-      <div><h3>Company</h3><ul><li><a href="#work">Work</a></li><li><a href="#method">Method</a></li><li><a href="#team">Team</a></li><li><a href="#contact">Contact</a></li></ul></div>
-      <div><h3>Connect</h3><ul><li><a href="https://www.instagram.com/reel/DUBIUl5DfBU/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/918826406545" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:Info@4amglobalmedia.com"><span>Info@4amglobalmedia.com</span></a></li><li><a href="tel:+918826406545">+91 88264 06545</a></li></ul></div>
-    </div>
-    <div class="legal"><span>© <span data-year>2026</span> 4AM Global Media. All rights reserved.</span><span>Sunrise rendered live in WebGL · 04:00 → 06:12</span></div>
+  <div class="foot-grid">
+    <div><a class="brand" href="/" aria-label="4AM Global Media, home"><img src="/logo-dark.webp" alt="4AM Global Media" width="340" height="160" loading="lazy" decoding="async"></a><p class="tag">The growth engine that never sleeps. A creative network made for today and tomorrow.</p></div>
+    <div><h3>Services</h3><ul><li><a href="/services/digital-marketing">Digital Marketing</a></li><li><a href="/services/branding">Branding</a></li><li><a href="/services/social-media-growth">Social Media Growth</a></li><li><a href="/services/seo">SEO</a></li><li><a href="/services/web-development">Web Development</a></li><li><a href="/services/content-creation">Content Creation</a></li><li><a href="/services/marketplace-product-onboarding">Marketplace Onboarding</a></li></ul></div>
+    <div><h3>Company</h3><ul><li><a href="/#work">Work</a></li><li><a href="/#process">Process</a></li><li><a href="/#team">Team</a></li><li><a href="/#contact">Contact</a></li></ul></div>
+    <div><h3>Connect</h3><ul><li><a href="https://www.instagram.com/reel/DUBIUl5DfBU/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/918826406545" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:Info@4amglobalmedia.com"><span>Info@4amglobalmedia.com</span></a></li><li><a href="tel:+918826406545">+91 88264 06545</a></li></ul></div>
   </div>
+  <div class="legal"><span>© <span data-year>2026</span> 4AM Global Media. All rights reserved.</span><span>Grown with care · plain HTML, CSS and JavaScript</span></div>
 </footer>
 <script type="module" src="/js/main.js"></script>
 </body>

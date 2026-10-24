@@ -18,13 +18,12 @@ Push to the repository. `vercel.json` tells Vercel to skip the install and build
 
 | Path | What it is |
 |---|---|
-| `public/index.html` | Home page: hero, services, software, reach, marketplaces, method, work, team, contact |
+| `public/index.html` | Home page: scroll film with three story cards, then services, marketplaces, numbers, work, process, team, contact |
 | `public/services/*.html` | One detailed, SEO page per service (served at `/services/<name>`) |
 | `public/404.html` | Page-not-found |
-| `public/css/site.css` | All styles (palette: platinum `#E5E4E2`, lavender `#E6E0F0`, coffee `#6F4E37`) |
-| `public/js/main.js` | Menu, scroll scenes, project carousel, contact form |
-| `public/js/globe.js` | The WebGL Earth (loaded only on the home page, after the page is idle) |
-| `public/assets/` | Images: `work/` project screenshots, `services/`, `team/`, `press/`, `earth/` textures |
+| `public/css/site.css` | All styles (palette: bone `#EBE9DF`, sage `#A9B887`, forest `#2E3D28`) |
+| `public/js/main.js` | Menu, scroll film, sketch reveals, counters, card tilt, contact form |
+| `public/assets/` | Images: `film/` scroll-film frames, `work/` project screenshots, `services/`, `team/`, `press/` |
 | `public/sitemap.xml`, `public/robots.txt` | For search engines |
 
 ## Common edits
@@ -37,6 +36,6 @@ Push to the repository. `vercel.json` tells Vercel to skip the install and build
 
 There is no server, so the form does not store anything. When a visitor sends it, their email app (or WhatsApp) opens with the brief already written, addressed to `Info@4amglobalmedia.com` (or `+91 88264 06545`). They press send there.
 
-## Earth imagery
+## Scroll film
 
-The globe uses NASA's Blue Marble and Black Marble imagery (public domain).
+The home-page film (an interface plant growing) comes from the free Scrollhaus "Kelpware" direction, re-encoded for speed and self-hosted. Scrollhaus licence: free to customise for your own or client websites; do not resell or redistribute the template library.
