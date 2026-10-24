@@ -18,12 +18,12 @@ Push to the repository. `vercel.json` tells Vercel to skip the install and build
 
 | Path | What it is |
 |---|---|
-| `public/index.html` | Home page: scroll film with three story cards, then services, marketplaces, numbers, work, process, team, contact |
+| `public/index.html` | Home page: night-video hero, scroll film with two story cards, then services, marketplaces, numbers, work, process, team, contact |
 | `public/services/*.html` | One detailed, SEO page per service (served at `/services/<name>`) |
 | `public/404.html` | Page-not-found |
 | `public/css/site.css` | All styles (palette: bone `#EBE9DF`, sage `#A9B887`, forest `#2E3D28`) |
-| `public/js/main.js` | Menu, scroll film, sketch reveals, counters, card tilt, contact form |
-| `public/assets/` | Images: `film/` scroll-film frames, `work/` project screenshots, `services/`, `team/`, `press/` |
+| `public/js/main.js` | Menu, hero video, scroll film, drifting card rows, sketch reveals, counters, contact form |
+| `public/assets/` | Media: `hero/` night video and stills, `film/` scroll-film frames, `work/` project screenshots, `services/`, `team/`, `press/` |
 | `public/sitemap.xml`, `public/robots.txt` | For search engines |
 
 ## Common edits

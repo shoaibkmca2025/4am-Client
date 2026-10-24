@@ -21,6 +21,19 @@ if (!rm && 'IntersectionObserver' in window) root.classList.add('anim');
 const EMAIL = 'Info@4amglobalmedia.com';
 const WHATSAPP = '918826406545';
 
+/* heavy, non-essential media (hero video, film frames) waits for the page to
+   load AND paint its first content, so it never competes with the copy */
+const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1200));
+const afterPaint = new Promise((res) => {
+  const loaded = new Promise((r) => (document.readyState === 'complete' ? r() : addEventListener('load', r, { once: true })));
+  const painted = new Promise((r) => {
+    if (performance.getEntriesByName('first-contentful-paint').length) return r();
+    try { new PerformanceObserver((list, obs) => { if (list.getEntries().some((e) => e.name === 'first-contentful-paint')) { obs.disconnect(); r(); } }).observe({ type: 'paint', buffered: true }); } catch { r(); }
+    setTimeout(r, 4000);  // never wait forever
+  });
+  Promise.all([loaded, painted]).then(res);
+});
+
 /* ---------- every page ---------- */
 $$('[data-year]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });
 
@@ -58,22 +71,18 @@ if (root.classList.contains('anim')) {
   }));
 }
 
-/* gentle 3D tilt toward the pointer (+ a spotlight on service cards) */
+/* gentle 3D tilt toward the pointer (founder cards, service-page photos;
+   cards inside moving rows stay still) */
 if (fine && !rm) {
   const tilt = (card, k) => {
     card.addEventListener('pointermove', (e) => {
       const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      card.style.setProperty('--ry', ((x - .5) * k).toFixed(2) + 'deg');
-      card.style.setProperty('--rx', ((.5 - y) * k).toFixed(2) + 'deg');
       card.style.setProperty('--ty', ((x - .5) * k).toFixed(2) + 'deg');
       card.style.setProperty('--tx', ((.5 - y) * k * .7).toFixed(2) + 'deg');
-      card.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
-      card.style.setProperty('--my', (y * 100).toFixed(1) + '%');
     });
-    card.addEventListener('pointerleave', () => ['--ry', '--rx', '--ty', '--tx'].forEach((p) => card.style.removeProperty(p)));
+    card.addEventListener('pointerleave', () => ['--ty', '--tx'].forEach((p) => card.style.removeProperty(p)));
   };
-  $$('.scard').forEach((c) => tilt(c, 10));
-  $$('.card, .person').forEach((c) => tilt(c, 6));
+  $$('.person').forEach((c) => tilt(c, 6));
   $$('.sp-photo .frame').forEach((c) => tilt(c, 12));
 }
 
@@ -89,46 +98,123 @@ $$('[data-copy]').forEach((btn) => {
   });
 });
 
-/* ---------- one-line card rows that slide right-to-left with the scroll ----------
-   The section is made as tall as the row is wide (plus a screen), the row is
-   pinned, and 1px of scroll moves it 1px — so it tracks the scroll exactly and
-   reverses the instant you scroll back. Reduced motion keeps a native,
-   swipeable row instead (no html.hs). */
-const rows = $$('.hscroll');
-if (rows.length && !rm) {
-  root.classList.add('hs');
-  const R = rows.map((sec) => ({ sec, view: $('.hs-view', sec), track: $('.track', sec), bar: $('.hs-bar i', sec), top: 0, dist: 0, last: -1 }));
-  const measure = () => R.forEach((r) => {
-    r.dist = Math.max(0, r.track.scrollWidth - r.view.clientWidth);
-    r.sec.style.height = `${r.dist + innerHeight}px`;
-  });
-  const tops = () => R.forEach((r) => { r.top = r.sec.getBoundingClientRect().top + scrollY; });
-  const apply = () => {
-    R.forEach((r) => {
-      // read the section's live position: anything above it may change height
-      const p = r.dist ? clamp(-r.sec.getBoundingClientRect().top / r.dist, 0, 1) : 0;
-      if (Math.abs(p - r.last) < .0005) return;
-      r.last = p;
-      r.track.style.transform = `translate3d(${(-p * r.dist).toFixed(1)}px,0,0)`;
-      if (r.bar) r.bar.style.transform = `scaleX(${p.toFixed(4)})`;
+/* ---------- card rows that drift right-to-left (services, work) ----------
+   A seamless loop: each row's cards are cloned once and the row wraps at half
+   its width. It drifts at a calm speed; hover, keyboard focus, the Pause
+   button or leaving the screen ease it to a stop (never a hard stop). Drag or
+   swipe to take over: the row follows the finger 1:1, keeps the flick's
+   velocity on release, then eases back into its drift. The page scroll is
+   never touched. Reduced motion (no html.loops): a plain swipeable row. */
+const loops = $$('.loop');
+if (loops.length && !rm) {
+  root.classList.add('loops');
+  loops.forEach((loop) => {
+    const track = $('.loop-track', loop);
+    const btn = document.querySelector(`.loop-btn[aria-controls="${loop.id}"]`);
+    const SPEED = matchMedia('(max-width: 639px)').matches ? 26 : 34;  // px per second
+    let built = false, half = 0, x = 0, v = 0, hover = false, focus = false, paused = false, seen = false, drag = false, last = 0, raf = 0, moved = false;
+    const build = () => $$(':scope > li', track).forEach((li) => {
+      const c = li.cloneNode(true);
+      c.setAttribute('aria-hidden', 'true'); c.setAttribute('inert', '');
+      $$('[id]', c).forEach((el) => el.removeAttribute('id'));
+      track.appendChild(c);
     });
-  };
-  let queued = false;
-  const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; apply(); }); } };
-  const relayout = () => { measure(); tops(); R.forEach((r) => { r.last = -1; }); apply(); };
-  addEventListener('scroll', schedule, { passive: true });
-  let rt = 0;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(relayout, 120); });
-  addEventListener('load', relayout);
-  if ('ResizeObserver' in window) { const ro = new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(relayout, 120); }); R.forEach((r) => ro.observe(r.track)); }
-  requestAnimationFrame(relayout);  // measure inside the first frame, not during script start-up
-  // keyboard: bring a focused card into view by scrolling the page to it
-  R.forEach((r) => r.track.addEventListener('focusin', (e) => {
-    const li = e.target.closest('.track > li');
-    if (!li) return;
-    const x = clamp(li.offsetLeft - (r.view.clientWidth - li.offsetWidth) / 2, 0, r.dist);
-    scrollTo({ top: r.sec.getBoundingClientRect().top + scrollY + x, behavior: 'instant' });
-  }));
+    const measure = () => { half = track.scrollWidth / 2; };
+    const wrap = () => { if (half) x = -((((-x) % half) + half) % half); };
+    const render = () => { if (!focus) wrap(); track.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`; };
+    const resting = () => hover || focus || paused || !seen;
+    const tick = (now) => {
+      raf = 0;
+      const dt = last ? Math.min(.05, (now - last) / 1000) : 0; last = now;
+      if (!drag) {
+        const target = resting() ? 0 : -SPEED;
+        v += (target - v) * (1 - Math.exp(-dt * 3.2));   // ease toward the drift (or a stop)
+        if (Math.abs(v - target) < .05) v = target;
+        x += v * dt;
+      }
+      render();
+      if (drag || v !== 0 || !resting()) raf = requestAnimationFrame(tick); else last = 0;
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !built) { built = true; build(); measure(); } kick(); }).observe(loop);
+    let rz = 0;
+    addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (built) { measure(); render(); } }, 150); });
+
+    loop.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; kick(); } });
+    loop.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; kick(); } });
+    // keyboard: stop, and slide the focused card fully into view
+    loop.addEventListener('focusin', (e) => {
+      focus = true; v = 0;
+      const li = e.target.closest('li');
+      if (li) {
+        const lr = loop.getBoundingClientRect(), r = li.getBoundingClientRect(), pad = 32;
+        if (r.left < lr.left + pad) x += lr.left + pad - r.left;
+        else if (r.right > lr.right - pad) x -= r.right - (lr.right - pad);
+        render();
+      }
+      kick();
+    });
+    loop.addEventListener('focusout', (e) => { if (!loop.contains(e.relatedTarget)) { focus = false; kick(); } });
+
+    // drag / swipe: follows 1:1 after an 8px threshold; vertical moves stay with the page
+    loop.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || drag) return;
+      const sx = e.clientX, sy = e.clientY, hist = [];
+      let active = false, base = 0;
+      moved = false;
+      const move = (ev) => {
+        const dx = ev.clientX - sx, dy = ev.clientY - sy;
+        if (!active) {
+          if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+          if (Math.abs(dy) > Math.abs(dx)) { end(); return; }
+          active = true; moved = true; drag = true; base = x - dx; v = 0;
+          loop.classList.add('dragging');
+          try { loop.setPointerCapture(ev.pointerId); } catch {}
+          kick();
+        }
+        x = base + dx; const before = x; wrap(); base += x - before;
+        hist.push([ev.timeStamp, ev.clientX]); if (hist.length > 5) hist.shift();
+      };
+      const end = () => {
+        loop.removeEventListener('pointermove', move); loop.removeEventListener('pointerup', end); loop.removeEventListener('pointercancel', end);
+        if (!active) return;
+        const [t0, p0] = hist[0] || [0, 0], [t1, p1] = hist[hist.length - 1] || [0, 0];
+        v = t1 > t0 ? clamp((p1 - p0) / ((t1 - t0) / 1000), -3000, 3000) : 0;  // hand the flick's velocity on
+        drag = false; loop.classList.remove('dragging'); kick();
+      };
+      loop.addEventListener('pointermove', move); loop.addEventListener('pointerup', end); loop.addEventListener('pointercancel', end);
+    });
+    loop.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+    loop.addEventListener('dragstart', (e) => e.preventDefault());
+
+    if (btn) btn.addEventListener('click', () => { paused = !paused; btn.setAttribute('aria-pressed', String(paused)); btn.textContent = paused ? 'Play' : 'Pause'; kick(); });
+  });
+}
+
+/* ---------- home hero: the night video, and the header's hero look ---------- */
+const hero = $('#hero');
+if (hero) {
+  const setHero = () => root.classList.toggle('at-hero', hero.getBoundingClientRect().bottom > 76);
+  let hq = false;
+  addEventListener('scroll', () => { if (!hq) { hq = true; requestAnimationFrame(() => { hq = false; setHero(); }); } }, { passive: true });
+  requestAnimationFrame(setHero);
+  const vid = $('video', hero), vbtn = $('.vpause', hero);
+  const conn = navigator.connection;
+  const tall = matchMedia('(max-aspect-ratio: 4/5)').matches;  // same split as the <picture> still
+  vid.addEventListener('playing', () => vid.classList.add('on'), { once: true });
+  if (conn && conn.saveData) vbtn.hidden = true;   // data saver: the still poster only
+  else {
+    let wantPlay = !rm, visible = true;
+    const sync = () => {
+      if (wantPlay && visible) { if (!vid.src) vid.src = tall ? vid.dataset.tall : vid.dataset.wide; vid.play().catch(() => {}); }
+      else vid.pause();
+      vbtn.setAttribute('aria-pressed', String(!wantPlay));
+      vbtn.setAttribute('aria-label', wantPlay ? 'Pause background video' : 'Play background video');
+    };
+    vbtn.addEventListener('click', () => { wantPlay = !wantPlay; sync(); });
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (vid.src) sync(); }).observe(hero);
+    if (wantPlay) afterPaint.then(() => idle(sync, { timeout: 1500 })); else sync();
+  }
 }
 
 /* "Browse all" opens the full project index */
@@ -250,25 +336,13 @@ if (stage) {
     const pump = () => {
       if (!alive || next >= order.length) return;
       const i = order[next++];
-      fetch(url(i)).then((r) => (r.ok ? r.blob() : null)).then((b) => { if (b) { blobs[i] = b; if (Math.abs(i - playhead) < 4) dirty = true; } }).catch(() => {}).finally(pump);
+      fetch(url(i), { priority: 'low' }).then((r) => (r.ok ? r.blob() : null)).then((b) => { if (b) { blobs[i] = b; if (Math.abs(i - playhead) < 4) dirty = true; } }).catch(() => {}).finally(pump);
     };
     // The poster covers the first screen, so the film can wait: start streaming
     // once the page has loaded and gone idle, or as soon as the visitor scrolls.
     const start = () => { if (started) return; started = true; for (let k = 0; k < 6; k++) pump(); };
     addEventListener('scroll', start, { once: true, passive: true });
-    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1200));
-    // Wait for both the load event and the first contentful paint, so the
-    // frames can never compete with the copy the visitor is about to read.
-    const loaded = new Promise((res) => (document.readyState === 'complete' ? res() : addEventListener('load', res, { once: true })));
-    const painted = new Promise((res) => {
-      const has = () => performance.getEntriesByName('first-contentful-paint').length > 0;
-      if (has()) return res();
-      try {
-        new PerformanceObserver((list, obs) => { if (list.getEntries().some((e) => e.name === 'first-contentful-paint')) { obs.disconnect(); res(); } }).observe({ type: 'paint', buffered: true });
-      } catch { res(); }
-      setTimeout(res, 4000);  // never wait forever
-    });
-    Promise.all([loaded, painted]).then(() => idle(start, { timeout: 2500 }));
+    afterPaint.then(() => idle(start, { timeout: 3000 }));
 
     /* decoding: keep only the frames around the playhead as bitmaps */
     const KEEP = 6;  // full-resolution bitmaps are 7–15 MB each decoded
@@ -301,13 +375,14 @@ if (stage) {
       return CAM[CAM.length - 1].slice(1);
     };
 
-    let W = 0, H = 0, dirty = true, end = 1, solidTop = 0;
+    let W = 0, H = 0, dirty = true, end = 1, solidTop = 0, filmStart = 0;
     const size = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2, Math.sqrt((mobile ? 3.4e6 : 5.6e6) / Math.max(1, innerWidth * innerHeight)));
       W = canvas.width = Math.round(innerWidth * dpr); H = canvas.height = Math.round(innerHeight * dpr);
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
       solidTop = solid.getBoundingClientRect().top + scrollY;
-      end = Math.max(1, solidTop - innerHeight);
+      filmStart = hero ? hero.offsetHeight * .5 : 0;  // the film plays once the hero scrolls away
+      end = Math.max(filmStart + 1, solidTop - innerHeight);
       dirty = true;
     };
     size();
@@ -322,13 +397,13 @@ if (stage) {
     const frame = () => {
       if (!alive) return;
       const y = scrollY;
-      const hp = clamp(y / end, 0, 1);
+      const hp = clamp((y - filmStart) / (end - filmStart), 0, 1);
       // ease the playhead toward the scroll position: steady film even with stepped wheels
       const target = hp * LAST;
       pos += (target - pos) * .18;
       if (Math.abs(target - pos) < .01) pos = target;
       px += (tpx - px) * .06; py += (tpy - py) * .06;
-      if (rail) { bars.forEach((b, i) => b.style.setProperty('--f', clamp(hp * 3 - i, 0, 1).toFixed(3))); rail.style.setProperty('--done', hp > .98 ? '1' : '0'); }
+      if (rail) { bars.forEach((b, i) => b.style.setProperty('--f', clamp(hp * bars.length - i, 0, 1).toFixed(3))); rail.style.setProperty('--done', hp > .98 ? '1' : '0'); }
       const covered = y > solidTop + 4;
       const q = pos / set.step, i = Math.min(N - 1, Math.floor(q)), frac = q - i;
       playhead = i;
