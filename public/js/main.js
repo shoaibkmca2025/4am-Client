@@ -34,6 +34,24 @@ const afterPaint = new Promise((res) => {
 });
 
 /* ---------- every page ---------- */
+/* Sections below the fold skip rendering at load (content-visibility: auto),
+   which keeps the first paint light. A few seconds after load they are laid
+   out in idle time, a slice at a time, so scrolling into them later doesn't
+   pay for their first layout mid-scroll (that cost up to ~100 ms frames). */
+addEventListener('load', () => setTimeout(() => {
+  const queue = $$('.solid > .sec, .marquee, .foot, .sp-sec').filter((el) => getComputedStyle(el).contentVisibility === 'auto');
+  const next = (dl) => {
+    do { const el = queue.shift(); el.style.contentVisibility = 'visible'; void el.offsetHeight; }  // lay it out here, in idle time
+    while (queue.length && dl && dl.timeRemaining && dl.timeRemaining() > 12);
+    if (queue.length) idle(next);
+  };
+  if (queue.length) idle(next);
+}, 5000), { once: true });
+
+/* fonts used further down the page load quietly once it has painted, so they
+   are ready before their sections render (no swap and re-layout mid-scroll) */
+if (document.fonts && document.fonts.load) afterPaint.then(() => idle(() => ['800 1em "Bricolage Grotesque"', '600 1em "JetBrains Mono"', '600 1em Caveat'].forEach((f) => document.fonts.load(f).catch(() => {}))));
+
 $$('[data-year]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });
 
 const menuBtn = $('.menu-btn'), nav = $('#nav');
@@ -67,7 +85,7 @@ if (root.classList.contains('anim')) {
   requestAnimationFrame(() => {
     const els = $$('.rv, .sk.draw:not(.rv .sk)'), vh = innerHeight;
     const shows = (r) => r.top < vh && r.bottom > 0;
-    const inView = els.map((el) => { const sec = el.closest('.solid > .sec'); return (!sec || shows(sec.getBoundingClientRect())) && shows(el.getBoundingClientRect()); });
+    const inView = els.map((el) => { const sec = el.closest('.solid > .sec, .marquee, .foot, .sp-sec'); return (!sec || shows(sec.getBoundingClientRect())) && shows(el.getBoundingClientRect()); });
     els.forEach((el, k) => {
       if (inView[k]) { el.classList.add('on'); return; }  // already in view
       $$('[data-count]', el).forEach((c) => { c.textContent = '0'; });
@@ -252,6 +270,8 @@ if (hero) {
   let hq = false;
   addEventListener('scroll', () => { if (!hq) { hq = true; requestAnimationFrame(() => { hq = false; setHero(); }); } }, { passive: true });
   requestAnimationFrame(setHero);
+  // the light logo is hidden while the hero is up: fetch it once the page has painted
+  afterPaint.then(() => idle(() => $$('.brand img[loading="lazy"]').forEach((i) => { i.loading = 'eager'; })));
   const vid = $('video', hero), vbtn = $('.vpause', hero);
   const conn = navigator.connection;
   const tall = matchMedia('(max-aspect-ratio: 4/5)').matches;  // same split as the <picture> still
@@ -376,6 +396,7 @@ if (scene) {
   const track = (p, a, b, f = (t) => t) => f(clamp((p - a) / (b - a), 0, 1));
   const apply = (p) => {
     const q = clamp(p / .86, 0, 1);  // the framing lands at 86% of the travel and holds
+    set('--cam-q', q.toFixed(4));  // the portrait slice derives its own x from this
     set('--cam-x', (-47.957 - 2.043 * q).toFixed(3) + '%');
     set('--cam-y', (-80.097 + 43.381 * q).toFixed(3) + '%');
     set('--cam-z', rm ? '1' : (1 + .11 * Math.sin(Math.PI * q)).toFixed(4));
@@ -414,6 +435,10 @@ if (scene) {
   let rz = 0;
   addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { measured = false; kick(); }, 150); });
   kick();
+
+  // decode the big photo in the background as soon as it arrives, not on the frame it first shows
+  const photo = $('.scene__photo', scene), warm = () => { if (photo.decode) photo.decode().catch(() => {}); };
+  if (photo.complete) warm(); else photo.addEventListener('load', warm, { once: true });
 
   /* intro: the headline lines are uncovered when the scene arrives */
   const open = () => scene.classList.add('is-open');
