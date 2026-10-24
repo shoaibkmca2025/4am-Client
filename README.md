@@ -21,7 +21,7 @@ Push to the repository. `vercel.json` tells Vercel to skip the install and build
 | `public/index.html` | Home page: night-video hero, launch scene (scroll-driven camera from a rocket launch to a results dashboard), then services, marketplaces, numbers, work, process, team, contact |
 | `public/services/*.html` | One detailed, SEO page per service (served at `/services/<name>`) |
 | `public/404.html` | Page-not-found |
-| `public/css/site.css` | All styles (palette: bone `#EBE9DF`, sage `#A9B887`, forest `#2E3D28`) |
+| `public/css/site.css` | All styles: night palette (navy `#061826`, accent `#9FD0FF`) and day palette (sky `#F4F8FC`, accent `#1D5FA8`), switched by the header sun/moon button |
 | `public/js/main.js` | Menu, hero video, launch scene, drifting card rows (swipe, arrows, keys), sketch reveals, counters, contact form |
 | `public/assets/` | Media: `hero/` night video and stills, `launch/` launch-scene photo, `work/` project screenshots, `services/`, `team/`, `press/` |
 | `public/sitemap.xml`, `public/robots.txt` | For search engines |

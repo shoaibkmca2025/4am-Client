@@ -27,20 +27,26 @@
 @font-face { font-family: "Figtree Fallback"; font-weight: 650 900; size-adjust: 96%; src: local("Arial Bold"), local("Arial-BoldMT"), local("Arimo Bold"), local("Liberation Sans Bold"); }
 
 :root {
-  --bone: #EBE9DF;
-  --bone-2: #E2DFD2;          /* raised surfaces on bone */
-  --sage: #A9B887;
-  --sage-soft: #D6DDC4;       /* sage washed into bone: chips, fills */
-  --forest: #2E3D28;
-  --forest-2: #3C4F34;        /* hover / pressed forest */
-  --line: rgba(46,61,40,.16);
-  --line-2: rgba(46,61,40,.32);
-  --dline: rgba(235,233,223,.18);   /* hairline on forest */
+  /* night palette, matched to the hero video and the launch scene. Roles kept
+     from the old light theme: --bone = page, --forest = text (and the few
+     inverse chips), --sage = accent. */
+  --bone: #061826;            /* page: the launch scene's night */
+  --bone-2: #0C2233;          /* raised surfaces */
+  --sage: #9FD0FF;            /* accent: the moon's glow (9.9:1 on the page) */
+  --sage-soft: #12304A;       /* accent washed into night: chips, fills */
+  --forest: #E8F0F8;          /* text (16.4:1 on the page) */
+  --forest-2: #FFFFFF;
+  --line: rgba(232,240,248,.12);
+  --line-2: rgba(232,240,248,.26);
+  --dline: rgba(232,240,248,.16);   /* hairline on raised night surfaces */
+  --night-deep: #030F19;      /* footer */
+  --muted: rgba(232,240,248,.72);
+  --glass: linear-gradient(160deg, #13395C, #0B2338);  /* featured blocks */
   /* sketch inks — decoration only */
   --tomato: #E8604C; --gold: #E2A93B; --sky: #5BA7D9; --coral: #FF9A8B;
-  --grad: linear-gradient(90deg, var(--sage), #E7C35F, var(--coral), var(--sage));   /* on forest */
-  --grad-ink: linear-gradient(90deg, var(--forest), #5E7A3A, #B5452F, var(--forest)); /* on bone: ≥3.9:1 */
-  --shadow: 0 24px 50px -30px rgba(30,40,26,.55);
+  --grad: linear-gradient(90deg, var(--sage), #F5BD4F, var(--coral), var(--sage));  /* night blue into sunrise gold */
+  --grad-ink: var(--grad);
+  --shadow: 0 24px 50px -30px rgba(0,0,0,.8);
   --display: "Bricolage Grotesque", "Bricolage Fallback", "Bricolage Fallback Roboto", system-ui, sans-serif;
   --body: "Figtree", "Figtree Fallback", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
@@ -48,7 +54,7 @@
   --pad: max(clamp(18px, 4vw, 64px), env(safe-area-inset-left, 0px));
   --ease: cubic-bezier(.2,.8,.2,1);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  color-scheme: light;
+  color-scheme: dark;
   background: var(--bone);
   scroll-padding-top: 88px;
   overflow-x: clip;
@@ -79,7 +85,7 @@ h3 { font-weight: 700; letter-spacing: -.02em; line-height: 1.12; }
 @media (prefers-reduced-motion: no-preference) { .grad { animation: flow 6s linear infinite; } }
 @keyframes flow { to { background-position: 300% 0; } }
 .k { display: inline-flex; align-items: center; gap: 10px; margin: 0; font: 600 12px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; }
-.k::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px rgba(169,184,135,.35); }
+.k::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px rgba(159,208,255,.22); }
 @media (prefers-reduced-motion: no-preference) { .k::before { animation: pulse 1.8s ease-in-out infinite; } }
 @keyframes pulse { 50% { opacity: .35; transform: scale(.7); } }
 .hand { font-family: var(--hand); font-weight: 600; }
@@ -127,7 +133,7 @@ h3 { font-weight: 700; letter-spacing: -.02em; line-height: 1.12; }
    misses SVG restyles when .on lands on the <svg> itself. */
 .anim .sk.draw :is(.s-t, .s-g, .s-s, .s-a, .s-f) { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.4s var(--ease) .15s; }
 .anim .on .sk.draw :is(.s-t, .s-g, .s-s, .s-a, .s-f), .anim .sk.draw.on :is(.s-t, .s-g, .s-s, .s-a, .s-f) { stroke-dashoffset: 0; }
-.s-t { stroke: var(--tomato); } .s-g { stroke: var(--gold); } .s-s { stroke: var(--sky); } .s-a { stroke: #7F9560; } .s-f { stroke: var(--forest); }
+.s-t { stroke: var(--tomato); } .s-g { stroke: var(--gold); } .s-s { stroke: var(--sky); } .s-a { stroke: var(--sage); } .s-f { stroke: var(--forest); }
 .f-t { fill: var(--tomato); } .f-g { fill: var(--gold); } .f-s { fill: var(--sky); } .f-a { fill: var(--sage); } .f-c { fill: var(--coral); } .f-f { fill: var(--forest); }
 @media (prefers-reduced-motion: no-preference) { .breathe { transform-origin: 60px 40px; animation: breathe 2.4s ease-in-out infinite; } }
 @keyframes breathe { 50% { transform: scale(1.12); } }
@@ -142,7 +148,7 @@ h3 { font-weight: 700; letter-spacing: -.02em; line-height: 1.12; }
 .marquee .row { display: flex; gap: .5em; width: max-content; font: 800 clamp(40px, 6vw, 96px)/1 var(--display); letter-spacing: -.04em; white-space: nowrap; }
 @media (prefers-reduced-motion: no-preference) { .marquee .row { animation: slide 32s linear infinite; } }
 @keyframes slide { to { transform: translateX(-50%); } }
-.marquee .row span:nth-child(3n+2) { color: #5E7A3A; }  /* olive: 3.9:1 on bone (sage is 1.7:1) */
+.marquee .row span:nth-child(3n+2) { color: var(--sage); }
 .marquee .row span:nth-child(3n) { color: transparent; -webkit-text-stroke: 1.5px var(--forest); }
 .marquee .row svg { width: .55em; height: .55em; align-self: center; }
 
@@ -179,7 +185,7 @@ html:not(.loops) .loop-track > li { scroll-snap-align: start; }
 .scard { position: relative; display: flex; flex-direction: column; border-radius: 20px; background: var(--bone-2); box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; overflow: hidden; transition: box-shadow .25s, transform .25s var(--ease); }
 .scard .ph { position: relative; display: block; aspect-ratio: 3 / 2; background: var(--sage-soft); }
 .scard .ph img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
-.scard .badge { position: absolute; left: 12px; bottom: -20px; z-index: 2; display: grid; place-items: center; width: 54px; height: 42px; border-radius: 14px; background: var(--bone); box-shadow: 0 8px 18px -10px rgba(30,40,26,.6), inset 0 0 0 1px var(--line); }
+.scard .badge { position: absolute; left: 12px; bottom: -20px; z-index: 2; display: grid; place-items: center; width: 54px; height: 42px; border-radius: 14px; background: var(--bone); box-shadow: 0 8px 18px -10px rgba(0,0,0,.6), inset 0 0 0 1px var(--line); }
 .scard .badge svg { width: 44px; height: 30px; }
 .scard .sbody { display: flex; flex-direction: column; gap: 6px; flex: 1; padding: 30px 16px 16px; }
 .scard h3 { font-size: 19px; }
@@ -217,7 +223,7 @@ form.brief .pill.light { background: var(--bone); color: var(--forest); }
 /* work */
 .card { position: relative; display: flex; flex-direction: column; border-radius: 22px; background: var(--bone-2); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; transform: rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg)); transition: transform .5s var(--ease), box-shadow .3s; }
 .shot { position: relative; aspect-ratio: 16/10; overflow: hidden; background: var(--sage-soft); }
-.shot .chrome { position: absolute; inset: 0 0 auto; z-index: 1; height: 26px; display: flex; align-items: center; gap: 5px; padding-left: 12px; background: rgba(235,233,223,.94); box-shadow: 0 1px 0 var(--line); }
+.shot .chrome { position: absolute; inset: 0 0 auto; z-index: 1; height: 26px; display: flex; align-items: center; gap: 5px; padding-left: 12px; background: rgba(12,34,51,.94); box-shadow: 0 1px 0 var(--line); }
 .shot .chrome b { width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); }
 .shot .chrome b:nth-child(1) { background: var(--tomato); } .shot .chrome b:nth-child(2) { background: var(--gold); } .shot .chrome b:nth-child(3) { background: var(--sage); }
 .shot .chrome span { margin-left: 10px; font: 500 11px/1 var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 10px; }
@@ -292,7 +298,7 @@ form.brief { padding: 28px; border-radius: 26px; background: var(--forest); colo
 .field.full { grid-column: 1/-1; }
 label { font: 700 14px/1.2 var(--body); }
 input, select, textarea { width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 14px; border: 0; background: var(--bone); color: var(--forest); font: 400 16px/1.4 var(--body); box-shadow: inset 0 0 0 1px var(--line-2); transition: box-shadow .2s; }
-input::placeholder, textarea::placeholder { color: rgba(46,61,40,.6); }
+input::placeholder, textarea::placeholder { color: rgba(232,240,248,.5); }
 textarea { min-height: 120px; resize: vertical; }
 input:focus, select:focus, textarea:focus { outline: none; box-shadow: inset 0 0 0 3px var(--sage); }
 .field.bad input, .field.bad select, .field.bad textarea { box-shadow: inset 0 0 0 3px #FF9A8B; }
@@ -326,7 +332,7 @@ input:focus, select:focus, textarea:focus { outline: none; box-shadow: inset 0 0
 .crumbs li + li::before { content: "/"; margin-right: 8px; }
 .crumbs a { text-underline-offset: 3px; }
 .eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; font: 600 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
-.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--sage); box-shadow: 0 0 0 4px rgba(169,184,135,.35); }
+.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--sage); box-shadow: 0 0 0 4px rgba(159,208,255,.22); }
 .sp-hero { display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr); gap: 56px; align-items: center; padding-block: 28px 80px; }
 .sp-hero h1 { font-size: clamp(44px,6vw,94px); line-height: .94; }
 .sp-hero h1 em { font-style: normal; background: var(--grad-ink); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -341,7 +347,7 @@ input:focus, select:focus, textarea:focus { outline: none; box-shadow: inset 0 0
 .sp-hero .facts { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 28px 0 0; }
 .sp-hero .facts li { font: 700 13px/1 var(--body); padding: 10px 13px; border-radius: 999px; background: var(--sage-soft); }
 .sp-photo { position: relative; perspective: 1200px; }
-.sp-photo .frame { border-radius: 28px; overflow: hidden; background: var(--sage-soft); box-shadow: 0 40px 80px -36px rgba(30,40,26,.6); transform: rotateY(var(--ty,-8deg)) rotateX(var(--tx,4deg)); transition: transform .6s var(--ease); }
+.sp-photo .frame { border-radius: 28px; overflow: hidden; background: var(--sage-soft); box-shadow: 0 40px 80px -36px rgba(0,0,0,.6); transform: rotateY(var(--ty,-8deg)) rotateX(var(--tx,4deg)); transition: transform .6s var(--ease); }
 .sp-photo img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
 .sp-photo .tag { position: absolute; left: -14px; bottom: 26px; margin: 0; padding: 14px 16px; border-radius: 18px; background: var(--forest); color: var(--bone); font: 600 14px/1.35 var(--body); box-shadow: var(--shadow); max-width: 240px; }
 .sp-photo .tag b { display: block; font: 800 26px/1 var(--display); letter-spacing: -.03em; margin-bottom: 4px; color: var(--sage); }
@@ -393,7 +399,7 @@ input:focus, select:focus, textarea:focus { outline: none; box-shadow: inset 0 0
 
 /* ---------- hover: real pointers only (touch would stick) ---------- */
 @media (hover: hover) and (pointer: fine) {
-  .nav a:hover { background: rgba(46,61,40,.1); }
+  .nav a:hover { background: rgba(232,240,248,.1); }
   .nav a[aria-current="true"]:hover { background: var(--forest-2); }
   .pill:hover { transform: translateY(-2px); }
   .pill:hover i { transform: rotate(-45deg); }
@@ -426,7 +432,7 @@ input:focus, select:focus, textarea:focus { outline: none; box-shadow: inset 0 0
   .row-ctl { justify-content: flex-start; }
   #services .loop-track > li { width: 236px; }
   #work .loop-track > li { width: 256px; }
-  .nav { position: fixed; left: var(--pad); right: var(--pad); top: calc(76px + env(safe-area-inset-top,0px)); flex-direction: column; gap: 2px; padding: 8px; border-radius: 22px; background: rgba(235,233,223,.97); }
+  .nav { position: fixed; left: var(--pad); right: var(--pad); top: calc(76px + env(safe-area-inset-top,0px)); flex-direction: column; gap: 2px; padding: 8px; border-radius: 22px; background: rgba(9,28,44,.97); box-shadow: inset 0 0 0 1px var(--line), 0 24px 60px -20px rgba(0,0,0,.7); }
   .nav:not(.open) { display: none; }
   .nav a { padding: 15px 14px; font-size: 18px; border-radius: 14px; }
   .menu-btn { display: inline-flex; align-items: center; margin-left: auto; }
@@ -733,3 +739,139 @@ input:focus, select:focus, textarea:focus { outline: none; box-shadow: inset 0 0
 .vch__n { margin: .15cqw 0 0; font-size: 1.15cqw; font-weight: 500; letter-spacing: -.03em; color: #fff; }
 .vch__bars { flex: 1; display: flex; align-items: flex-end; gap: .3cqw; margin-top: .4cqw; }
 .vch__bars i { flex: 1; height: calc(var(--h) * 1%); border-radius: .15cqw .15cqw 0 0; background: linear-gradient(#A6FB89, rgba(166,251,137,.25)); }
+
+/* ══════════ night surfaces: blocks that were dark forest on cream ══════════ */
+::selection { background: var(--sage); color: var(--bone); }
+.skip { background: var(--sage); color: var(--bone); }
+.pill, .btn-primary, .sp-hero .actions .btn-primary, .cta-band .btn-primary { background: var(--sage); color: var(--bone); }  /* primary: the moon's glow, navy text 9.9:1 */
+.pill i { background: var(--bone); color: var(--sage); }
+.pill.light { background: var(--bone-2); color: var(--forest); box-shadow: inset 0 0 0 1px var(--line-2); }
+.pill.light i { background: var(--sage); color: var(--bone); }
+@media (hover: hover) and (pointer: fine) { .pill:hover, .btn-primary:hover { background: #C4E3FF; } .pill.light:hover { background: var(--sage-soft); } }
+.scard.feature, .quote, .cta-band { background: var(--glass); color: var(--forest); box-shadow: inset 0 0 0 1px rgba(159,208,255,.18); }
+.scard.feature .s-f { stroke: var(--sage); } .scard.feature .f-f { fill: var(--sage); }
+form.brief, .steps li { background: var(--bone-2); color: var(--forest); box-shadow: inset 0 0 0 1px var(--line); }
+.sp-photo .tag { background: rgba(6,24,38,.9); color: var(--forest); box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow); }
+.outcomes li::before { background: var(--sage); color: var(--bone); }
+.foot { background: var(--night-deep); color: var(--forest); }
+.form-end small { color: var(--muted); }  /* 9:1 on the form card */
+.cta-band .btn-ghost { color: var(--forest); box-shadow: inset 0 0 0 1.5px var(--line-2); }
+.nav a[aria-current="true"] { background: var(--sage-soft); color: var(--forest); }
+.ghost.on-dark { color: var(--forest); box-shadow: inset 0 0 0 1.5px var(--line-2); }
+
+/* ══════════ day theme ══════════
+   html[data-theme="day"] (set in <head> before first paint, switched by the
+   header button). Same token roles as night; colours taken from the day hero
+   (sunrise above the clouds) and the day launch scene (blue sky, pale moon). */
+:root[data-theme="day"] {
+  --bone: #F4F8FC;            /* page: sky white */
+  --bone-2: #FFFFFF;          /* raised surfaces */
+  --sage: #1D5FA8;            /* accent: deep sky blue (6.0:1 on the page, white text on it 6.4:1) */
+  --sage-soft: #DCEAF7;
+  --forest: #0B2338;          /* text (15.6:1) */
+  --forest-2: #071A2B;
+  --line: rgba(11,35,56,.12);
+  --line-2: rgba(11,35,56,.26);
+  --dline: rgba(11,35,56,.14);
+  --night-deep: #E7EFF7;      /* footer */
+  --glass: linear-gradient(160deg, #E4F0FC, #CDE2F6);
+  --muted: rgba(11,35,56,.72);
+  --grad: linear-gradient(90deg, #1D5FA8, #B4531F, #9E3B2E, #1D5FA8);  /* sky blue into sunrise, ≥4.5:1 on the page */
+  --shadow: 0 24px 50px -30px rgba(20,50,80,.35);
+  color-scheme: light;
+}
+.th-day { display: none !important; }
+:root[data-theme="day"] .th-day { display: revert !important; }
+:root[data-theme="day"] .th-night { display: none !important; }
+:root[data-theme="day"] picture.th-day, :root[data-theme="day"] .vhero picture.th-day { display: block !important; }
+
+/* the few colours that were hard-coded for night */
+@media (hover: hover) and (pointer: fine) { :root[data-theme="day"] :is(.pill, .btn-primary):hover { background: #174E8B; } }
+:root[data-theme="day"] :is(.scard.feature, .quote, .cta-band) { box-shadow: inset 0 0 0 1px rgba(29,95,168,.16); }
+:root[data-theme="day"] .sp-photo .tag { background: rgba(255,255,255,.94); }
+:root[data-theme="day"] .shot .chrome { background: rgba(255,255,255,.94); }
+:root[data-theme="day"] :is(input, textarea)::placeholder { color: rgba(11,35,56,.5); }
+@media (hover: hover) and (pointer: fine) { :root[data-theme="day"] .nav a:hover { background: rgba(11,35,56,.06); } }
+
+/* header in day: white glass pills (night keeps the dark glass of html.at-hero) */
+:root[data-theme="day"] .top .brand { background: rgba(255,255,255,.78); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 8px 24px -14px rgba(20,50,80,.45); }
+:root[data-theme="day"] .top .nav { background: rgba(255,255,255,.72); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 8px 24px -14px rgba(20,50,80,.4); }
+:root[data-theme="day"] .top .menu-btn { background: rgba(255,255,255,.85); color: var(--forest); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 8px 24px -14px rgba(20,50,80,.45); }
+@media (max-width: 860px) { :root[data-theme="day"] .top .nav { background: rgba(255,255,255,.97); box-shadow: inset 0 0 0 1px var(--line), 0 24px 60px -20px rgba(20,50,80,.4); } }
+
+/* the switch: a round glass button beside "Start a project" (beside Menu on phones) */
+.top .nav { margin-left: auto; }   /* nav sits centred between the logo and the right-hand buttons */
+.theme-btn { margin-left: auto; flex: none; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; cursor: pointer; touch-action: manipulation;
+  background: rgba(255,255,255,.85); color: var(--forest); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 8px 24px -14px rgba(20,50,80,.45);
+  transition: background-color .35s, color .25s, box-shadow .35s, transform .15s var(--ease-out); }
+.theme-btn:active { transform: scale(.92); }
+.theme-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.at-hero .theme-btn { background: rgba(255,255,255,.06); color: #fff; box-shadow: inset 0 1px 1px rgba(255,255,255,.12), inset 0 0 0 1px rgba(255,255,255,.18); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+:root[data-theme="night"] .theme-btn .i-moon, :root[data-theme="day"] .theme-btn .i-sun { display: none; }   /* the icon shows where the button takes you */
+@media (hover: hover) and (pointer: fine) { .theme-btn:hover { box-shadow: inset 0 0 0 2px currentColor; } }
+.theme-btn:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+@media (max-width: 860px) { .top .menu-btn { margin-left: 0; } }
+
+/* switching crossfades the whole page (View Transitions); reduced motion switches instantly */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .5s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+
+/* hero in day: the sunrise film; white type keeps a soft shadow for contrast over the bright sky */
+:root[data-theme="day"] .vhero { --vh-bg: #5A8FC4; --vh-muted: rgba(255,255,255,.94); }
+:root[data-theme="day"] .vhero :is(h1, .vsub) { text-shadow: 0 2px 28px rgba(8,28,52,.55), 0 1px 3px rgba(8,28,52,.45); }
+:root[data-theme="day"] .vhero h1 em { color: #FFE4BF; }
+
+/* launch scene in day: daylight photo, dark title over the pale moon; the results window stays a dark product screen */
+:root[data-theme="day"] .scene { --night: #5B96CC; }
+:root[data-theme="day"] .results__title { color: #0B2338; }
+:root[data-theme="day"] .results__pill { background: rgba(255,255,255,.62); color: #0B2338; }
+:root[data-theme="day"] .dash::before { background: rgba(6,20,34,.8); }
+
+/* ══════════ glass cards: services and projects ══════════
+   Glass needs something behind it to bend: each row carries soft colour glows
+   (moon blue, sunrise gold, dusk violet) and the cards are frosted panes over
+   them, so a card's tint shifts as it drifts across. The glows are painted on
+   .loop itself: its edge mask makes it the backdrop root, so anything outside
+   it would never reach the cards' blur. */
+:root { --glow-a: rgba(70,140,255,.42); --glow-b: rgba(245,189,79,.30); --glow-c: rgba(150,110,255,.32);
+  --glass-fill: linear-gradient(150deg, rgba(255,255,255,.11), rgba(255,255,255,.035));
+  --glass-edge: rgba(255,255,255,.13); --glass-hi: rgba(255,255,255,.28); --glass-shadow: 0 22px 44px -26px rgba(0,0,0,.8); }
+:root[data-theme="day"] { --glow-a: rgba(80,150,220,.55); --glow-b: rgba(246,175,120,.55); --glow-c: rgba(160,130,250,.42);
+  --glass-fill: linear-gradient(150deg, rgba(255,255,255,.68), rgba(255,255,255,.42));
+  --glass-edge: rgba(255,255,255,.9); --glass-hi: #fff; --glass-shadow: 0 22px 44px -26px rgba(20,60,110,.45); }
+.loop, .sp-work, .others { background:
+  radial-gradient(30% 60% at 10% 58%, var(--glow-a), transparent 72%),
+  radial-gradient(26% 55% at 36% 38%, var(--glow-b), transparent 72%),
+  radial-gradient(30% 60% at 62% 62%, var(--glow-c), transparent 72%),
+  radial-gradient(26% 55% at 88% 40%, var(--glow-a), transparent 72%); }
+:is(.loop .scard, .loop .card, .sp-work .card, .others a) {
+  background: var(--glass-fill);
+  box-shadow: inset 0 0 0 1px var(--glass-edge), inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+  -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); }
+.loop .scard.feature { background: linear-gradient(150deg, rgba(159,208,255,.24), rgba(159,208,255,.08)); }
+:root[data-theme="day"] .loop .scard.feature { background: linear-gradient(150deg, rgba(29,95,168,.16), rgba(255,255,255,.5)); }
+@media (max-width: 640px) { :is(.loop .scard, .loop .card, .sp-work .card, .others a) { -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%); } }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :is(.loop .scard, .loop .card, .sp-work .card, .others a) { background: var(--bone-2); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :is(.loop .scard, .loop .card, .sp-work .card, .others a) { background: var(--bone-2); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .theme-btn, :root[data-theme="day"] .top :is(.brand, .nav, .menu-btn) { background: var(--bone-2); }
+}
+
+:root[data-theme="day"] .vhero .vbtn { background: rgba(8,28,52,.34); text-shadow: 0 1px 3px rgba(8,28,52,.5); }  /* legible over bright clouds */
+/* day legibility scrims: white type over bright sky needs a darker ground (night needs none) */
+.vhero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+:root[data-theme="day"] .vhero::after { background: radial-gradient(ellipse 52% 34% at 50% 46%, rgba(6,22,42,.66), rgba(6,22,42,.5) 50%, rgba(6,22,42,0) 100%); }
+@media (max-aspect-ratio: 4/5) { :root[data-theme="day"] .vhero::after { background: linear-gradient(rgba(6,22,42,.5), rgba(6,22,42,.62) 30%, rgba(6,22,42,.5) 52%, rgba(6,22,42,0) 72%); } }
+:root[data-theme="day"] .scene__glow { background: linear-gradient(to top, rgba(6,22,42,.74), rgba(6,22,42,.6) 40%, rgba(6,22,42,.42) 64%, rgba(6,22,42,0) 88%); }
+/* Drifting rows: no live backdrop blur. Their backdrop is only the soft glow, so the
+   blur pass changed nothing but saturation, while re-blurring every moving card on
+   every frame (measured: most of the scroll jank on phones). The glow is painted
+   pre-saturated instead; the frosted fill, edge light and shadow stay. Stationary
+   glass (service pages, the reduced-motion rows) keeps the real blur. */
+.loops .loop :is(.scard, .card) { -webkit-backdrop-filter: none; backdrop-filter: none; }
+:root[data-theme="night"] .loops .loop { --glow-a: rgba(50,120,255,.8); --glow-b: rgba(255,178,40,.56); --glow-c: rgba(145,75,255,.72); }
+:root[data-theme="day"] .loops .loop { --glow-a: rgba(70,145,225,.62); --glow-b: rgba(250,165,105,.62); --glow-c: rgba(150,115,250,.50); }
+/* screenshot tags and "latest project" chips: one dark-glass chip in both themes
+   (they sit over bright site screenshots, so they never flip) */
+.shot .ind, .card .new { background: rgba(6,24,38,.88); color: #E8F0F8; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }

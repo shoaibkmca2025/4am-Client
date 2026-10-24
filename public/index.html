@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="at-hero" data-theme="night">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,7 +7,7 @@
 <meta name="description" content="4AM Global Media builds websites, apps and brands, then grows them with SEO, ads, social media and marketplace onboarding. 100 client projects shipped worldwide.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="google-site-verification" content="aXj2fD-1BBe7MPoguRkK_NU84RU-S7CjmROUaUdpBbY">
-<meta name="theme-color" content="#002C42">
+<meta name="theme-color" content="#061826">
 <link rel="canonical" href="https://4amglobalmedia.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="4AM Global Media">
@@ -24,24 +24,26 @@
 <link rel="preload" href="/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function(){var d=document.documentElement,t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='day'&&t!=='night'){var h=new Date().getHours();t=h>=6&&h<18?'day':'night'}d.setAttribute('data-theme',t);d.classList.toggle('at-hero',t==='night');var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==='day'?'#F4F8FC':'#061826';var l=document.createElement('link');l.rel='preload';l.as='image';l.fetchPriority='high';l.href='/assets/hero/'+t+'-poster'+(matchMedia('(max-aspect-ratio: 4/5)').matches?'-tall':'')+'.webp';document.head.appendChild(l);})()</script>
 <link rel="stylesheet" href="/css/site.css">
-<script>document.documentElement.classList.add("at-hero")</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://4amglobalmedia.com/#org","name":"4AM Global Media","url":"https://4amglobalmedia.com/","logo":"https://4amglobalmedia.com/assets/og-4am.jpg","email":"Info@4amglobalmedia.com","telephone":"+918826406545","sameAs":["https://www.instagram.com/reel/DUBIUl5DfBU/"],"description":"A creative network made for today and tomorrow: web development, digital marketing, SEO, social media, branding, content and marketplace onboarding.","founder":[{"@type":"Person","name":"Vaibhav Pasi"},{"@type":"Person","name":"Shoaib Khatik"}]},{"@type":"WebSite","@id":"https://4amglobalmedia.com/#site","url":"https://4amglobalmedia.com/","name":"4AM Global Media","publisher":{"@id":"https://4amglobalmedia.com/#org"}}]}</script>
 </head>
 <body class="home" id="top">
 <a class="skip" href="#main">Skip to content</a>
 <header class="top">
-  <a class="brand" href="#top" aria-label="4AM Global Media, back to top"><img class="on-light" src="/logo-mark.webp" alt="4AM Global Media" width="298" height="140" loading="lazy"><img class="on-dark" src="/logo-dark.webp" alt="" width="340" height="160"></a>
+  <a class="brand" href="#top" aria-label="4AM Global Media, back to top"><img class="on-dark th-night" src="/logo-dark.webp" alt="4AM Global Media" width="340" height="160" loading="lazy"><img class="on-light th-day" src="/logo-mark.webp" alt="4AM Global Media" width="298" height="140" loading="lazy"></a>
   <nav class="nav" id="nav" aria-label="Primary"><a href="#services">Services</a><a href="#work">Work</a><a href="#process">Process</a><a href="#team">Team</a><a href="#contact">Contact</a></nav>
+  <button class="theme-btn" type="button" aria-label="Switch between day and night theme" title="Day / night"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/></svg></button>
   <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   <a class="pill" href="#contact">Start a project <i aria-hidden="true">↗</i></a>
 </header>
 <main id="main" tabindex="-1">
 <section class="vhero" id="hero" aria-labelledby="hero-h">
-  <picture><source media="(max-aspect-ratio: 4/5)" srcset="/assets/hero/night-poster-tall.webp" width="606" height="1076"><img src="/assets/hero/night-poster.webp" alt="" width="1280" height="716" fetchpriority="high"></picture>
-    <video muted loop playsinline preload="none" aria-hidden="true" data-wide="/assets/hero/night-1080.mp4" data-tall="/assets/hero/night-portrait.mp4"></video>
-    <div class="vprops" aria-hidden="true">
-      <div class="vwin vwin--code"><div class="vwin__bar"><i></i><i></i><i></i><span>launch.ts</span></div><pre class="vwin__code"><span class="ln"><span class="kw">import</span> { ship } <span class="kw">from</span> <span class="st">'@4am/studio'</span></span><span class="ln"> </span><span class="ln"><span class="kw">const</span> brand = <span class="kw">await</span> ship({</span><span class="ln">  site:   <span class="st">'fast'</span>,</span><span class="ln">  app:    <span class="st">'native'</span>,</span><span class="ln">  seo:    <span class="nu">true</span>,</span><span class="ln">  growth: <span class="st">'compounding'</span>,</span><span class="ln">})</span><span class="ln"> </span><span class="ln">brand.launch()</span><span class="ln"><span class="cm">// 04:00, before the market</span></span><span class="ln"> </span><span class="ln"><span class="kw">export const</span> services = [</span><span class="ln">  <span class="st">'web'</span>, <span class="st">'apps'</span>, <span class="st">'seo'</span>,</span><span class="ln">  <span class="st">'social'</span>, <span class="st">'content'</span>,</span><span class="ln">  <span class="st">'branding'</span>, <span class="st">'marketplaces'</span>,</span><span class="ln">]</span><span class="ln"> </span><span class="ln">brand.grow({ <span class="nu">every</span>: <span class="st">'day'</span> })</span></pre></div>
+  <picture class="th-night"><source media="(max-aspect-ratio: 4/5)" srcset="/assets/hero/night-poster-tall.webp" width="606" height="1076"><img src="/assets/hero/night-poster.webp" alt="" width="1280" height="716" loading="lazy"></picture>
+  <picture class="th-day"><source media="(max-aspect-ratio: 4/5)" srcset="/assets/hero/day-poster-tall.webp" width="608" height="1026"><img src="/assets/hero/day-poster.webp" alt="" width="1280" height="720" loading="lazy"></picture>
+    <video muted loop playsinline preload="none" aria-hidden="true" data-wide="/assets/hero/night-1080.mp4" data-tall="/assets/hero/night-portrait.mp4" data-day-wide="/assets/hero/day-1600.mp4" data-day-tall="/assets/hero/day-portrait.mp4"></video>
+    <div class="vprops th-night" aria-hidden="true">
+      <div class="vwin vwin--code"><div class="vwin__bar"><i></i><i></i><i></i><span>launch.ts</span></div><pre class="vwin__code"><span class="ln"><span class="kw">import</span> { ship }</span><span class="ln">  <span class="kw">from</span> <span class="st">'@4am/studio'</span></span><span class="ln"> </span><span class="ln"><span class="kw">const</span> brand =</span><span class="ln">  <span class="kw">await</span> ship({</span><span class="ln">    site: <span class="st">'fast'</span>,</span><span class="ln">    app:  <span class="st">'native'</span>,</span><span class="ln">    seo:  <span class="nu">true</span>,</span><span class="ln">    growth: <span class="st">'max'</span>,</span><span class="ln">  })</span><span class="ln"> </span><span class="ln">brand.launch()</span><span class="ln"><span class="cm">// 04:00, before</span></span><span class="ln"><span class="cm">// the market wakes</span></span><span class="ln"> </span><span class="ln"><span class="kw">export const</span> services</span><span class="ln">  = [<span class="st">'web'</span>, <span class="st">'apps'</span>,</span><span class="ln">  <span class="st">'seo'</span>, <span class="st">'social'</span>,</span><span class="ln">  <span class="st">'content'</span>, <span class="st">'brand'</span>,</span><span class="ln">  <span class="st">'marketplaces'</span>]</span><span class="ln"> </span><span class="ln">brand.grow()</span></pre></div>
       <div class="vwin vwin--term"><div class="vwin__bar"><i></i><i></i><i></i><span>~/4am · deploy</span></div><pre class="vwin__code"><span class="ln"><span class="pr">$</span> npm run ship</span><span class="ln"><span class="ok">✓</span> build       1.2s</span><span class="ln"><span class="ok">✓</span> tests       passed</span><span class="ln"><span class="ok">✓</span> lighthouse  100</span><span class="ln"><span class="ok">✓</span> live → yourbrand.com</span><span class="ln"><span class="pr">$</span> <span class="cur"></span></span></pre></div>
       <div class="vwin vwin--phone"><i class="vph__notch"></i><i class="vph__head"></i><i class="vph__card"></i><i class="vph__row"></i><i class="vph__row"></i><i class="vph__row"></i><i class="vph__tab"></i></div>
       <div class="vwin vwin--chart"><p class="vch__t">Growth</p><p class="vch__n">+240%</p><div class="vch__bars"><i style="--h:30"></i><i style="--h:44"></i><i style="--h:38"></i><i style="--h:60"></i><i style="--h:76"></i><i style="--h:100"></i></div></div>
@@ -54,7 +56,7 @@
 <section class="scene" id="launch" aria-labelledby="launch-h">
   <div class="scene__viewport">
     <div class="scene__backdrop" aria-hidden="true">
-      <div class="scene__camera"><picture><source media="(max-aspect-ratio: 4/5)" srcset="/assets/launch/night-launch-tall.webp" width="1720" height="5504"><img class="scene__photo" src="/assets/launch/night-launch.webp" srcset="/assets/launch/night-launch.webp 1600w, /assets/launch/night-launch-2400.webp 2400w, /assets/launch/night-launch-3072.webp 3072w" sizes="(max-aspect-ratio: 159/100) 173vh, 109vw" alt="" width="1600" height="2867" loading="lazy" decoding="async"></picture></div>
+      <div class="scene__camera"><picture class="th-night"><source media="(max-aspect-ratio: 4/5)" srcset="/assets/launch/night-launch-tall.webp" width="1720" height="5504"><img class="scene__photo" src="/assets/launch/night-launch.webp" srcset="/assets/launch/night-launch.webp 1600w, /assets/launch/night-launch-2400.webp 2400w, /assets/launch/night-launch-3072.webp 3072w" sizes="(max-aspect-ratio: 159/100) 173vh, 109vw" alt="" width="1600" height="2867" loading="lazy" decoding="async"></picture><picture class="th-day"><source media="(max-aspect-ratio: 4/5)" srcset="/assets/launch/day-launch-tall.webp" width="1720" height="5504"><img class="scene__photo" src="/assets/launch/day-launch.webp" srcset="/assets/launch/day-launch.webp 1600w, /assets/launch/day-launch-2400.webp 2400w, /assets/launch/day-launch-3072.webp 3072w" sizes="(max-aspect-ratio: 159/100) 173vh, 109vw" alt="" width="1600" height="2867" loading="lazy" decoding="async"></picture></div>
       <div class="scene__glow"></div>
     </div>
     <div class="launch">
@@ -361,7 +363,7 @@
 
 <footer class="foot">
   <div class="foot-grid">
-    <div><a class="brand" href="/" aria-label="4AM Global Media, home"><img src="/logo-dark.webp" alt="4AM Global Media" width="340" height="160" loading="lazy" decoding="async"></a><p class="tag">The growth engine that never sleeps. A creative network made for today and tomorrow.</p></div>
+    <div><a class="brand" href="/" aria-label="4AM Global Media, home"><img class="th-night" src="/logo-dark.webp" alt="4AM Global Media" width="340" height="160" loading="lazy" decoding="async"><img class="th-day" src="/logo-mark.webp" alt="4AM Global Media" width="298" height="140" loading="lazy" decoding="async"></a><p class="tag">The growth engine that never sleeps. A creative network made for today and tomorrow.</p></div>
     <div><h2>Services</h2><ul><li><a href="/services/digital-marketing">Digital Marketing</a></li><li><a href="/services/branding">Branding</a></li><li><a href="/services/social-media-growth">Social Media Growth</a></li><li><a href="/services/seo">SEO</a></li><li><a href="/services/web-development">Web Development</a></li><li><a href="/services/content-creation">Content Creation</a></li><li><a href="/services/marketplace-product-onboarding">Marketplace Onboarding</a></li></ul></div>
     <div><h2>Company</h2><ul><li><a href="/#work">Work</a></li><li><a href="/#process">Process</a></li><li><a href="/#team">Team</a></li><li><a href="/#contact">Contact</a></li></ul></div>
     <div><h2>Connect</h2><ul><li><a href="https://www.instagram.com/reel/DUBIUl5DfBU/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/918826406545" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:Info@4amglobalmedia.com"><span>Info@4amglobalmedia.com</span></a></li><li><a href="tel:+918826406545">+91 88264 06545</a></li></ul></div>

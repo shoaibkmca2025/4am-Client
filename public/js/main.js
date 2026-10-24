@@ -34,6 +34,24 @@ const afterPaint = new Promise((res) => {
 });
 
 /* ---------- every page ---------- */
+/* day / night theme. <head> sets it before first paint (saved choice, else
+   day 06:00–18:00 local time); the header button switches it, crossfading the
+   whole page where the View Transitions API exists. */
+const themeBtns = $$('.theme-btn');
+const applyTheme = (t) => {
+  root.setAttribute('data-theme', t); root.classList.toggle('at-hero', t === 'night');
+  const m = $('meta[name="theme-color"]'); if (m) m.content = t === 'day' ? '#F4F8FC' : '#061826';
+  themeBtns.forEach((b) => b.setAttribute('aria-label', t === 'day' ? 'Switch to night theme' : 'Switch to day theme'));
+  dispatchEvent(new CustomEvent('themechange', { detail: t }));
+};
+const theme = () => (root.getAttribute('data-theme') === 'day' ? 'day' : 'night');
+applyTheme(theme());
+themeBtns.forEach((b) => b.addEventListener('click', () => {
+  const t = theme() === 'day' ? 'night' : 'day';
+  try { localStorage.setItem('theme', t); } catch {}
+  if (document.startViewTransition && !rm) document.startViewTransition(() => applyTheme(t)); else applyTheme(t);
+}));
+
 /* Sections below the fold skip rendering at load (content-visibility: auto),
    which keeps the first paint light. A few seconds after load they are laid
    out in idle time, a slice at a time, so scrolling into them later doesn't
@@ -264,23 +282,16 @@ loops.forEach((loop) => {
 /* ---------- home hero: the night video, and the header's hero look ---------- */
 const hero = $('#hero');
 if (hero) {
-  // the header keeps its dark glass look over the hero and the launch scene below it
-  const dark = $('#launch') || hero;
-  const setHero = () => root.classList.toggle('at-hero', dark.getBoundingClientRect().bottom > 76);
-  let hq = false;
-  addEventListener('scroll', () => { if (!hq) { hq = true; requestAnimationFrame(() => { hq = false; setHero(); }); } }, { passive: true });
-  requestAnimationFrame(setHero);
-  // the light logo is hidden while the hero is up: fetch it once the page has painted
-  afterPaint.then(() => idle(() => $$('.brand img[loading="lazy"]').forEach((i) => { i.loading = 'eager'; })));
   const vid = $('video', hero), vbtn = $('.vpause', hero);
   const conn = navigator.connection;
   const tall = matchMedia('(max-aspect-ratio: 4/5)').matches;  // same split as the <picture> still
-  vid.addEventListener('playing', () => vid.classList.add('on'), { once: true });
+  const src = () => (theme() === 'day' ? (tall ? vid.dataset.dayTall : vid.dataset.dayWide) : (tall ? vid.dataset.tall : vid.dataset.wide));
+  vid.addEventListener('playing', () => vid.classList.add('on'));  // the still underneath shows until the film is really playing
   if (conn && conn.saveData) vbtn.hidden = true;   // data saver: the still poster only
   else {
     let wantPlay = !rm, visible = true;
     const sync = () => {
-      if (wantPlay && visible) { if (!vid.src) vid.src = tall ? vid.dataset.tall : vid.dataset.wide; vid.play().catch(() => {}); }
+      if (wantPlay && visible) { if (!vid.src) vid.src = src(); vid.play().catch(() => {}); }
       else vid.pause();
       vbtn.setAttribute('aria-pressed', String(!wantPlay));
       vbtn.setAttribute('aria-label', wantPlay ? 'Pause background video' : 'Play background video');
@@ -288,6 +299,8 @@ if (hero) {
     vbtn.addEventListener('click', () => { wantPlay = !wantPlay; sync(); });
     new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (vid.src) sync(); }).observe(hero);
     if (wantPlay) afterPaint.then(() => idle(sync, { timeout: 1500 })); else sync();
+    // theme switch: the matching film replaces the current one (the new still shows until it plays)
+    addEventListener('themechange', () => { if (!vid.getAttribute('src')) return; vid.classList.remove('on'); vid.src = src(); if (wantPlay && visible) vid.play().catch(() => {}); });
   }
 }
 
@@ -437,8 +450,8 @@ if (scene) {
   kick();
 
   // decode the big photo in the background as soon as it arrives, not on the frame it first shows
-  const photo = $('.scene__photo', scene), warm = () => { if (photo.decode) photo.decode().catch(() => {}); };
-  if (photo.complete) warm(); else photo.addEventListener('load', warm, { once: true });
+  const warm = () => $$('.th-' + theme() + ' .scene__photo', scene).forEach((p) => { if (!p.decode) return; const go = () => p.decode().catch(() => {}); if (p.complete) go(); else p.addEventListener('load', go, { once: true }); });
+  warm(); addEventListener('themechange', warm);
 
   /* intro: the headline lines are uncovered when the scene arrives */
   const open = () => scene.classList.add('is-open');
