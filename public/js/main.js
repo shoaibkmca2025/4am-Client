@@ -62,13 +62,19 @@ if (root.classList.contains('anim')) {
     $$('[data-count]', e.target).forEach(count);
     io.unobserve(e.target);
   }), { rootMargin: '0px 0px -12% 0px' });
-  // after the first frame, so this never forces a layout of its own
-  requestAnimationFrame(() => $$('.rv, .sk.draw:not(.rv .sk)').forEach((el) => {
-    const r = el.getBoundingClientRect();
-    if (r.top < innerHeight && r.bottom > 0) { el.classList.add('on'); return; }  // already in view
-    $$('[data-count]', el).forEach((c) => { c.textContent = '0'; });
-    io.observe(el);
-  }));
+  // after the first frame; all positions are read before anything is written,
+  // and only inside sections that are on screen: reading geometry inside an
+  // off-screen content-visibility section forces the browser to lay it out
+  requestAnimationFrame(() => {
+    const els = $$('.rv, .sk.draw:not(.rv .sk)'), vh = innerHeight;
+    const shows = (r) => r.top < vh && r.bottom > 0;
+    const inView = els.map((el) => { const sec = el.closest('.solid > .sec'); return (!sec || shows(sec.getBoundingClientRect())) && shows(el.getBoundingClientRect()); });
+    els.forEach((el, k) => {
+      if (inView[k]) { el.classList.add('on'); return; }  // already in view
+      $$('[data-count]', el).forEach((c) => { c.textContent = '0'; });
+      io.observe(el);
+    });
+  });
 }
 
 /* gentle 3D tilt toward the pointer (founder cards, service-page photos;
@@ -244,7 +250,7 @@ if (form) {
   const validate = () => {
     const e = {};
     if (val('name').length < 2) e.name = 'Enter your name.';
-    if (!EMAIL_RE.test(val('email'))) e.email = 'Enter a work email like name@company.com.';
+    if (!EMAIL_RE.test(val('email'))) e.email = 'Enter an email like name@company.com.';
     if (val('phone')) { const d = val('phone').replace(/\D/g, ''); if (d.length < 7 || d.length > 15) e.phone = 'Enter a valid phone number, or leave it blank.'; }
     if (!val('service')) e.service = 'Choose the service you need.';
     if (!val('budget')) e.budget = 'Choose a budget range.';
@@ -298,32 +304,42 @@ if (form) {
 /* ══════════ home: the film ══════════ */
 const stage = $('.stage');
 if (stage) {
-  const canvas = $('#film'), solid = $('.solid'), rail = $('.progress'), bars = rail ? $$('i', rail) : [];
+  const canvas = $('#film'), solid = $('.solid');
   const beats = $$('.beat');
-  const LAST = 286;  // frames 0…286 of the original film
+  // source frames 125…287 of the original film: before 125 the clip carries its
+  // own baked-in title, which used to force a heavy (blurry) zoom to hide
+  const FIRST = 125, LAST = 287;
 
-  /* story beats: words rise when a beat is a third on screen */
+  /* story beats: words rise when a beat is a third on screen, and the rest of
+     its card (text, buttons) arrives with them, so the card never shows a gap */
   if (root.classList.contains('anim')) {
-    const bio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); bio.unobserve(e.target); } }), { threshold: .3 });
+    const bio = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in'); $$('.rv', e.target).forEach((el) => el.classList.add('on'));
+      bio.unobserve(e.target);
+    }), { threshold: .3 });
     beats.forEach((b) => bio.observe(b));
   } else beats.forEach((b) => b.classList.add('in'));
 
-  /* nav: highlight the section in view */
+  /* nav: highlight the section in view; over the hero and the film nothing is
+     current (it used to keep the last section lit after scrolling back up) */
   const links = $$('.nav a');
   const navIO = new IntersectionObserver((es) => es.forEach((e) => {
     if (!e.isIntersecting) return;
     links.forEach((a) => a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id ? 'true' : 'false'));
   }), { rootMargin: '-45% 0px -50% 0px' });
   ['services', 'work', 'process', 'team', 'contact'].forEach((id) => { const s = document.getElementById(id); if (s) navIO.observe(s); });
+  [hero, ...beats].forEach((s) => s && navIO.observe(s));
 
   const conn = navigator.connection;
   const still = rm || (conn && conn.saveData) || !canvas.getContext;
   if (!still) {
     // Phones in portrait only ever see a narrow slice of the 16:9 film, so they
     // get that slice at full source height (sharp, and a third of the bytes).
-    const mobile = innerWidth < 640 && innerWidth / innerHeight < .8;
-    const set = mobile ? { dir: 'm', step: 3, x0: 896 / 2560, w: 1178 / 2560 } : { dir: 'd', step: 2, x0: 0, w: 1 };
-    const frames = []; for (let f = 1; f <= 287; f += set.step) frames.push(f);
+    // (matchMedia, not innerWidth: that read forced an 85 ms layout at start-up)
+    const mobile = matchMedia('(max-width: 639px) and (max-aspect-ratio: 4/5)').matches;
+    const set = mobile ? { dir: 'm', step: 2, x0: 896 / 2560, w: 1178 / 2560 } : { dir: 'd', step: 2, x0: 0, w: 1 };
+    const frames = []; for (let f = FIRST; f <= LAST; f += set.step) frames.push(f);
     const N = frames.length;
     const url = (i) => `/assets/film/${set.dir}/${String(frames[i]).padStart(3, '0')}.webp`;
     const ctx = canvas.getContext('2d', { alpha: false });
@@ -363,10 +379,10 @@ if (stage) {
     };
     const nearest = (i) => { for (let d = 0; d < N; d++) { if (bitmaps.has(i - d)) return i - d; if (bitmaps.has(i + d)) return i + d; } return -1; };
 
-    /* camera: [frame, zoom, focusX, focusY] — close on the plant while the clip's
-       own baked-in title fades (it sits left of x≈.37 until ~frame 124), then pull
-       out and push gently back in. With the 2560px source the close-up is ~1:1. */
-    const CAM = [[0, 1.62, .66, .42], [100, 1.7, .67, .4], [124, 1.6, .64, .45], [168, 1.0, .52, .5], [230, 1.05, .55, .48], [286, 1.18, .6, .42]];
+    /* camera: [frame, zoom, focusX, focusY] — kept near 1:1 so the soft source is
+       shown at or below its own size (sharpest), with the plant right of the
+       story cards, which sit on the left */
+    const CAM = [[FIRST, 1.1, .62, .5], [200, 1.03, .6, .5], [LAST, 1.1, .62, .45]];
     const camera = (p) => {
       for (let k = 0; k < CAM.length - 1; k++) {
         const A = CAM[k], B = CAM[k + 1];
@@ -385,7 +401,6 @@ if (stage) {
       end = Math.max(filmStart + 1, solidTop - innerHeight);
       dirty = true;
     };
-    size();
     let rz = 0;
     addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(size, 120); });
 
@@ -393,19 +408,20 @@ if (stage) {
     let px = 0, py = 0, tpx = 0, tpy = 0;
     if (fine) addEventListener('pointermove', (e) => { tpx = e.clientX / innerWidth - .5; tpy = e.clientY / innerHeight - .5; }, { passive: true });
 
-    let pos = 0, last = { pos: -1, px: 9, py: 9, w: 0 }, shown = false;
+    let pos = FIRST, last = { pos: -1, px: 9, py: 9, w: 0 }, shown = false;
     const frame = () => {
       if (!alive) return;
+      if (!W) size();  // first frame: measured here, where the page is laid out anyway
       const y = scrollY;
       const hp = clamp((y - filmStart) / (end - filmStart), 0, 1);
       // ease the playhead toward the scroll position: steady film even with stepped wheels
-      const target = hp * LAST;
+      const target = FIRST + hp * (LAST - FIRST);
       pos += (target - pos) * .18;
       if (Math.abs(target - pos) < .01) pos = target;
       px += (tpx - px) * .06; py += (tpy - py) * .06;
-      if (rail) { bars.forEach((b, i) => b.style.setProperty('--f', clamp(hp * bars.length - i, 0, 1).toFixed(3))); rail.style.setProperty('--done', hp > .98 ? '1' : '0'); }
-      const covered = y > solidTop + 4;
-      const q = pos / set.step, i = Math.min(N - 1, Math.floor(q)), frac = q - i;
+      const covered = y > solidTop + 4 || (hero && y < 1);  // the bone sections, or the full-screen hero, hide the film
+      // always one whole frame: blending two neighbours read as a soft double image
+      const i = Math.min(N - 1, Math.round((pos - FIRST) / set.step));
       playhead = i;
       want(i); want(i + 1); want(i - 1); want(i + 2);
       const changed = dirty || Math.abs(last.pos - pos) > .005 || Math.abs(last.px - px) > .0005 || Math.abs(last.py - py) > .0005 || last.w !== W;
@@ -414,13 +430,11 @@ if (stage) {
         if (n0 >= 0) {
           const b0 = bitmaps.get(n0), iw = b0.width, ih = b0.height;
           let [z, fx, fy] = camera(pos);
-          if (W < H) z = 1 + (z - 1) * .5;  // portrait already crops hard: zoom less, stay sharp
-          fx = (fx - set.x0) / set.w;       // focus in the phone slice's own coordinates
+          if (W < H) z = 1;              // portrait already crops hard: no zoom, stay sharp
+          fx = (fx - set.x0) / set.w;    // focus in the phone slice's own coordinates
           const s = Math.max(W / iw, H / ih) * z, dw = iw * s, dh = ih * s;
           const ox = clamp(W / 2 - (fx + px * .012) * dw, W - dw, 0), oy = clamp(H / 2 - (fy + py * .012) * dh, H - dh, 0);
-          ctx.globalAlpha = 1; ctx.drawImage(b0, ox, oy, dw, dh);
-          const b1 = n0 === i && frac > .02 ? bitmaps.get(i + 1) : null;
-          if (b1) { ctx.globalAlpha = frac; ctx.drawImage(b1, ox, oy, dw, dh); ctx.globalAlpha = 1; }
+          ctx.drawImage(b0, ox, oy, dw, dh);
           if (!shown) { shown = true; stage.classList.add('live'); }
           last = { pos, px, py, w: W }; dirty = false;
         }
