@@ -89,6 +89,48 @@ $$('[data-copy]').forEach((btn) => {
   });
 });
 
+/* ---------- one-line card rows that slide right-to-left with the scroll ----------
+   The section is made as tall as the row is wide (plus a screen), the row is
+   pinned, and 1px of scroll moves it 1px — so it tracks the scroll exactly and
+   reverses the instant you scroll back. Reduced motion keeps a native,
+   swipeable row instead (no html.hs). */
+const rows = $$('.hscroll');
+if (rows.length && !rm) {
+  root.classList.add('hs');
+  const R = rows.map((sec) => ({ sec, view: $('.hs-view', sec), track: $('.track', sec), bar: $('.hs-bar i', sec), top: 0, dist: 0, last: -1 }));
+  const measure = () => R.forEach((r) => {
+    r.dist = Math.max(0, r.track.scrollWidth - r.view.clientWidth);
+    r.sec.style.height = `${r.dist + innerHeight}px`;
+  });
+  const tops = () => R.forEach((r) => { r.top = r.sec.getBoundingClientRect().top + scrollY; });
+  const apply = () => {
+    R.forEach((r) => {
+      // read the section's live position: anything above it may change height
+      const p = r.dist ? clamp(-r.sec.getBoundingClientRect().top / r.dist, 0, 1) : 0;
+      if (Math.abs(p - r.last) < .0005) return;
+      r.last = p;
+      r.track.style.transform = `translate3d(${(-p * r.dist).toFixed(1)}px,0,0)`;
+      if (r.bar) r.bar.style.transform = `scaleX(${p.toFixed(4)})`;
+    });
+  };
+  let queued = false;
+  const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; apply(); }); } };
+  const relayout = () => { measure(); tops(); R.forEach((r) => { r.last = -1; }); apply(); };
+  addEventListener('scroll', schedule, { passive: true });
+  let rt = 0;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(relayout, 120); });
+  addEventListener('load', relayout);
+  if ('ResizeObserver' in window) { const ro = new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(relayout, 120); }); R.forEach((r) => ro.observe(r.track)); }
+  requestAnimationFrame(relayout);  // measure inside the first frame, not during script start-up
+  // keyboard: bring a focused card into view by scrolling the page to it
+  R.forEach((r) => r.track.addEventListener('focusin', (e) => {
+    const li = e.target.closest('.track > li');
+    if (!li) return;
+    const x = clamp(li.offsetLeft - (r.view.clientWidth - li.offsetWidth) / 2, 0, r.dist);
+    scrollTo({ top: r.sec.getBoundingClientRect().top + scrollY + x, behavior: 'instant' });
+  }));
+}
+
 /* "Browse all" opens the full project index */
 const allWork = $('#all-work details');
 if (allWork) {
@@ -191,8 +233,10 @@ if (stage) {
   const conn = navigator.connection;
   const still = rm || (conn && conn.saveData) || !canvas.getContext;
   if (!still) {
-    const mobile = matchMedia('(max-width: 860px)').matches || Math.min(innerWidth, innerHeight) < 600;
-    const set = mobile ? { dir: 'm', step: 3 } : { dir: 'd', step: 2 };
+    // Phones in portrait only ever see a narrow slice of the 16:9 film, so they
+    // get that slice at full source height (sharp, and a third of the bytes).
+    const mobile = innerWidth < 640 && innerWidth / innerHeight < .8;
+    const set = mobile ? { dir: 'm', step: 3, x0: 896 / 2560, w: 1178 / 2560 } : { dir: 'd', step: 2, x0: 0, w: 1 };
     const frames = []; for (let f = 1; f <= 287; f += set.step) frames.push(f);
     const N = frames.length;
     const url = (i) => `/assets/film/${set.dir}/${String(frames[i]).padStart(3, '0')}.webp`;
@@ -213,11 +257,21 @@ if (stage) {
     const start = () => { if (started) return; started = true; for (let k = 0; k < 6; k++) pump(); };
     addEventListener('scroll', start, { once: true, passive: true });
     const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1200));
-    if (document.readyState === 'complete') idle(start, { timeout: 2500 });
-    else addEventListener('load', () => idle(start, { timeout: 2500 }), { once: true });
+    // Wait for both the load event and the first contentful paint, so the
+    // frames can never compete with the copy the visitor is about to read.
+    const loaded = new Promise((res) => (document.readyState === 'complete' ? res() : addEventListener('load', res, { once: true })));
+    const painted = new Promise((res) => {
+      const has = () => performance.getEntriesByName('first-contentful-paint').length > 0;
+      if (has()) return res();
+      try {
+        new PerformanceObserver((list, obs) => { if (list.getEntries().some((e) => e.name === 'first-contentful-paint')) { obs.disconnect(); res(); } }).observe({ type: 'paint', buffered: true });
+      } catch { res(); }
+      setTimeout(res, 4000);  // never wait forever
+    });
+    Promise.all([loaded, painted]).then(() => idle(start, { timeout: 2500 }));
 
     /* decoding: keep only the frames around the playhead as bitmaps */
-    const KEEP = mobile ? 8 : 14;
+    const KEEP = 6;  // full-resolution bitmaps are 7–15 MB each decoded
     const bitmaps = new Map(), decoding = new Set();
     const canBitmap = typeof createImageBitmap === 'function';
     const want = (i) => {
@@ -235,8 +289,10 @@ if (stage) {
     };
     const nearest = (i) => { for (let d = 0; d < N; d++) { if (bitmaps.has(i - d)) return i - d; if (bitmaps.has(i + d)) return i + d; } return -1; };
 
-    /* camera: [frame, zoom, focusX, focusY] — tight on the plant, pull out, push back in */
-    const CAM = [[0, 1.62, .66, .42], [100, 1.7, .67, .4], [124, 1.6, .64, .45], [168, 1.04, .52, .5], [230, 1.1, .55, .48], [286, 1.32, .6, .42]];
+    /* camera: [frame, zoom, focusX, focusY] — close on the plant while the clip's
+       own baked-in title fades (it sits left of x≈.37 until ~frame 124), then pull
+       out and push gently back in. With the 2560px source the close-up is ~1:1. */
+    const CAM = [[0, 1.62, .66, .42], [100, 1.7, .67, .4], [124, 1.6, .64, .45], [168, 1.0, .52, .5], [230, 1.05, .55, .48], [286, 1.18, .6, .42]];
     const camera = (p) => {
       for (let k = 0; k < CAM.length - 1; k++) {
         const A = CAM[k], B = CAM[k + 1];
@@ -247,8 +303,9 @@ if (stage) {
 
     let W = 0, H = 0, dirty = true, end = 1, solidTop = 0;
     const size = () => {
-      const dpr = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 1.75, Math.sqrt(3.2e6 / Math.max(1, innerWidth * innerHeight)));
+      const dpr = Math.min(devicePixelRatio || 1, 2, Math.sqrt((mobile ? 3.4e6 : 5.6e6) / Math.max(1, innerWidth * innerHeight)));
       W = canvas.width = Math.round(innerWidth * dpr); H = canvas.height = Math.round(innerHeight * dpr);
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
       solidTop = solid.getBoundingClientRect().top + scrollY;
       end = Math.max(1, solidTop - innerHeight);
       dirty = true;
@@ -282,7 +339,8 @@ if (stage) {
         if (n0 >= 0) {
           const b0 = bitmaps.get(n0), iw = b0.width, ih = b0.height;
           let [z, fx, fy] = camera(pos);
-          if (W < H) z = 1 + (z - 1) * .45;  // portrait already crops hard: zoom less, stay sharp
+          if (W < H) z = 1 + (z - 1) * .5;  // portrait already crops hard: zoom less, stay sharp
+          fx = (fx - set.x0) / set.w;       // focus in the phone slice's own coordinates
           const s = Math.max(W / iw, H / ih) * z, dw = iw * s, dh = ih * s;
           const ox = clamp(W / 2 - (fx + px * .012) * dw, W - dw, 0), oy = clamp(H / 2 - (fy + py * .012) * dh, H - dh, 0);
           ctx.globalAlpha = 1; ctx.drawImage(b0, ox, oy, dw, dh);

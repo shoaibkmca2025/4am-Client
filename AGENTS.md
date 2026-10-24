@@ -13,14 +13,15 @@ A static website: hand-written HTML, CSS and plain JavaScript in `public/`. No f
 
 ## Structure
 
-- `public/index.html` — home page. A fixed `<canvas id="film">` scrubs a pre-rendered 3D film (an interface plant growing; frames from the Scrollhaus "Kelpware" free direction, re-encoded and self-hosted in `public/assets/film/d/` — desktop, every 2nd frame, 1600px — and `film/m/` — phones, every 3rd frame, 1024px) behind three `.beat` story cards; then `.solid` bone sections: services, marketplaces, numbers, work (100 projects), process, team, contact.
+- `public/index.html` — home page. A fixed `<canvas id="film">` scrubs a pre-rendered 3D film (an interface plant growing; frames from the Scrollhaus "Kelpware" free direction, re-encoded and self-hosted at full source resolution: `public/assets/film/d/` — desktop/tablet, every 2nd frame, 2560×1440 — and `film/m/` — portrait phones, every 3rd frame, the 1178×1440 slice a phone actually shows (x 896–2074), so it stays sharp) behind three `.beat` story cards; then `.solid` bone sections: services and work are `.hscroll` rows (one line of cards, pinned, sliding right-to-left 1:1 with the scroll; reduced motion gets a native swipe row), plus marketplaces, numbers, all 100 projects, process, team, contact.
 - `public/services/<slug>.html` — seven service pages, each with its own `<title>`, meta description, canonical, Open Graph tags and JSON-LD (`Service`, `BreadcrumbList`, `FAQPage`). Keep these in sync with the home page service list, the footer on every page, and `sitemap.xml`.
 - `public/css/site.css` — every style. Owner palette on `:root`: `--bone` #EBE9DF, `--sage` #A9B887, `--forest` #2E3D28. Text is forest on light surfaces and bone (or light sage #C9D6AB) on forest; sage itself is too light for text on bone (1.7:1). Sketch inks (`--tomato`, `--gold`, `--sky`) are decoration only. Gradient text on bone uses `--grad-ink`.
 - `public/js/main.js` — ES module. Every page: menu, reveal-on-scroll (`.rv` → `.on`; inline SVG sketches with `pathLength="1"` draw in), counters (`data-count`), card tilt, copy buttons, contact form. Home only: the film engine — frames fetched coarse-to-fine after load/idle or on first scroll, decoded with `createImageBitmap`, only ~10 kept around the playhead (memory-safe), camera keyframes `CAM`, pointer parallax, progress rail, beat word-rise.
 
 ## Rules that matter
 
-- Off-screen home scenes use `content-visibility: auto`; avoid reading geometry inside them from per-frame code, or the browser is forced to lay them out.
+- Plain home sections (`.solid > .sec`) use `content-visibility: auto`, so their height changes when they first render. The `.hscroll` rows therefore read their section's live `getBoundingClientRect()` every frame — never cache their scroll offset.
+- The film camera zooms in (≈1.6×) for the first ~124 frames on purpose: the source clip has a baked-in title left of x≈0.37 until then.
 - The first story beat renders visible at load (no reveal): it is the LCP element. Don't add `.rv` or the word-rise to it, and keep the film download deferred until after load or the first scroll.
 - Sketch draw-in CSS matches strokes by ink class (`.s-t` etc.), not `[pathLength]`: Chrome lowercases that selector and misses restyles when `.on` lands on the `<svg>` itself.
 - Respect `prefers-reduced-motion` (engine and CSS already branch on it) and gate hover effects behind `@media (hover: hover) and (pointer: fine)`.
