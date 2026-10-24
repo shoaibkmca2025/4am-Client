@@ -36,11 +36,6 @@
   <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   <a class="pill" href="#contact">Start a project <i aria-hidden="true">↗</i></a>
 </header>
-<div class="stage" aria-hidden="true">
-  <picture><source media="(min-width: 640px)" srcset="/assets/film/d/125.webp" width="2560" height="1440"><img class="poster" src="/assets/film/m/125.webp" alt="" width="1178" height="1440" loading="lazy" decoding="async"></picture>
-  <canvas id="film"></canvas>
-</div>
-
 <main id="main" tabindex="-1">
 <section class="vhero" id="hero" aria-labelledby="hero-h">
   <picture><source media="(max-aspect-ratio: 4/5)" srcset="/assets/hero/night-poster-tall.webp" width="606" height="1076"><img src="/assets/hero/night-poster.webp" alt="" width="1280" height="716" fetchpriority="high"></picture>
@@ -50,24 +45,35 @@
   <a class="liquid-glass vbtn fade-rise-2" href="#contact">Start a project</a>
   <button class="liquid-glass vpause" type="button" aria-pressed="false" aria-label="Pause background video"></button>
 </section>
-<div class="film">
-  <section class="beat" aria-label="Build">
-    <div class="copy">
-      <p class="k">Built to grow</p>
-      <h2><span class="w"><span>Websites</span></span> <span class="w"><span>and</span></span> <span class="w"><span>apps</span></span> <span class="w"><span>that</span></span> <span class="w"><span>keep</span></span> <span class="w"><span class="grad">growing.</span></span></h2>
-      <p class="rv">Web platforms, mobile apps and the integrations behind them, designed, shipped and maintained by the same people.</p>
+<section class="scene" id="launch" aria-labelledby="launch-h">
+  <div class="scene__viewport">
+    <div class="scene__backdrop" aria-hidden="true">
+      <div class="scene__camera"><img class="scene__photo" src="/assets/launch/night-launch.webp" alt="" width="1536" height="2752" loading="lazy" decoding="async"></div>
+      <div class="scene__glow"></div>
     </div>
-  </section>
-  <section class="beat" aria-label="Grow">
-    <div class="copy">
-      <p class="k">Growth with a pulse</p>
-      <h2><span class="w"><span>Marketing</span></span> <span class="w"><span>you</span></span> <span class="w"><span>can</span></span> <span class="w"><span class="grad">measure.</span></span></h2>
-      <p class="rv">Paid, organic, owned. We put your message where the attention already is, and measure every hop it makes.</p>
-      <div class="actions rv"><a class="pill light" href="#services">See what we do <i aria-hidden="true">↓</i></a><a class="ghost on-dark" href="#contact">Start a project</a></div>
+    <div class="launch">
+      <p class="launch__badge"><span class="launch__label">Shipped so far</span><span class="launch__value"><i aria-hidden="true">◆</i> 100 client projects</span></p>
+      <h2 class="launch__title" id="launch-h"><span class="line"><span class="line__in">Launch a brand&nbsp;</span></span><span class="line"><span class="line__in">that keeps&nbsp;</span></span><span class="line"><span class="line__in">climbing.</span></span></h2>
+      <p class="launch__sub">Websites, apps and the integrations behind them, designed, shipped and maintained by the same people.</p>
     </div>
-  </section>
-  <div class="spacer"></div>
-</div>
+    <div class="results">
+      <p class="results__pill"><i aria-hidden="true"></i>Client results</p>
+      <h2 class="results__title">Marketing you can measure.</h2>
+      <p class="sr">Results from our client work: Joker Media, 240% more conversions. Silver Thatch Pensions, three times the traffic. Greendale Physical Therapy, 180% more bookings. Roly Poly, 300% more online orders. Century Boats, 45% lower customer acquisition cost.</p>
+      <div class="dash" aria-hidden="true">
+        <div class="dash__bar"><i></i><i></i><i></i><span class="dash__url"><svg viewBox="0 0 6 8"><path d="M1.3 3.5V2.3a1.7 1.7 0 0 1 3.4 0v1.2M.5 3.5h5v4h-5z"/></svg>4amglobalmedia.com/results</span></div>
+        <div class="dash__nav"><span class="on">Dashboard</span><span>Campaigns</span><span>Search</span><span>Social</span><span>Reports</span><span class="dash__user"><b></b>Client view</span></div>
+        <div class="dash__tabs"><span class="on">Growth</span><span>Search</span><span>Social</span></div>
+        <div class="dc c1"><p class="ct">Conversions</p><p class="fig">+240%</p><p class="delta"><b>Joker Media</b>conversion growth</p>
+          <svg class="area" viewBox="0 0 245.5 69.5" preserveAspectRatio="none"><defs><linearGradient id="dc-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path class="grid" d="M11.5 0v69.5M66.5 0v69.5M121.5 0v69.5M176.5 0v69.5M231.5 0v69.5"/><path fill="url(#dc-fill)" d="M0 62C28 60 44 54 66 51s40-9 58-14 34-6 50-15 36-13 50-17 16-3 21.5-3V69.5H0z"/><path class="ln" d="M0 62C28 60 44 54 66 51s40-9 58-14 34-6 50-15 36-13 50-17 16-3 21.5-3"/></svg></div>
+        <div class="dc c2"><p class="ct">Traffic</p><div class="pair"><p><span>Silver Thatch</span><b>3×</b></p><p><span>Greendale bookings</span><b>+180%</b></p></div><i class="dots"></i></div>
+        <div class="dc c3"><p class="ct">Orders</p><div class="pair"><p><span>Roly Poly orders</span><b>+300%</b></p><p><span>Century Boats CAC</span><b>−45%</b></p></div><div class="bars"><i style="--h:52"></i><i style="--h:70"></i><i style="--h:88"></i><i style="--h:64"></i><i style="--h:104"></i><i style="--h:82"></i></div></div>
+        <div class="dc c4"><p class="ct">This week</p><ul class="log"><li><em>SEO</em>Weekly ranking report<b>Done</b></li><li><em>ADS</em>Budget moved to the best-performing ad set</li><li><em>WEB</em>New release shipped to production</li></ul></div>
+        <div class="dc c5"><p class="ct">4AM in numbers</p><div class="trio"><p><span>Projects shipped</span><b>100</b></p><p><span>Marketplaces</span><b>15</b></p><p><span>Reply time</span><b>24h</b></p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div class="solid">
   <div class="marquee" aria-hidden="true"><div class="row"><span>Websites</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Brands</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Growth</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Search</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Content</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Commerce</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Websites</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Brands</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Growth</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Search</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Content</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg><span>Commerce</span><svg class="sk draw " viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M20 3 V37 M3 20 H37 M8 8 L32 32 M32 8 L8 32"/></svg></div></div>
@@ -75,7 +81,7 @@
   <section class="sec row-sec" id="services" aria-labelledby="svc-h">
     <div class="sec-head rv">
       <div><p class="k">What we do</p><h2 id="svc-h">Seven services. <span class="mark">One<svg class="sk draw ring" viewBox="0 0 200 80" aria-hidden="true" focusable="false"><path pathLength="1" class="s-g" stroke-width="3" d="M34 16 C 76 0, 172 4, 190 30 C 206 58, 150 78, 92 75 C 30 72, 0 52, 14 31 C 23 17, 62 9, 104 11"/></svg></span> accountable team.</h2></div>
-      <div class="row-ctl"><span class="hand loop-tip" aria-hidden="true">drag or swipe →</span><button class="loop-btn" type="button" aria-controls="svc-loop" aria-pressed="false">Pause</button></div>
+      <div class="row-ctl"><span class="hand loop-tip" aria-hidden="true">drag or swipe →</span><span class="loop-arrows"><button class="loop-nav" type="button" aria-controls="svc-loop" data-dir="-1" aria-label="Previous services"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button><button class="loop-nav" type="button" aria-controls="svc-loop" data-dir="1" aria-label="Next services"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button></span><button class="loop-btn" type="button" aria-controls="svc-loop" aria-pressed="false">Pause</button></div>
     </div>
     <div class="loop rv" id="svc-loop" role="region" aria-roledescription="carousel" aria-label="Our seven services">
       <ul class="loop-track">
@@ -137,7 +143,7 @@
   <section class="sec row-sec" id="work" aria-labelledby="work-h">
     <div class="sec-head rv">
       <div><p class="k">Our work</p><h2 id="work-h">Sites and apps we've <span class="mark">shipped.<svg class="sk draw under" viewBox="0 0 200 20" aria-hidden="true" focusable="false"><path pathLength="1" class="s-t" stroke-width="4" d="M4 14 C 40 5, 80 5, 120 10 S 178 17, 196 6"/></svg></span></h2></div>
-      <div class="row-ctl"><a class="ghost" href="#all-work">All 100 projects ↓</a><button class="loop-btn" type="button" aria-controls="work-loop" aria-pressed="false">Pause</button></div>
+      <div class="row-ctl"><a class="ghost" href="#all-work">All 100 projects ↓</a><span class="loop-arrows"><button class="loop-nav" type="button" aria-controls="work-loop" data-dir="-1" aria-label="Previous projects"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button><button class="loop-nav" type="button" aria-controls="work-loop" data-dir="1" aria-label="Next projects"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button></span><button class="loop-btn" type="button" aria-controls="work-loop" aria-pressed="false">Pause</button></div>
     </div>
     <div class="loop rv" id="work-loop" role="region" aria-roledescription="carousel" aria-label="Selected client projects">
       <ul class="loop-track">
@@ -350,9 +356,9 @@
 <footer class="foot">
   <div class="foot-grid">
     <div><a class="brand" href="/" aria-label="4AM Global Media, home"><img src="/logo-dark.webp" alt="4AM Global Media" width="340" height="160" loading="lazy" decoding="async"></a><p class="tag">The growth engine that never sleeps. A creative network made for today and tomorrow.</p></div>
-    <div><h3>Services</h3><ul><li><a href="/services/digital-marketing">Digital Marketing</a></li><li><a href="/services/branding">Branding</a></li><li><a href="/services/social-media-growth">Social Media Growth</a></li><li><a href="/services/seo">SEO</a></li><li><a href="/services/web-development">Web Development</a></li><li><a href="/services/content-creation">Content Creation</a></li><li><a href="/services/marketplace-product-onboarding">Marketplace Onboarding</a></li></ul></div>
-    <div><h3>Company</h3><ul><li><a href="/#work">Work</a></li><li><a href="/#process">Process</a></li><li><a href="/#team">Team</a></li><li><a href="/#contact">Contact</a></li></ul></div>
-    <div><h3>Connect</h3><ul><li><a href="https://www.instagram.com/reel/DUBIUl5DfBU/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/918826406545" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:Info@4amglobalmedia.com"><span>Info@4amglobalmedia.com</span></a></li><li><a href="tel:+918826406545">+91 88264 06545</a></li></ul></div>
+    <div><h2>Services</h2><ul><li><a href="/services/digital-marketing">Digital Marketing</a></li><li><a href="/services/branding">Branding</a></li><li><a href="/services/social-media-growth">Social Media Growth</a></li><li><a href="/services/seo">SEO</a></li><li><a href="/services/web-development">Web Development</a></li><li><a href="/services/content-creation">Content Creation</a></li><li><a href="/services/marketplace-product-onboarding">Marketplace Onboarding</a></li></ul></div>
+    <div><h2>Company</h2><ul><li><a href="/#work">Work</a></li><li><a href="/#process">Process</a></li><li><a href="/#team">Team</a></li><li><a href="/#contact">Contact</a></li></ul></div>
+    <div><h2>Connect</h2><ul><li><a href="https://www.instagram.com/reel/DUBIUl5DfBU/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/918826406545" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:Info@4amglobalmedia.com"><span>Info@4amglobalmedia.com</span></a></li><li><a href="tel:+918826406545">+91 88264 06545</a></li></ul></div>
   </div>
   <div class="legal"><span>© <span data-year>2026</span> 4AM Global Media. All rights reserved.</span><span>Grown with care · plain HTML, CSS and JavaScript</span></div>
 </footer>

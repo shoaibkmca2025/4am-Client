@@ -12,7 +12,6 @@
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-const smooth = (t) => t * t * (3 - 2 * t);
 const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const root = document.documentElement;
@@ -107,11 +106,15 @@ $$('[data-copy]').forEach((btn) => {
 /* ---------- card rows that drift right-to-left (services, work) ----------
    A seamless loop: each row's cards are cloned once and the row wraps at half
    its width. It drifts at a calm speed; hover, keyboard focus, the Pause
-   button or leaving the screen ease it to a stop (never a hard stop). Drag or
-   swipe to take over: the row follows the finger 1:1, keeps the flick's
-   velocity on release, then eases back into its drift. The page scroll is
-   never touched. Reduced motion (no html.loops): a plain swipeable row. */
+   button or leaving the screen ease it to a stop (never a hard stop). People
+   can move it themselves: a horizontal trackpad swipe or Shift+wheel, the
+   arrow buttons (one card per press, lined up with the heading), the arrow
+   keys (card to card), or drag / swipe, which follows 1:1 and keeps the
+   flick's velocity. After any of these the row waits before drifting again.
+   Vertical scrolling always stays with the page. Reduced motion (no
+   html.loops): a plain, natively scrollable row. */
 const loops = $$('.loop');
+const HOLD = 5000;  // ms the row stays put after someone moves it
 if (loops.length && !rm) {
   root.classList.add('loops');
   loops.forEach((loop) => {
@@ -119,6 +122,7 @@ if (loops.length && !rm) {
     const btn = document.querySelector(`.loop-btn[aria-controls="${loop.id}"]`);
     const SPEED = matchMedia('(max-width: 639px)').matches ? 26 : 34;  // px per second
     let built = false, half = 0, x = 0, v = 0, hover = false, focus = false, paused = false, seen = false, drag = false, last = 0, raf = 0, moved = false;
+    let glideTo = null, hold = 0;
     const build = () => $$(':scope > li', track).forEach((li) => {
       const c = li.cloneNode(true);
       c.setAttribute('aria-hidden', 'true'); c.setAttribute('inert', '');
@@ -126,31 +130,58 @@ if (loops.length && !rm) {
       track.appendChild(c);
     });
     const measure = () => { half = track.scrollWidth / 2; };
-    const wrap = () => { if (half) x = -((((-x) % half) + half) % half); };
+    const wrap = () => {
+      if (!half) return;
+      const before = x; x = -((((-x) % half) + half) % half);
+      if (glideTo !== null) glideTo += x - before;  // a glide in progress wraps with the row
+    };
     const render = () => { if (!focus) wrap(); track.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`; };
-    const resting = () => hover || focus || paused || !seen;
+    const resting = () => hover || focus || paused || !seen || performance.now() < hold;
     const tick = (now) => {
       raf = 0;
       const dt = last ? Math.min(.05, (now - last) / 1000) : 0; last = now;
-      if (!drag) {
+      if (glideTo !== null) {
+        x += (glideTo - x) * (1 - Math.exp(-dt * 9));   // ease to the chosen card
+        if (Math.abs(glideTo - x) < .5) { x = glideTo; glideTo = null; }
+      } else if (!drag) {
         const target = resting() ? 0 : -SPEED;
         v += (target - v) * (1 - Math.exp(-dt * 3.2));   // ease toward the drift (or a stop)
         if (Math.abs(v - target) < .05) v = target;
         x += v * dt;
       }
       render();
-      if (drag || v !== 0 || !resting()) raf = requestAnimationFrame(tick); else last = 0;
+      if (drag || glideTo !== null || v !== 0 || !resting()) raf = requestAnimationFrame(tick); else last = 0;
     };
     const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    const holdOn = () => { hold = performance.now() + HOLD; setTimeout(kick, HOLD + 30); };
     new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !built) { built = true; build(); measure(); } kick(); }).observe(loop);
     let rz = 0;
     addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (built) { measure(); render(); } }, 150); });
+
+    // one card per press, landing with a card's left edge on the heading's
+    loop.nudge = (dir) => {
+      const first = track.firstElementChild; if (!first) return;
+      const step = first.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 0);
+      const head = $('.sec-head', loop.closest('section'));
+      const off = head ? head.getBoundingClientRect().left - loop.getBoundingClientRect().left : 0;
+      const from = glideTo ?? x, k = (from - off) / step;  // the next card edge in the pressed direction
+      glideTo = (dir > 0 ? Math.floor(k - .15) : Math.ceil(k + .15)) * step + off;
+      v = 0; holdOn(); kick();
+    };
+    // trackpad: horizontal swipes (and Shift+wheel) move the row, vertical ones scroll the page
+    loop.addEventListener('wheel', (e) => {
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
+      if (!d) return;
+      e.preventDefault();
+      glideTo = null; v = 0; x -= d * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? loop.clientWidth : 1);
+      holdOn(); render(); kick();
+    }, { passive: false });
 
     loop.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; kick(); } });
     loop.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hover = false; kick(); } });
     // keyboard: stop, and slide the focused card fully into view
     loop.addEventListener('focusin', (e) => {
-      focus = true; v = 0;
+      focus = true; v = 0; glideTo = null;
       const li = e.target.closest('li');
       if (li) {
         const lr = loop.getBoundingClientRect(), r = li.getBoundingClientRect(), pad = 32;
@@ -173,7 +204,7 @@ if (loops.length && !rm) {
         if (!active) {
           if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
           if (Math.abs(dy) > Math.abs(dx)) { end(); return; }
-          active = true; moved = true; drag = true; base = x - dx; v = 0;
+          active = true; moved = true; drag = true; glideTo = null; base = x - dx; v = 0;
           loop.classList.add('dragging');
           try { loop.setPointerCapture(ev.pointerId); } catch {}
           kick();
@@ -186,7 +217,7 @@ if (loops.length && !rm) {
         if (!active) return;
         const [t0, p0] = hist[0] || [0, 0], [t1, p1] = hist[hist.length - 1] || [0, 0];
         v = t1 > t0 ? clamp((p1 - p0) / ((t1 - t0) / 1000), -3000, 3000) : 0;  // hand the flick's velocity on
-        drag = false; loop.classList.remove('dragging'); kick();
+        drag = false; loop.classList.remove('dragging'); holdOn(); kick();
       };
       loop.addEventListener('pointermove', move); loop.addEventListener('pointerup', end); loop.addEventListener('pointercancel', end);
     });
@@ -196,11 +227,28 @@ if (loops.length && !rm) {
     if (btn) btn.addEventListener('click', () => { paused = !paused; btn.setAttribute('aria-pressed', String(paused)); btn.textContent = paused ? 'Play' : 'Pause'; kick(); });
   });
 }
+// arrow buttons and arrow keys, in both modes (the reduced-motion row scrolls natively)
+loops.forEach((loop) => {
+  const step = () => (loop.querySelector('.loop-track > li')?.getBoundingClientRect().width || 260) + 14;
+  $$(`.loop-nav[aria-controls="${loop.id}"]`).forEach((b) => b.addEventListener('click', () => {
+    const dir = +b.dataset.dir;
+    if (loop.nudge) loop.nudge(dir); else loop.scrollBy({ left: dir * step(), behavior: rm ? 'auto' : 'smooth' });
+  }));
+  loop.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const li = e.target.closest('li'); if (!li) return;
+    const sib = e.key === 'ArrowRight' ? li.nextElementSibling : li.previousElementSibling;
+    const to = sib && !sib.hasAttribute('inert') && sib.querySelector('a[href], button');
+    if (to) { e.preventDefault(); to.focus(); }
+  });
+});
 
 /* ---------- home hero: the night video, and the header's hero look ---------- */
 const hero = $('#hero');
 if (hero) {
-  const setHero = () => root.classList.toggle('at-hero', hero.getBoundingClientRect().bottom > 76);
+  // the header keeps its dark glass look over the hero and the launch scene below it
+  const dark = $('#launch') || hero;
+  const setHero = () => root.classList.toggle('at-hero', dark.getBoundingClientRect().bottom > 76);
   let hq = false;
   addEventListener('scroll', () => { if (!hq) { hq = true; requestAnimationFrame(() => { hq = false; setHero(); }); } }, { passive: true });
   requestAnimationFrame(setHero);
@@ -301,149 +349,82 @@ if (form) {
   });
 }
 
-/* ══════════ home: the film ══════════ */
-const stage = $('.stage');
-if (stage) {
-  const canvas = $('#film'), solid = $('.solid');
-  const beats = $$('.beat');
-  // source frames 125…287 of the original film: before 125 the clip carries its
-  // own baked-in title, which used to force a heavy (blurry) zoom to hide
-  const FIRST = 125, LAST = 287;
+/* ══════════ home: nav highlight and the launch scene ══════════ */
+const scene = $('#launch');
 
-  /* story beats: words rise when a beat is a third on screen, and the rest of
-     its card (text, buttons) arrives with them, so the card never shows a gap */
-  if (root.classList.contains('anim')) {
-    const bio = new IntersectionObserver((es) => es.forEach((e) => {
-      if (!e.isIntersecting) return;
-      e.target.classList.add('in'); $$('.rv', e.target).forEach((el) => el.classList.add('on'));
-      bio.unobserve(e.target);
-    }), { threshold: .3 });
-    beats.forEach((b) => bio.observe(b));
-  } else beats.forEach((b) => b.classList.add('in'));
-
-  /* nav: highlight the section in view; over the hero and the film nothing is
-     current (it used to keep the last section lit after scrolling back up) */
-  const links = $$('.nav a');
+/* nav: highlight the section in view; over the hero and the launch scene
+   nothing is current */
+const navLinks = $$('.nav a[href^="#"]');
+if (hero && navLinks.length) {
   const navIO = new IntersectionObserver((es) => es.forEach((e) => {
     if (!e.isIntersecting) return;
-    links.forEach((a) => a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id ? 'true' : 'false'));
+    navLinks.forEach((a) => a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id ? 'true' : 'false'));
   }), { rootMargin: '-45% 0px -50% 0px' });
   ['services', 'work', 'process', 'team', 'contact'].forEach((id) => { const s = document.getElementById(id); if (s) navIO.observe(s); });
-  [hero, ...beats].forEach((s) => s && navIO.observe(s));
+  [hero, scene].forEach((s) => s && navIO.observe(s));
+}
 
-  const conn = navigator.connection;
-  const still = rm || (conn && conn.saveData) || !canvas.getContext;
-  if (!still) {
-    // Phones in portrait only ever see a narrow slice of the 16:9 film, so they
-    // get that slice at full source height (sharp, and a third of the bytes).
-    // (matchMedia, not innerWidth: that read forced an 85 ms layout at start-up)
-    const mobile = matchMedia('(max-width: 639px) and (max-aspect-ratio: 4/5)').matches;
-    const set = mobile ? { dir: 'm', step: 2, x0: 896 / 2560, w: 1178 / 2560 } : { dir: 'd', step: 2, x0: 0, w: 1 };
-    const frames = []; for (let f = FIRST; f <= LAST; f += set.step) frames.push(f);
-    const N = frames.length;
-    const url = (i) => `/assets/film/${set.dir}/${String(frames[i]).padStart(3, '0')}.webp`;
-    const ctx = canvas.getContext('2d', { alpha: false });
+/* The scene (after the Scrollhaus "Zenith" direction): one photograph, two
+   framings. Scroll progress p drives a single camera pan + push-in from the
+   launch to the moon (never a crossfade); the launch copy rises, blurs, then
+   fades; the results window arrives behind its heading, at a different rate.
+   The timeline eases toward the scroll position (settle 9/s) and is capped at
+   0.4/s, so even a hard flick plays out; the loop stops once it settles. */
+if (scene) {
+  const S = scene.style, set = (k, v) => S.setProperty(k, v);
+  const out3 = (t) => 1 - (1 - t) ** 3, out4 = (t) => 1 - (1 - t) ** 4, io3 = (t) => (t < .5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+  const track = (p, a, b, f = (t) => t) => f(clamp((p - a) / (b - a), 0, 1));
+  const apply = (p) => {
+    const q = clamp(p / .86, 0, 1);  // the framing lands at 86% of the travel and holds
+    set('--cam-x', (-47.957 - 2.043 * q).toFixed(3) + '%');
+    set('--cam-y', (-80.097 + 43.381 * q).toFixed(3) + '%');
+    set('--cam-z', rm ? '1' : (1 + .11 * Math.sin(Math.PI * q)).toFixed(4));
+    const exit = track(p, .297, .508);
+    set('--hero-out', (exit ** 1.75).toFixed(4));
+    set('--hero-o', ((1 - clamp((exit - .38) / .62, 0, 1)) ** 1.25).toFixed(4));
+    set('--hero-blur', (18 * exit ** .9).toFixed(2));
+    scene.classList.toggle('is-blurring', exit > 0 && exit < 1);
+    scene.classList.toggle('is-gone', exit >= 1);
+    set('--glow-o', (1 - track(p, .55, .95, io3)).toFixed(4));
+    set('--plat-o', track(p, .557, .623, out3).toFixed(4));
+    set('--plat-text', track(p, .563, .967, out4).toFixed(4));
+    set('--plat-shot', track(p, .557, .984, out3).toFixed(4));
+    scene.classList.toggle('plat-on', p > .54);
+    scene.classList.toggle('is-moving', p > .001 && p < .999);
+    if (p > .05) scene.classList.add('is-open');
+  };
+  let top = 0, span = 1, measured = false, target = 0, cur = -1, last = 0, raf = 0;
+  const measure = () => { top = scene.offsetTop; span = Math.max(1, scene.offsetHeight - innerHeight); measured = true; };
+  const step = (now) => {
+    raf = 0;
+    if (!measured) measure();  // first frame: the page is laid out here anyway
+    target = clamp((scrollY - top) / span, 0, 1);
+    const dt = last ? Math.min(.05, (now - last) / 1000) : 0; last = now;
+    if (rm || cur < 0) cur = target;
+    else {
+      const cap = .4 * dt;
+      cur += clamp((target - cur) * (1 - Math.exp(-9 * dt)), -cap, cap);
+      if (Math.abs(target - cur) < .0004) cur = target;
+    }
+    apply(cur);
+    if (cur !== target) raf = requestAnimationFrame(step); else last = 0;
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(step); };
+  addEventListener('scroll', kick, { passive: true });
+  let rz = 0;
+  addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { measured = false; kick(); }, 150); });
+  kick();
 
-    /* loading: coarse to fine (every 16th frame first, then 8th …), 6 at a time */
-    const blobs = new Array(N), order = [], seen = new Set();
-    for (const stride of [16, 8, 4, 2, 1]) for (let i = 0; i < N; i += stride) if (!seen.has(i)) { seen.add(i); order.push(i); }
-    if (!seen.has(N - 1)) order.push(N - 1);
-    let next = 0, alive = true, started = false;
-    const pump = () => {
-      if (!alive || next >= order.length) return;
-      const i = order[next++];
-      fetch(url(i), { priority: 'low' }).then((r) => (r.ok ? r.blob() : null)).then((b) => { if (b) { blobs[i] = b; if (Math.abs(i - playhead) < 4) dirty = true; } }).catch(() => {}).finally(pump);
-    };
-    // The poster covers the first screen, so the film can wait: start streaming
-    // once the page has loaded and gone idle, or as soon as the visitor scrolls.
-    const start = () => { if (started) return; started = true; for (let k = 0; k < 6; k++) pump(); };
-    addEventListener('scroll', start, { once: true, passive: true });
-    afterPaint.then(() => idle(start, { timeout: 3000 }));
-
-    /* decoding: keep only the frames around the playhead as bitmaps */
-    const KEEP = 6;  // full-resolution bitmaps are 7–15 MB each decoded
-    const bitmaps = new Map(), decoding = new Set();
-    const canBitmap = typeof createImageBitmap === 'function';
-    const want = (i) => {
-      if (i < 0 || i >= N || !blobs[i] || bitmaps.has(i) || decoding.has(i)) return;
-      decoding.add(i);
-      const done = (bm) => { decoding.delete(i); if (!bm) return; bitmaps.set(i, bm); dirty = true; evict(); };
-      if (canBitmap) createImageBitmap(blobs[i]).then(done, () => decoding.delete(i));
-      else { const img = new Image(); img.src = URL.createObjectURL(blobs[i]); img.decode().then(() => done(img), () => decoding.delete(i)); }
-    };
-    let playhead = 0;
-    const evict = () => {
-      if (bitmaps.size <= KEEP) return;
-      const far = [...bitmaps.keys()].sort((a, b) => Math.abs(b - playhead) - Math.abs(a - playhead));
-      for (const i of far.slice(0, bitmaps.size - KEEP)) { const bm = bitmaps.get(i); if (bm.close) bm.close(); bitmaps.delete(i); }
-    };
-    const nearest = (i) => { for (let d = 0; d < N; d++) { if (bitmaps.has(i - d)) return i - d; if (bitmaps.has(i + d)) return i + d; } return -1; };
-
-    /* camera: [frame, zoom, focusX, focusY] — kept near 1:1 so the soft source is
-       shown at or below its own size (sharpest), with the plant right of the
-       story cards, which sit on the left */
-    const CAM = [[FIRST, 1.1, .62, .5], [200, 1.03, .6, .5], [LAST, 1.1, .62, .45]];
-    const camera = (p) => {
-      for (let k = 0; k < CAM.length - 1; k++) {
-        const A = CAM[k], B = CAM[k + 1];
-        if (p <= B[0]) { const t = smooth(clamp((p - A[0]) / (B[0] - A[0]), 0, 1)); return [1, 2, 3].map((j) => A[j] + (B[j] - A[j]) * t); }
-      }
-      return CAM[CAM.length - 1].slice(1);
-    };
-
-    let W = 0, H = 0, dirty = true, end = 1, solidTop = 0, filmStart = 0;
-    const size = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 2, Math.sqrt((mobile ? 3.4e6 : 5.6e6) / Math.max(1, innerWidth * innerHeight)));
-      W = canvas.width = Math.round(innerWidth * dpr); H = canvas.height = Math.round(innerHeight * dpr);
-      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-      solidTop = solid.getBoundingClientRect().top + scrollY;
-      filmStart = hero ? hero.offsetHeight * .5 : 0;  // the film plays once the hero scrolls away
-      end = Math.max(filmStart + 1, solidTop - innerHeight);
-      dirty = true;
-    };
-    let rz = 0;
-    addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(size, 120); });
-
-    /* pointer parallax nudges the framing slightly (never reveals an edge) */
-    let px = 0, py = 0, tpx = 0, tpy = 0;
-    if (fine) addEventListener('pointermove', (e) => { tpx = e.clientX / innerWidth - .5; tpy = e.clientY / innerHeight - .5; }, { passive: true });
-
-    let pos = FIRST, last = { pos: -1, px: 9, py: 9, w: 0 }, shown = false;
-    const frame = () => {
-      if (!alive) return;
-      if (!W) size();  // first frame: measured here, where the page is laid out anyway
-      const y = scrollY;
-      const hp = clamp((y - filmStart) / (end - filmStart), 0, 1);
-      // ease the playhead toward the scroll position: steady film even with stepped wheels
-      const target = FIRST + hp * (LAST - FIRST);
-      pos += (target - pos) * .18;
-      if (Math.abs(target - pos) < .01) pos = target;
-      px += (tpx - px) * .06; py += (tpy - py) * .06;
-      const covered = y > solidTop + 4 || (hero && y < 1);  // the bone sections, or the full-screen hero, hide the film
-      // always one whole frame: blending two neighbours read as a soft double image
-      const i = Math.min(N - 1, Math.round((pos - FIRST) / set.step));
-      playhead = i;
-      want(i); want(i + 1); want(i - 1); want(i + 2);
-      const changed = dirty || Math.abs(last.pos - pos) > .005 || Math.abs(last.px - px) > .0005 || Math.abs(last.py - py) > .0005 || last.w !== W;
-      if (!covered && changed) {
-        const n0 = nearest(i);
-        if (n0 >= 0) {
-          const b0 = bitmaps.get(n0), iw = b0.width, ih = b0.height;
-          let [z, fx, fy] = camera(pos);
-          if (W < H) z = 1;              // portrait already crops hard: no zoom, stay sharp
-          fx = (fx - set.x0) / set.w;    // focus in the phone slice's own coordinates
-          const s = Math.max(W / iw, H / ih) * z, dw = iw * s, dh = ih * s;
-          const ox = clamp(W / 2 - (fx + px * .012) * dw, W - dw, 0), oy = clamp(H / 2 - (fy + py * .012) * dh, H - dh, 0);
-          ctx.drawImage(b0, ox, oy, dw, dh);
-          if (!shown) { shown = true; stage.classList.add('live'); }
-          last = { pos, px, py, w: W }; dirty = false;
-        }
-      }
-      if (!document.hidden) requestAnimationFrame(frame); else running = false;
-    };
-    let running = true;
-    requestAnimationFrame(frame);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden && !running) { running = true; requestAnimationFrame(frame); } });
-    if ('ResizeObserver' in window) new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(size, 120); }).observe(document.body);
+  /* intro: the headline lines are uncovered when the scene arrives */
+  const open = () => scene.classList.add('is-open');
+  if (!root.classList.contains('anim')) { scene.classList.add('in'); open(); }
+  else {
+    const intro = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      intro.disconnect(); scene.classList.add('in');
+      $('.launch__sub', scene).addEventListener('animationend', open, { once: true });
+      setTimeout(open, 1800);  // backstop
+    }, { threshold: .6 });
+    intro.observe($('.launch__title', scene));
   }
 }
