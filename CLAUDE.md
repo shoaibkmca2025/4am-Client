@@ -9,7 +9,7 @@ A static website: hand-written HTML, CSS and plain JavaScript in `public/`. No f
 ## Run and deploy
 
 - Preview: `npx serve public` (clean URLs: `/services/seo` → `services/seo.html`).
-- Deploy: Vercel serves `public/` directly. `vercel.json` sets `framework: null`, empty install and build commands, `outputDirectory: "public"`, `cleanUrls`, and redirects the removed backend routes (`/portal`, `/admin`, `/blog`, `/careers`, `/verify`) to `/`.
+- Deploy: Vercel serves `public/` directly. `vercel.json` sets `framework: null`, empty install and build commands, `outputDirectory: "public"`, `cleanUrls`, redirects `www.4amglobalmedia.com` to the apex domain (308, so Google sees one host; never also set apex → www in the Vercel dashboard, that would loop), and redirects the removed backend routes (`/portal`, `/admin`, `/blog`, `/careers`, `/verify`) to `/`.
 
 ## Structure
 
@@ -29,3 +29,5 @@ A static website: hand-written HTML, CSS and plain JavaScript in `public/`. No f
 - Respect `prefers-reduced-motion` (engine and CSS already branch on it) and gate hover effects behind `@media (hover: hover) and (pointer: fine)`.
 - The contact form has no server: it validates, then opens `mailto:` or `wa.me` with the brief. Don't add a backend unless asked.
 - Images are WebP with explicit `width`/`height`; below-the-fold images use `loading="lazy"`.
+- Project cards (`.card`) are whole-card links: the project name is `<h3><a class="cover">`, and its `::after` stretches over the card (z-index above the `.chrome` / `.ind` tags), so screen readers hear one short link name. No separate "Visit site" link. A card with no live site (e.g. "Launching soon") has no `.cover`.
+- SEO: every indexable page has a self-referencing canonical on `https://4amglobalmedia.com` (no `www`, no trailing slash, no `.html`), a `<title>` of 60 characters or fewer (keywords first, "| 4AM Global Media" last) and a meta description of 160 or fewer; `og:` / `twitter:` copies and the JSON-LD `Service` description match them. Bump each `<lastmod>` in `sitemap.xml` when a page changes. `404.html` stays `noindex` with no canonical.

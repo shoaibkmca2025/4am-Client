@@ -199,7 +199,7 @@ html:not(.loops) .loop-track > li { scroll-snap-align: start; }
 .loop .card .metric { font-size: 24px; margin-top: 2px; }
 .loop .card .k2 { font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .loop .card .new { font-size: 10px; padding: 5px 8px; }
-.loop .card a, .loop .card .soon { padding-top: 10px; font-size: 13px; }
+.loop .card .soon { padding-top: 10px; font-size: 13px; }
 .all-work { margin-top: 28px; }
 form.brief .pill.light { background: var(--bone); color: var(--forest); }
 
@@ -236,7 +236,11 @@ form.brief .pill.light { background: var(--bone); color: var(--forest); }
 .card .metric { font: 800 30px/1.05 var(--display); letter-spacing: -.03em; margin-top: 6px; }
 .card .k2 { font-size: 15px; }
 .card .new { align-self: flex-start; margin-bottom: 6px; font: 600 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 6px 9px; border-radius: 6px; background: var(--forest); color: var(--bone); }
-.card a { margin-top: auto; padding-top: 12px; font: 700 14px/1 var(--body); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+/* the whole card is the link: the title's link stretches over it (one short link name for screen readers) */
+.card .cover { color: inherit; text-decoration: none; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.card .cover::after { content: ""; position: absolute; inset: 0; z-index: 2; border-radius: 22px; }
+.card .cover:focus-visible { outline: none; }
+.card .cover:focus-visible::after { outline: 2px solid var(--forest); outline-offset: -3px; }
 .card .soon { margin-top: auto; padding-top: 12px; font: 700 14px/1 var(--body); }
 .all-work { margin-top: 24px; }
 .all-work details { border-radius: 22px; background: var(--bone-2); box-shadow: inset 0 0 0 1px var(--line); }
@@ -409,6 +413,7 @@ input:focus, select:focus, textarea:focus { outline: none; box-shadow: inset 0 0
   .scard:hover::before { opacity: 1; }
   .card:hover { box-shadow: inset 0 0 0 1.5px var(--forest), var(--shadow); }
   .card:hover .shot img { transform: scale(1.04); }
+  .card:hover .cover { text-decoration: underline; }
   .steps-rows li:hover { padding-left: 14px; }
   .press a:hover, .others a:hover, .grid-work li:hover, .feat li:hover { box-shadow: inset 0 0 0 1.5px var(--forest); }
   .copy-btn:hover { box-shadow: inset 0 0 0 2px var(--forest); }

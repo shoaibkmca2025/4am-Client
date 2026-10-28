@@ -8,6 +8,12 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www\\.4amglobalmedia\\.com" }],
+      "destination": "https://4amglobalmedia.com/:path*",
+      "permanent": true
+    },
+    {
       "source": "/portal",
       "destination": "/",
       "permanent": false
